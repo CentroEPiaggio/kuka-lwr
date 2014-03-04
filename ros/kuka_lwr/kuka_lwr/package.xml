@@ -1,0 +1,30 @@
+<package>
+  <name>kuka_lwr</name>
+  <version>0.0.0</version>
+  <description>
+    ROS meta-package containing kuka lwr packages.
+  </description>
+  <maintainer email="carlos.rosales@for.unipi.it">Carlos Rosales</maintainer>
+  <maintainer email="manuel.bonilla@centropiaggio.unipi.it">Manuel Bonilla</maintainer>
+  <license>GPLv2</license>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!--> PACKAGES </-->
+  
+  <!--> Kuka LWR description </-->
+  <run_depend> lwr_description </run_depend>
+
+  <!--> Socket communication with Kuka LWR external programs </-->
+  <run_depend> lwr_socket_comm </run_depend>
+
+  <!--> ROS_CONTROL pkgs with Kuka LWR </-->
+  <run_depend> lwr_ros_control </run_depend>
+
+  <!--> GAZEBO pkgs with Kuka LWR </-->
+  <run_depend> lwr_gazebo </run_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

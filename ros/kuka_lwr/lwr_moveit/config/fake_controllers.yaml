@@ -1,0 +1,13 @@
+controller_list:
+  - name: /lwr/lwr_trajectory_controller
+    type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
+    default: true
+    joints:
+      - lwr_arm_0_joint
+      - lwr_arm_1_joint
+      - lwr_arm_2_joint
+      - lwr_arm_3_joint
+      - lwr_arm_4_joint
+      - lwr_arm_5_joint
+      - lwr_arm_6_joint

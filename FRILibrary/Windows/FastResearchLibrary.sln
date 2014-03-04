@@ -1,0 +1,83 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastResearchLibrary", "FastResearchLibrary\FastResearchLibrary.vcproj", "{40F9D69D-A698-4CD2-BFBA-365A8C0DC612}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pthread", "pthread\pthread.vcproj", "{A443AE05-DACB-4605-A444-7490CA245701}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FastResearchInterfaceTest", "FastResearchInterfaceTest\FastResearchInterfaceTest.vcproj", "{FCD70A6B-B000-427A-B392-B5C45E803D04}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A443AE05-DACB-4605-A444-7490CA245701} = {A443AE05-DACB-4605-A444-7490CA245701}
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612} = {40F9D69D-A698-4CD2-BFBA-365A8C0DC612}
+		{3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36} = {3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LWRJointPositionControlExample", "LWRJointPositionControlExample\LWRJointPositionControlExample.vcproj", "{C2E9F981-C992-4465-ABC5-AC4DED3B2E9C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A443AE05-DACB-4605-A444-7490CA245701} = {A443AE05-DACB-4605-A444-7490CA245701}
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612} = {40F9D69D-A698-4CD2-BFBA-365A8C0DC612}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LWRCartImpedanceControlExample", "LWRCartImpedanceControlExample\LWRCartImpedanceControlExample.vcproj", "{F5C4C704-A68D-406D-BF61-B7A1D85ED2EC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A443AE05-DACB-4605-A444-7490CA245701} = {A443AE05-DACB-4605-A444-7490CA245701}
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612} = {40F9D69D-A698-4CD2-BFBA-365A8C0DC612}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LWRJointImpedanceControlExample", "LWRJointImpedanceControlExample\LWRJointImpedanceControlExample.vcproj", "{00B47F3E-D45E-444F-8C2C-E55076AB8C52}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A443AE05-DACB-4605-A444-7490CA245701} = {A443AE05-DACB-4605-A444-7490CA245701}
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612} = {40F9D69D-A698-4CD2-BFBA-365A8C0DC612}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LWRLoggingExample", "LWRLoggingExample\LWRLoggingExample.vcproj", "{AC9F7DCF-4D25-448F-BE32-B8DB456D41A3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A443AE05-DACB-4605-A444-7490CA245701} = {A443AE05-DACB-4605-A444-7490CA245701}
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612} = {40F9D69D-A698-4CD2-BFBA-365A8C0DC612}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TypeIRML", "TypeIRML\TypeIRML.vcproj", "{3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612}.Debug|Win32.ActiveCfg = Debug|Win32
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612}.Debug|Win32.Build.0 = Debug|Win32
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612}.Release|Win32.ActiveCfg = Release|Win32
+		{40F9D69D-A698-4CD2-BFBA-365A8C0DC612}.Release|Win32.Build.0 = Release|Win32
+		{A443AE05-DACB-4605-A444-7490CA245701}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A443AE05-DACB-4605-A444-7490CA245701}.Debug|Win32.Build.0 = Debug|Win32
+		{A443AE05-DACB-4605-A444-7490CA245701}.Release|Win32.ActiveCfg = Release|Win32
+		{A443AE05-DACB-4605-A444-7490CA245701}.Release|Win32.Build.0 = Release|Win32
+		{FCD70A6B-B000-427A-B392-B5C45E803D04}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FCD70A6B-B000-427A-B392-B5C45E803D04}.Debug|Win32.Build.0 = Debug|Win32
+		{FCD70A6B-B000-427A-B392-B5C45E803D04}.Release|Win32.ActiveCfg = Release|Win32
+		{FCD70A6B-B000-427A-B392-B5C45E803D04}.Release|Win32.Build.0 = Release|Win32
+		{C2E9F981-C992-4465-ABC5-AC4DED3B2E9C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C2E9F981-C992-4465-ABC5-AC4DED3B2E9C}.Debug|Win32.Build.0 = Debug|Win32
+		{C2E9F981-C992-4465-ABC5-AC4DED3B2E9C}.Release|Win32.ActiveCfg = Release|Win32
+		{C2E9F981-C992-4465-ABC5-AC4DED3B2E9C}.Release|Win32.Build.0 = Release|Win32
+		{F5C4C704-A68D-406D-BF61-B7A1D85ED2EC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F5C4C704-A68D-406D-BF61-B7A1D85ED2EC}.Debug|Win32.Build.0 = Debug|Win32
+		{F5C4C704-A68D-406D-BF61-B7A1D85ED2EC}.Release|Win32.ActiveCfg = Release|Win32
+		{F5C4C704-A68D-406D-BF61-B7A1D85ED2EC}.Release|Win32.Build.0 = Release|Win32
+		{00B47F3E-D45E-444F-8C2C-E55076AB8C52}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00B47F3E-D45E-444F-8C2C-E55076AB8C52}.Debug|Win32.Build.0 = Debug|Win32
+		{00B47F3E-D45E-444F-8C2C-E55076AB8C52}.Release|Win32.ActiveCfg = Release|Win32
+		{00B47F3E-D45E-444F-8C2C-E55076AB8C52}.Release|Win32.Build.0 = Release|Win32
+		{AC9F7DCF-4D25-448F-BE32-B8DB456D41A3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AC9F7DCF-4D25-448F-BE32-B8DB456D41A3}.Debug|Win32.Build.0 = Debug|Win32
+		{AC9F7DCF-4D25-448F-BE32-B8DB456D41A3}.Release|Win32.ActiveCfg = Release|Win32
+		{AC9F7DCF-4D25-448F-BE32-B8DB456D41A3}.Release|Win32.Build.0 = Release|Win32
+		{3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36}.Debug|Win32.Build.0 = Debug|Win32
+		{3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36}.Release|Win32.ActiveCfg = Release|Win32
+		{3E00F1F3-155A-4A13-A1C4-FDC7F1DDDB36}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

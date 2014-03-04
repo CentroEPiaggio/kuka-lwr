@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <material name="Kuka/DarkGrey">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+  
+  <material name="Kuka/LightGrey">
+    <color rgba="0.8 0.8 0.8 1.0"/>
+  </material>
+
+  <material name="Kuka/Red">
+    <color rgba="0.3 0.3 0.3 1.0"/>
+  </material>
+
+  <material name="Kuka/Black">
+    <color rgba="0 0 0 1.0"/>
+  </material>
+
+  <material name="Kuka/Orange">
+    <color rgba="1.0 0.487 0 1.0"/>
+  </material>
+
+  <material name="Kuka/Silver">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+  <material name="Kuka/Grey">
+    <color rgba="0.7 0.7 0.7 1.0"/>
+  </material>
+
+  <material name="Kuka/Blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+
+</robot>

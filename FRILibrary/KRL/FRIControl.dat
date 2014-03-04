@@ -1,0 +1,50 @@
+&ACCESS RVP
+&REL 67
+DEFDAT  FRICONTROL
+;FOLD Program information
+    ;=====================================
+    ; Stanford University
+    ; Department of Computer Science
+    ; Artificial Intelligence Laboratory 
+    ; Gates Computer Science Building 1A
+    ; 353 Serra Mall
+    ; Stanford, CA 94305-9010
+    ; USA
+    ; 
+    ; KRL application, which contains the KRL commands
+    ; for appying the Fast Research Interface (FRI) of
+    ; the KUKA Light-Weight Robot (LWR)
+    ; 
+    ; July 20, 2010
+    ; 
+    ; Author: Torsten Kroeger, tkr@stanford.edu
+    ; 
+    ; Latest update: November 19, 2011
+    ;=====================================
+;ENDFOLD (Program information)
+
+;FOLD EXTERNAL DECLARATIONS;%{PE}%MKUKATPBASIS,%CEXT,%VCOMMON,%P
+    ;FOLD BASISTECH EXT;%{PE}%MKUKATPBASIS,%CEXT,%VEXT,%P
+        EXT  BAS (BAS_COMMAND  :IN,REAL  :IN )
+        DECL INT SUCCESS
+    ;ENDFOLD (BASISTECH EXT)
+    ;FOLD USER EXT;%{E}%MKUKATPUSER,%CEXT,%VEXT,%P
+        ;Make here your modifications
+    
+        DECL FRISTATE RETURN_VALUE
+        INT I
+        INT STRING_OFFSET
+        DECL STATE_T STATE
+
+    ;ENDFOLD (USER EXT)
+;ENDFOLD (EXTERNAL DECLERATIONS)
+
+DECL BASIS_SUGG_T LAST_BASIS={POINT1[] "P2                      ",POINT2[] "P2                      ",CP_PARAMS[] "CPDAT0                  ",PTP_PARAMS[] "PDAT2                   ",CONT[] "                        ",CP_VEL[] "2.0                     ",PTP_VEL[] "100                     "}
+DECL E6POS XP1={X -525.592529,Y -0.0128466198,Z 659.265625,A 0.00409000413,B -45.2178993,C -0.00150612905,S 5,T 28,E1 -0.00314998603,E2 0.0,E3 0.0,E4 0.0,E5 0.0,E6 0.0}
+DECL FDAT FP1={TOOL_NO 1,BASE_NO 0,IPO_FRAME #BASE,POINT2[] " "}
+DECL PDAT PPDAT1={VEL 100.0,ACC 100.0,APO_DIST 100.0}
+DECL E6POS XP2={X -61.6020203,Y -3.44777509E-05,Z 1174.51501,A 0.00320645003,B -3.6860249,C -0.000158029696,S 5,T 28,E1 0.000214576707,E2 0.0,E3 0.0,E4 0.0,E5 0.0,E6 0.0}
+DECL FDAT FP2={TOOL_NO 1,BASE_NO 0,IPO_FRAME #BASE,POINT2[] " "}
+DECL PDAT PPDAT2={VEL 100.0,ACC 100.0,APO_DIST 100.0}
+DECL LDAT LCPDAT1={VEL 2.0,ACC 100.0,APO_DIST 100.0,APO_FAC 50.0,ORI_TYP #VAR}
+ENDDAT

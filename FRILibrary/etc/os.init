@@ -1,0 +1,27 @@
+[startup]
+/usr/photon/bin/pterm -x0 -y668 -h150 -w1135 -t HM_SPController /home/rxcontrol/bin/HM_SPController -f /home/rxcontrol/etc/HM_spcontroller.init
+/usr/photon/bin/pterm -x1281 -y818 -h150 -w1135 -t SPExecution /home/rxcontrol/bin/SPExecution -f /home/rxcontrol/etc/597480-01-SPExecution.init
+/usr/photon/bin/pterm -x1281 -y640 -h150 -w1135 -t SPInterface /home/rxcontrol/bin/SPInterface -f /home/rxcontrol/etc/597480-01-SPInterface.init
+/usr/photon/bin/pterm -x1281 -y462 -h150 -w1135 -t JointPos_Ctrl_Device /home/rxcontrol/bin/JointPos_Ctrl_Device -f /home/rxcontrol/etc/597480-01-JointPos_Ctrl.init
+/usr/photon/bin/pterm -x1281 -y284 -h150 -w1135 -t TimeOut /home/rxcontrol/bin/TimeOut -f /home/rxcontrol/etc/597480-01-TimeOut.init
+/usr/photon/bin/pterm -x2561 -y818 -h150 -w1135 -t CartPos_Ctrl_Device /home/rxcontrol/bin/CartPos_Ctrl_Device -f /home/rxcontrol/etc/597480-01-CartPos_Ctrl.init
+/usr/photon/bin/pterm -x2561 -y640 -h150 -w1135 -t GripperRX60 /home/rxcontrol/bin/GripperRX60 -f /home/rxcontrol/etc/597480-01-Gripper.init
+/usr/photon/bin/pterm -x2561 -y462 -h150 -w1135 -t Speed_Ctrl_Device /home/rxcontrol/bin/Speed_Ctrl_Device -f /home/rxcontrol/etc/597480-01-Speed_Ctrl.init
+/usr/photon/bin/pterm -x2561 -y284 -h150 -w1135 -t Force_Ctrl_Device /home/rxcontrol/bin/Force_Ctrl_Device -f /home/rxcontrol/etc/597480-01-Force_Ctrl.init
+
+
+[command]
+
+[protocols]
+QNET=/home/edda/lib/protocolQNET.so
+TCP=/home/edda/lib/protocolTCP.so
+UDP=/home/edda/lib/protocolUDP.so
+
+[internal]
+receiver=TCP://localhost:10000
+priority=45
+maxServer=1000
+maxAnswers=1000
+#maxRequests=1000
+#maxMessages=1000
+queuePerServer=20

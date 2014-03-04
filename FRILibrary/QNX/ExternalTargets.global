@@ -1,0 +1,87 @@
+# ExternalTargets.global
+# 
+# Stanford University
+# Department of Computer Science
+# Artificial Intelligence Laboratory
+# Gates Computer Science Building 1A
+# 353 Serra Mall
+# Stanford, CA 94305-9010
+# USA
+#
+# http://cs.stanford.edu/groups/manips
+#
+# Author : Torsten Kroeger, tkr@stanford.edu
+# Date   : November 2011
+#
+#
+
+# ****************************************************************
+# Entry points for external targets
+# ****************************************************************
+
+export
+
+all_debug_x86:
+	@echo Building debug variant [$(TARGET_OS), X86]
+	make -k do_all
+
+all_release_x86:
+	@echo Building release variant [$(TARGET_OS), X86]
+	make -k do_all
+
+all_debug_x64:
+	@echo Building debug variant [$(TARGET_OS), X64]
+	make -k do_all
+	
+all_release_x64:
+	@echo Building release variant [$(TARGET_OS), X64]
+	make -k do_all	
+
+all:
+	@echo $(LINE2)
+	@echo Building the entire project tree in three variants [debug, release]
+	@echo $(LINE2)
+	make -k all_debug_x86
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo $(LINE2)
+	make -k all_release_x86
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo This is the end of the build process.
+	@echo $(LINE2)	
+
+clean_debug_x86:
+	@echo Cleaning debug variant [$(TARGET_OS), x86]
+	make -k do_clean
+
+clean_release_x86:
+	@echo Cleaning release variant [$(TARGET_OS), x86]
+	make -k do_clean
+
+clean_debug_x64:
+	@echo Cleaning debug variant [$(TARGET_OS), x64]
+	make -k do_clean
+
+clean_release_x64:
+	@echo Cleaning release variant [$(TARGET_OS), x64]
+	make -k do_clean	
+
+clean:
+	@echo $(LINE2)
+	@echo Cleaning up the entire project tree in three variants [debug, release]
+	@echo $(LINE2)
+	make -k clean_debug_x86
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo $(LINE2)		
+	make -k clean_release_x86
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo $(LINE2)
+	@echo This is the end of the clean up process.
+	@echo $(LINE2)
+
