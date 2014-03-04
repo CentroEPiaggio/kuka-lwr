@@ -34,7 +34,7 @@ Launch the controllers in terminal 2:
 
 `roslaunch lwr_ros_control lwr_control.launch`
 
-Send commands to any joint in terminal 3:
+Send commands to any joint in terminal 3 (you need to load/start the position controllers in the lwr_control.launch file):
 
 `rostopic pub -1 /lwr/joint0_position_controller/command std_msgs/Float64 "data: 0.0"`
 
@@ -50,3 +50,9 @@ Send commands to any joint in terminal 3:
 
 `rostopic pub -1 /lwr/joint6_position_controller/command std_msgs/Float64 "data: 0.0"`
 
+
+Launch the moveit planner
+
+`roslaunch lwr_moveit demo.launch`
+
+and plan enexecute trajectories.
