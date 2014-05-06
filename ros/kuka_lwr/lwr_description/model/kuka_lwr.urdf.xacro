@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot name="kuka_lwr" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 	<!-- utils /-->
 	<xacro:include filename="$(find lwr_description)/model/utils.xacro"/>
@@ -23,10 +23,10 @@
 		<insert_block name="origin"/>
 		<origin xyz="0 0 0" rpy="0 0 0"/>
 		<parent link="${parent}"/>
-		<child link="calib_${name}_arm_base_link"/>
+		<child link="${name}_arm_base_link"/>
 	</joint>
 
-	<link name="calib_${name}_arm_base_link">
+	<link name="${name}_arm_base_link">
 		<inertial>
 			<mass value="${base_mass}"/>
 			<origin xyz="0 0 0.055"  />
@@ -55,7 +55,7 @@
 		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="204" velocity="${velocity_scale * 110 * M_PI / 180}" />
 		<safety_controller soft_lower_limit="${-168 * M_PI / 180}" soft_upper_limit="${168 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics damping="1.0"/>
-		<parent link="calib_${name}_arm_base_link"/>
+		<parent link="${name}_arm_base_link"/>
 		<child link="${name}_arm_1_link"/>
 	</joint>
 

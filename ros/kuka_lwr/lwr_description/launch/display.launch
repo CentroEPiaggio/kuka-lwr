@@ -1,12 +1,20 @@
 <launch>
-	<arg name="gui" default="True" />
 	
-	<param name="robot_description" command="$(find xacro)/xacro.py $(find lwr_description)/robot/kuka_lwr_on_box.urdf.xacro" />
+	<!-- Model definition-->
+	<arg name="model" default="$(find lwr_description)/robot/lwr_on_box.urdf.xacro"/>
+	<param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
+	<!-- Enable slider controllers. Just visualization purposes-->
+	<arg name="gui" default="True" />
 	<param name="use_gui" value="$(arg gui)"/>
 
+	<!-- Enable feedback from dynamic simulator -->
 	<rosparam param="source_list">[/lwr/joint_states]</rosparam>
 	
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+	<!-- Enable needed topics -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+	<!-- Enable visualization in rviz -->
+  	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lwr_description)/launch/rviz_config.rviz" />
 	
 </launch>

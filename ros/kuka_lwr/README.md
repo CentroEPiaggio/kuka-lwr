@@ -36,19 +36,19 @@ Launch the controllers in terminal 2:
 
 Send commands to any joint in terminal 3 (you need to load/start the position controllers in the lwr_control.launch file):
 
-`rostopic pub -1 /lwr/joint0_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint0_position_controller/command std_msgs/Float64 "data: 0.0"`
 
-`rostopic pub -1 /lwr/joint1_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint1_position_controller/command std_msgs/Float64 "data: 0.0"`
 
-`rostopic pub -1 /lwr/joint2_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint2_position_controller/command std_msgs/Float64 "data: 0.0"`
 
-`rostopic pub -1 /lwr/joint3_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint3_position_controller/command std_msgs/Float64 "data: 0.0"`
 
-`rostopic pub -1 /lwr/joint4_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint4_position_controller/command std_msgs/Float64 "data: 0.0"`
 
-`rostopic pub -1 /lwr/joint5_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint5_position_controller/command std_msgs/Float64 "data: 0.0"`
 
-`rostopic pub -1 /lwr/joint6_position_controller/command std_msgs/Float64 "data: 0.0"`
+`rostopic pub -1 /joint6_position_controller/command std_msgs/Float64 "data: 0.0"`
 
 
 Launch the moveit planner

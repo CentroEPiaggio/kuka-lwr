@@ -3,49 +3,49 @@
 
 	<xacro:macro name="kuka_lwr_gazebo" params="name">
 
-		<gazebo>
-			<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-				<robotNamespace>/lwr</robotNamespace>
-			</plugin>
-		</gazebo>
+<!-- 		<gazebo>
+			<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"> -->
+				<!-- <robotNamespace>/lwr</robotNamespace> -->
+<!-- 			</plugin>
+		</gazebo> -->
 
-		<gazebo reference="calib_${name}_arm_base_link">
-			<gravity>true</gravity>
+		<gazebo reference="${name}_arm_base_link">
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_1_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_2_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_3_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_4_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_5_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_6_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_7_link">
-			<gravity>true</gravity>
+			<!-- <gravity>true</gravity> -->
 			<material>Gazebo/Grey</material>
 		</gazebo>
 
