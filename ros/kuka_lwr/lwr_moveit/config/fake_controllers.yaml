@@ -1,5 +1,5 @@
 controller_list:
-  - name: /lwr/lwr_trajectory_controller
+  - name: /lwr_trajectory_controller
     type: FollowJointTrajectory
     action_ns: follow_joint_trajectory
     default: true
