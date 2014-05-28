@@ -6,29 +6,44 @@
     <joint name="${name}_base_joint" type="fixed">
       <insert_block name="origin"/>
       <parent link="${parent}"/>
-      <child link="${name}_link"/>
-      <sensor name="{name}_force_torque" type="force_torque">
-          <always_on>true</always_on>
-          <visualize>true</visualize>
-          <update_rate>10</update_rate>
-      </sensor>
+      <child link="${name}_link_base"/>
     </joint>
 
-    <link name="${name}_link">
+    <link name="${name}_link_base">
       <visual>
         <geometry>
-         <mesh filename="package://lwr_end_effectors/meshes/test_force_identification.stl"/>
+         <mesh filename="package://lwr_end_effectors/meshes/test_force_identification_base.stl"/>
         </geometry>
         <material name="${color}" />
       </visual>
       <collision>
         <geometry>
-         <mesh filename="package://lwr_end_effectors/meshes/test_force_identification.stl"/>
+         <mesh filename="package://lwr_end_effectors/meshes/test_force_identification_base.stl"/>
+        </geometry>
+        <material name="${color}" />
+      </collision>
+    </link>
+
+    <link name="${name}_link_contact_geometry">
+      <visual>
+        <geometry>
+         <mesh filename="package://lwr_end_effectors/meshes/half_sphere.stl"/>
+        </geometry>
+        <material name="${color}" />
+      </visual>
+      <collision>
+        <geometry>
+         <mesh filename="package://lwr_end_effectors/meshes/half_sphere.stl"/>
         </geometry>
         <material name="${color}" />
       </collision>
     </link>
     
+    <joint name="${name}_contact_geom_joint" type="fixed">
+      <insert_block name="origin"/>
+      <parent link="${name}_link_base"/>
+      <child link="${name}_link_contact_geometry"/>
+    </joint>
 <!--     <joint name="${parent}_${name}_contact_joint" type="fixed">
       <origin xyz="0.05 0 0" rpy="0 0 0"/>
       <parent link="${name}_link"/>
