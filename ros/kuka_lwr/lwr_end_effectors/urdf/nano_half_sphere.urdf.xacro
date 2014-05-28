@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  
+  <xacro:macro name="nano_half_sphere" params="name parent color *origin">
+  
+    <joint name="${name}_base_joint" type="fixed">
+      <insert_block name="origin"/>
+      <parent link="${parent}"/>
+      <child link="${name}_link"/>
+      <sensor name="{name}_force_torque" type="force_torque">
+          <always_on>true</always_on>
+          <visualize>true</visualize>
+          <update_rate>10</update_rate>
+      </sensor>
+    </joint>
+
+    <link name="${name}_link">
+      <visual>
+        <geometry>
+         <mesh filename="package://lwr_end_effectors/meshes/test_force_identification.stl"/>
+        </geometry>
+        <material name="${color}" />
+      </visual>
+      <collision>
+        <geometry>
+         <mesh filename="package://lwr_end_effectors/meshes/test_force_identification.stl"/>
+        </geometry>
+        <material name="${color}" />
+      </collision>
+    </link>
+    
+<!--     <joint name="${parent}_${name}_contact_joint" type="fixed">
+      <origin xyz="0.05 0 0" rpy="0 0 0"/>
+      <parent link="${name}_link"/>
+      <child link="${name}_contact_point"/>
+    </joint>
+
+    <link name="${name}_contact_point">
+      <visual>
+        <geometry>
+         <sphere radius="0.003"/>
+        </geometry>
+        <color rgba="1 0 0 1.0" />
+      </visual>
+    </link> -->
+    
+  </xacro:macro>
+
+
+</robot>
+
