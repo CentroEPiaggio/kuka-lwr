@@ -8,7 +8,7 @@
       <parent link="${parent}"/>
       <child link="${name}_link_base"/>
     </joint>
-
+    
     <link name="${name}_link_base">
       <visual>
         <geometry>
@@ -40,7 +40,7 @@
     </link>
     
     <joint name="${name}_contact_geom_joint" type="fixed">
-      <insert_block name="origin"/>
+      <!-- <insert_block name="origin"/> -->
       <parent link="${name}_link_base"/>
       <child link="${name}_link_contact_geometry"/>
     </joint>
