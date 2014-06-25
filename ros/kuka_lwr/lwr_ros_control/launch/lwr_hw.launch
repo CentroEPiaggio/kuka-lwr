@@ -1,0 +1,18 @@
+<launch>
+
+  <include file="$(find lwr_ros_control)/launch/lwr_control.launch"/>
+
+  <!-- model description /-->
+  <include file="$(find lwr_description)/launch/display.launch"/>
+  <param name="tip_joint" value="lwr_arm_6_joint"/>
+  
+  <!-- hardware address /-->
+  <param name="port" value="49999"/>
+  <param name="ip" value="192.168.0.10"/>
+
+  <!-- launch hardware interface /-->
+  <node name="lwr_hw_interface" pkg="lwr_ros_control" type="lwr_server" respawn="false" output="screen">
+
+</node>
+    
+</launch>

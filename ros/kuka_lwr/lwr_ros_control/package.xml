@@ -40,10 +40,14 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>ros_control</build_depend>
-  <build_depend>ros_controllers</build_depend>
-  <run_depend>ros_control</run_depend>
-  <run_depend>ros_controllers</run_depend>
+  <build_depend>controller_interface</build_depend>
+  <build_depend>hardware_interface</build_depend>
+  <build_depend>control_toolbox</build_depend>
+  <build_depend>realtime_tools</build_depend>
+  <run_depend>controller_interface</run_depend>
+  <run_depend>hardware_interface</run_depend>
+  <run_depend>control_toolbox</run_depend>
+  <run_depend>realtime_tools</run_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

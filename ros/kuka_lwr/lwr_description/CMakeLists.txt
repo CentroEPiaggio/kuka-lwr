@@ -49,10 +49,10 @@ find_package(catkin REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES lwr_test
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+  #INCLUDE_DIRS 
+  #LIBRARIES #lwr_test
+  #CATKIN_DEPENDS #other_catkin_pkg
+  #DEPENDS #system_lib
 )
 
 ###########

@@ -15,38 +15,15 @@ find_package(catkin REQUIRED COMPONENTS
   urdf
 )
 
-## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen REQUIRED)
+include_directories(${EIGEN_INCLUDE_DIRS})
+add_definitions(${EIGEN_DEFINITIONS})
 
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+add_definitions (-fpermissive)
 
 ################################################
 ## Declare ROS messages, services and actions ##
 ################################################
-
-## To declare and build messages, services or actions from within this
-## package, follow these steps:
-## * Let MSG_DEP_SET be the set of packages whose message types you use in
-##   your messages/services/actions (e.g. std_msgs, actionlib_msgs, ...).
-## * In the file package.xml:
-##   * add a build_depend and a run_depend tag for each package in MSG_DEP_SET
-##   * If MSG_DEP_SET isn't empty the following dependencies might have been
-##     pulled in transitively but can be declared for certainty nonetheless:
-##     * add a build_depend tag for "message_generation"
-##     * add a run_depend tag for "message_runtime"
-## * In this file (CMakeLists.txt):
-##   * add "message_generation" and every package in MSG_DEP_SET to
-##     find_package(catkin REQUIRED COMPONENTS ...)
-##   * add "message_runtime" and every package in MSG_DEP_SET to
-##     catkin_package(CATKIN_DEPENDS ...)
-##   * uncomment the add_*_files sections below as needed
-##     and list every .msg/.srv/.action file to be processed
-##   * uncomment the generate_messages entry below
-##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
 # add_message_files(
@@ -97,29 +74,39 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include
-#   ${catkin_INCLUDE_DIRS}
-# )
+include_directories(include
+  /usr/include/xenomai/
+  ${Boost_INCLUDE_DIR}
+  ${catkin_INCLUDE_DIRS}
+)
 
 ## Declare a cpp library
-# add_library(LWRSim
-#   src/LWRSim.cpp
-# )
+add_library(friremote
+  src/friremote.cpp
+  src/friudp.cpp
+)
+
+add_library(terse_roscpp 
+	src/params.cpp
+)
 
 ## Declare a cpp executable
-#add_executable(lwr_hardware_interface src/lwr_hardware_interface.cpp)
-# add_executable(lwr_controller_manager
-# 	src/lwr_controller_manager.cpp
-# )
+add_executable(lwr_server
+ 	src/lwr_server.cpp
+)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(lwr_ros_control_node lwr_ros_control_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(lwr_controller_manager
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(lwr_server
+	friremote
+	native
+	xenomai
+	terse_roscpp
+   ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

@@ -4,11 +4,11 @@
 	<arg name="model" default="$(find lwr_description)/robot/lwr_on_box.urdf.xacro"/>
 	<param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
 	<!-- Enable slider controllers. Just visualization purposes-->
-	<arg name="gui" default="True" />
+	<arg name="gui" default="False" />
 	<param name="use_gui" value="$(arg gui)"/>
 
 	<!-- Enable feedback from dynamic simulator -->
-	<rosparam param="source_list">[/lwr/joint_states]</rosparam>
+	<!-- <rosparam param="source_list">[/lwr/joint_states]</rosparam> /-->
 	
 	<!-- Enable needed topics -->
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
