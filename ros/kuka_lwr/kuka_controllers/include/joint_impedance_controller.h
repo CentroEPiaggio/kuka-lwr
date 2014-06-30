@@ -50,6 +50,7 @@ namespace kuka_controllers
 	    void setGains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 	private:
 
+	enum { Joints = 7 };
 	ros::NodeHandle nh_;
 	ros::Subscriber sub_gains_;
 	ros::Subscriber sub_posture_;

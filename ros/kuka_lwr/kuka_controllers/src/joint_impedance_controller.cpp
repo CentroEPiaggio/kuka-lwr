@@ -99,6 +99,18 @@ namespace kuka_controllers {
 		}
 
 
+		for (int i = 0; i < joint_handles_.size(); ++i){
+   			if ( !nh_.getParam("stiffness_gains", K_(i)) ){
+   				ROS_WARN("Stiffness gain not set in yalm file, Using %f", K_(i));
+   			}
+		}
+		for (int i = 0; i < joint_handles_.size(); ++i){
+   			if ( !nh_.getParam("damping_gains", D_(i)) ){
+   				ROS_WARN("Damping gain not set in yalm file, Using %f", D_(i));
+   			}
+		}
+   		
+
 	// Create inverse dynamics solver
 		// id_solver_.reset( new KDL::ChainIdSolver_RNE( kdl_chain_, gravity_) );
 		id_solver_gravity_.reset( new KDL::ChainDynParam( kdl_chain_, gravity_) );

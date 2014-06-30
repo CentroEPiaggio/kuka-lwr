@@ -53,3 +53,11 @@
       lwr_arm_4_joint: {p: 100,  d: 1, i: 1, i_clamp: 1}
       lwr_arm_5_joint: {p: 100,  d: 1, i: 1, i_clamp: 1}
       lwr_arm_6_joint: {p: 100,  d: 1, i: 1, i_clamp: 1}
+
+  #   Joint Impedance Controllers
+  JointImpedanceControl:
+  type: kuka_controllers/JointImpedanceController
+  root_name: lwr_arm_0_joint
+  tip_name: lwr_arm_6_joint
+  stiffness_gains: 30
+  damping_gains: .7
