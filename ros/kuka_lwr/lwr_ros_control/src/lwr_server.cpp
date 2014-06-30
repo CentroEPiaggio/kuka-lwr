@@ -40,10 +40,9 @@ namespace lwr_ros_control
   {
   public:
     LWRHW(ros::NodeHandle nh);
-    bool configure();
     bool start();
-    bool read(const ros::Time time, const ros::Duration period); 
-    void write(const ros::Time time, const ros::Duration period);
+    bool read(/*const ros::Time time, const ros::Duration period*/); 
+    void write(/*const ros::Time time, const ros::Duration period*/);
     void stop();
 
     // Wait for all devices to become active
@@ -93,7 +92,6 @@ namespace lwr_ros_control
 
     // State
     ros::NodeHandle nh_;
-    bool configured_;
 
     // Configuration
     urdf::Model urdf_model_;
@@ -109,13 +107,12 @@ namespace lwr_ros_control
   };
 
   LWRHW::LWRHW(ros::NodeHandle nh) :
-    nh_(nh),
-    configured_(false)
+    nh_(nh)
   {
     // TODO: Determine pre-existing calibration from ROS parameter server
   }
 
-  bool LWRHW::configure() 
+  bool LWRHW::start()
   {
     using namespace terse_roscpp;
     
@@ -199,20 +196,6 @@ namespace lwr_ros_control
     this->registerInterface(&state_interface_);
     this->registerInterface(&effort_interface_);
 
-    // Set configured flag
-    configured_ = true;
-
-    return true;
-  }
-
-  bool LWRHW::start()
-  {
-    // Guard on configured
-    if(!configured_) {
-      ROS_ERROR("LWR hardware must be configured before it can be started.");
-      return false;
-    }
-
     std::cout << "Opening FRI Version " 
       << FRI_MAJOR_VERSION << "." << FRI_SUB_VERSION << "." <<FRI_DATAGRAM_ID_CMD << "." <<FRI_DATAGRAM_ID_MSR 
       << " Interface for LWR ROS server" << std::endl;
@@ -245,8 +228,8 @@ namespace lwr_ros_control
   }
 
   bool LWRHW::read(
-        const ros::Time time, 
-        const ros::Duration period)
+        /*const ros::Time time, 
+        const ros::Duration period*/)
     {
       // Get raw state
       Eigen::Matrix<double,7,1> raw_positions;
@@ -277,8 +260,8 @@ namespace lwr_ros_control
     }
 
   void LWRHW::write(
-        const ros::Time time, 
-        const ros::Duration period)
+        /*const ros::Time time, 
+        const ros::Duration period*/)
     {
       static int warning = 0;
 
@@ -371,9 +354,7 @@ int main( int argc, char** argv ){
   ros::NodeHandle lwr_nh("");
 
   lwr_ros_control::LWRHW lwr_robot(lwr_nh);
-  //lwr_robot.configure();
   //lwr_robot.start();
-
 
   // Timer variables
   struct timespec ts = {0,0};
@@ -382,34 +363,37 @@ int main( int argc, char** argv ){
   //   ROS_FATAL("Failed to poll realtime clock!");
   // }
 
-  ros::Time 
-    last(ts.tv_sec, ts.tv_nsec),
-    now(ts.tv_sec, ts.tv_nsec);
+  ros::Time last(ts.tv_sec, ts.tv_nsec), now(ts.tv_sec, ts.tv_nsec);
   ros::Duration period(1.0);
 
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
+  //ros::AsyncSpinner spinner(1);
+  //spinner.start();
 
   realtime_tools::RealtimePublisher<std_msgs::Duration> publisher(lwr_nh, "loop_rate", 2);
 
-  bool lwr_ok = false;
-  while(!g_quit && !lwr_ok) {
-    if(!lwr_robot.configure()) {
-      ROS_ERROR("Could not configure LWR!");
-    } else if(!lwr_robot.start()) {
-      ROS_ERROR("Could not start LWR!");
-    } else {
-      ros::Duration(1.0).sleep();
+  // bool lwr_ok = false;
+  // while(!g_quit && !lwr_ok) 
+  // {
+  //   if(!lwr_robot.start()) 
+  //   {
+  //     ROS_ERROR("Could not start LWR!");
+  //   } 
+  //   else 
+  //   {
+  //     ros::Duration(1.0).sleep();
 
-      if(!lwr_robot.read(now, period)) {
-        ROS_ERROR("Could not read from LWR!");
-      } else {
-        lwr_ok = true;
-      }
-    }
+  //     if(!lwr_robot.read(now, period)) 
+  //     {
+  //       ROS_ERROR("Could not read from LWR!");
+  //     } 
+  //     else 
+  //     {
+  //       lwr_ok = true;
+  //     }
+  //   }
 
-    ros::Duration(1.0).sleep();
-  }
+  //   ros::Duration(1.0).sleep();
+  // }
 
   // Construct the controller manager
   ros::NodeHandle nh;
@@ -418,20 +402,25 @@ int main( int argc, char** argv ){
   uint32_t count = 0;
 
   // Run as fast as possible
-  while( !g_quit ) {
+  while( !g_quit ) 
+  {
     // Get the time / period
-    if (!clock_gettime(CLOCK_REALTIME, &ts)) {
+    if (!clock_gettime(CLOCK_REALTIME, &ts)) 
+    {
       now.sec = ts.tv_sec;
       now.nsec = ts.tv_nsec;
       period = now - last;
       last = now;
-    } else {
+    } 
+    else 
+    {
       ROS_FATAL("Failed to poll realtime clock!");
       break;
     } 
 
     // Read the state from the lwr
-    if(!lwr_robot.read(now, period)) {
+    if(!lwr_robot.read(/*now, period*/)) 
+    {
       g_quit=true;
       break;
     }
@@ -440,23 +429,23 @@ int main( int argc, char** argv ){
     manager.update(now, period);
 
     // Write the command to the lwr
-    lwr_robot.write(now, period);
+    lwr_robot.write(/*now, period)*/);
 
-    if(count++ > 1000)
-    {
-      if(publisher.trylock())
-      {
-        count = 0;
-        publisher.msg_.data = period;
-        publisher.unlockAndPublish();
-      }
-    }
+    // if(count++ > 1000)
+    // {
+    //   if(publisher.trylock())
+    //   {
+    //     count = 0;
+    //     publisher.msg_.data = period;
+    //     publisher.unlockAndPublish();
+    //   }
+    // }
   }
 
   publisher.stop();
 
   std::cerr<<"Stpping spinner..."<<std::endl;
-  spinner.stop();
+  //spinner.stop();
 
   std::cerr<<"Stopping LWR..."<<std::endl;
   lwr_robot.stop();
