@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <native/task.h>
+//#include <native/task.h>
 #include <sys/mman.h>
 #include <cmath>
 #include <time.h>
@@ -45,7 +45,6 @@ namespace lwr_ros_control
     bool read(const ros::Time time, const ros::Duration period); 
     void write(const ros::Time time, const ros::Duration period);
     void stop();
-    void cleanup() { }
 
     // Wait for all devices to become active
     bool wait_for_mode(/*barrett::SafetyModule::SafetyMode mode,*/
@@ -461,9 +460,6 @@ int main( int argc, char** argv ){
 
   std::cerr<<"Stopping LWR..."<<std::endl;
   lwr_robot.stop();
-
-  std::cerr<<"Cleaning up LWR..."<<std::endl;
-  lwr_robot.cleanup();
 
   std::cerr<<"Bye!"<<std::endl;
 

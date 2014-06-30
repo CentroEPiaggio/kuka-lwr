@@ -75,24 +75,23 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(include
-  /usr/include/xenomai/
   ${Boost_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
 add_library(friremote
-  src/friremote.cpp
-  src/friudp.cpp
+    src/friremote.cpp
+    src/friudp.cpp
 )
 
 add_library(terse_roscpp 
-	src/params.cpp
+    src/params.cpp
 )
 
 ## Declare a cpp executable
 add_executable(lwr_server
- 	src/lwr_server.cpp
+    src/lwr_server.cpp
 )
 
 ## Add cmake target dependencies of the executable/library
@@ -101,11 +100,9 @@ add_executable(lwr_server
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(lwr_server
-	friremote
-	native
-	xenomai
-	terse_roscpp
-   ${catkin_LIBRARIES}
+    friremote
+    terse_roscpp
+    ${catkin_LIBRARIES}
 )
 
 #############
