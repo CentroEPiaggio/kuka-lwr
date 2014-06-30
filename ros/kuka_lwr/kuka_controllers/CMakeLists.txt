@@ -45,6 +45,7 @@ catkin_package(
 
 add_library(${PROJECT_NAME}
   src/joint_impedance_controller.cpp
+  src/kuka_joint_effort_controller.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})

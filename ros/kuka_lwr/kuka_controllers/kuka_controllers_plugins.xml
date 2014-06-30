@@ -6,16 +6,9 @@
     </description>
   </class>
 
-<!--   <class name="kuka_controllers/JointVelocityController" type="kuka_controllers::JointVelocityController" base_class_type="controller_interface::ControllerBase">
-    <description>
-      The JointVelocityController tracks velocity commands. It expects a EffortJointInterface type of hardware interface.
-    </description>
-  </class>
-
   <class name="kuka_controllers/JointEffortController" type="kuka_controllers::JointEffortController" base_class_type="controller_interface::ControllerBase">
     <description>
-      The JointEffortController tracks effort commands. It expects a EffortJointInterface type of hardware interface.
+      The JointPositionController tracks position commands. It expects a EffortJointInterface type of hardware interface.
     </description>
-  </class> -->
-
+  </class>
 </library>

@@ -10,7 +10,6 @@
 
 #include "joint_impedance_controller.h"
 
-PLUGINLIB_EXPORT_CLASS(kuka_controllers::JointImpedanceController,controller_interface::ControllerBase)
 
 namespace kuka_controllers {
 	JointImpedanceController::JointImpedanceController(){
@@ -18,7 +17,9 @@ namespace kuka_controllers {
 	}
 
 	JointImpedanceController::~JointImpedanceController(){
-		
+		sub_gains_.shutdown();
+		sub_posture_.shutdown();
+
 	}
 
 	bool JointImpedanceController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n){
@@ -196,4 +197,8 @@ namespace kuka_controllers {
 	}
 
 
-};
+// PLUGINLIB_DECLARE_CLASS(kuka_controllers, JointImpedanceController, kuka_controllers::JointImpedanceController,controller_interface::ControllerBase)
+
+}
+
+PLUGINLIB_EXPORT_CLASS(kuka_controllers::JointImpedanceController,controller_interface::ControllerBase)

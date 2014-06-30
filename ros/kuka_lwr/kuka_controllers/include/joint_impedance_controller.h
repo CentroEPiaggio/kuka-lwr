@@ -48,6 +48,7 @@ namespace kuka_controllers
 	    void update(const ros::Time& time, const ros::Duration& period);
 	    void commandConfiguration(const std_msgs::Float64MultiArray::ConstPtr &msg);
 	    void setGains(const std_msgs::Float64MultiArray::ConstPtr &msg);
+	   
 	private:
 
 	enum { Joints = 7 };
