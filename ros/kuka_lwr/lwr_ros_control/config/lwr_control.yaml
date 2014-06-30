@@ -64,6 +64,6 @@
 
   #testing Controllers
   kukaControl:
-    type: kuka_controllers/JointEffortController
+    type: kuka_controllers/JointImpedanceController
     joint: lwr_arm_0_joint
     pid: {p: 100.0, i: 0.01, d: 10.0}

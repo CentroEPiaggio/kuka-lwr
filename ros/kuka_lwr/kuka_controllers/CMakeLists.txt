@@ -1,30 +1,20 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(kuka_controllers)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
+# Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
-  control_msgs
-  control_toolbox
   controller_interface
-  dynamic_reconfigure
+  control_msgs
   forward_command_controller
+  control_toolbox
   realtime_tools
   urdf
   Eigen
+  orocos_kdl
+  kdl_parser
 )
 
-# catkin_package(
-#    CATKIN_DEPENDS  roscpp angles filters tf tf_conversions  eigen_conversions pluginlib actionlib
-#     std_msgs geometry_msgs diagnostic_msgs trajectory_msgs pr2_controllers_msgs 
-#     pr2_controller_interface pr2_controller_manager kdl_parser pr2_mechanism_model control_toolbox realtime_tools message_filters control_msgs 
-#    INCLUDE_DIRS include
-#    LIBRARIES robot_mechanism_controllers
-# )
-
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
-
 
 # Declare catkin package
 catkin_package(
@@ -35,17 +25,15 @@ catkin_package(
     realtime_tools
     urdf
     forward_command_controller
-    eigen_conversions
-    geometry_msgs
-    std_msgs
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
 
-
 add_library(${PROJECT_NAME}
+  src/joint_effort_controller.cpp
+  src/joint_velocity_controller.cpp
+  src/joint_position_controller.cpp
   src/joint_impedance_controller.cpp
-  src/kuka_joint_effort_controller.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})

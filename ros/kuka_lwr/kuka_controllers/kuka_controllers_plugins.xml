@@ -1,14 +1,28 @@
 <library path="lib/libkuka_controllers">
 
-  <class name="kuka_controllers/JointImpedanceController" type="kuka_controllers::JointImpedanceController" base_class_type="controller_interface::ControllerBase">
-    <description>
-      The JointImpedanceController regulate position commands Using Joint impedance control . It expects a EffortJointInterface type of hardware interface.
-    </description>
-  </class>
-
-  <class name="kuka_controllers/JointEffortController" type="kuka_controllers::JointEffortController" base_class_type="controller_interface::ControllerBase">
+<!--   <class name="kuka_controllers/JointPositionController" type="kuka_controllers::JointPositionController" base_class_type="controller_interface::ControllerBase">
     <description>
       The JointPositionController tracks position commands. It expects a EffortJointInterface type of hardware interface.
     </description>
+  </class> -->
+
+<!--   <class name="kuka_controllers/JointVelocityController" type="kuka_controllers::JointVelocityController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The JointVelocityController tracks velocity commands. It expects a EffortJointInterface type of hardware interface.
+    </description>
+  </class> -->
+
+  <class name="kuka_controllers/JointEffortController" type="kuka_controllers::JointEffortController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The JointEffortController tracks effort commands. It expects a EffortJointInterface type of hardware interface.
+    </description>
   </class>
+
+  <class name="kuka_controllers/JointImpedanceController" type="kuka_controllers::JointImpedanceController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The JointImpedanceController tracks effort commands. It expects a EffortJointInterface type of hardware interface.
+    </description>
+  </class>
+
+
 </library>

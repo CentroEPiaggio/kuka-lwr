@@ -1,44 +1,43 @@
-<?xml version="1.0"?>
 <package>
   <name>kuka_controllers</name>
-  <version>0.0.0</version>
-  <description>The kuka_controllers package contains the kuka controllers for simulation of the real controllers</description>
-
-  <maintainer email="josemanuelbonilla@gmail.com">Manuel Bonilla</maintainer>
-  <maintainer email="cjrosales@gmail.com">Carlos Rosales</maintainer>
-
+  <version>0.8.0</version>
+  <description>kuka_controllers</description>
+  <maintainer email="vijay@hidof.com">Vijay Pradeep</maintainer>
 
   <license>BSD</license>
-  <license>WTFPL</license>
 
-  <url type="website">https://github.com/CentroEPiaggio/kuka-lwr.git</url>
+  <url type="website">https://github.com/ros-controls/ros_controllers/wiki</url>
+  <url type="bugtracker">https://github.com/ros-controls/ros_controllers/issues</url>
+  <url type="repository">https://github.com/ros-controls/ros_controllers</url>
 
-  <author email="josemanuelbonilla@gmail.com">Manuel Bonilla</author>
-  <author email="cjrosales@gmail.com">Carlos Rosales</author>
+  <author>Vijay Pradeep</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>control_msgs</build_depend>
-  <build_depend>control_toolbox</build_depend>
-  <build_depend>controller_interface</build_depend>
-  <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>forward_command_controller</build_depend>
-  <build_depend>realtime_tools</build_depend>
-  <build_depend>urdf</build_depend>
-  <run_depend>control_msgs</run_depend>
-  <run_depend>control_toolbox</run_depend>
-  <run_depend>controller_interface</run_depend>
-  <run_depend>dynamic_reconfigure</run_depend>
-  <run_depend>forward_command_controller</run_depend>
-  <run_depend>realtime_tools</run_depend>
-  <run_depend>urdf</run_depend>
-  <run_depend>eigen</run_depend>
-  <run_depend>eigen_conversions</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
 
+  <build_depend>angles</build_depend>
+  <build_depend>controller_interface</build_depend> 
+  <build_depend>control_msgs</build_depend> 
+  <build_depend>control_toolbox</build_depend> 
+  <build_depend>realtime_tools</build_depend> 
+  <build_depend>urdf</build_depend> 
+  <build_depend>forward_command_controller</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>orocos_kdl</build_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>kdl</build_depend>
+
+  <run_depend>angles</run_depend>
+  <run_depend>controller_interface</run_depend> 
+  <run_depend>control_msgs</run_depend> 
+  <run_depend>control_toolbox</run_depend> 
+  <run_depend>realtime_tools</run_depend> 
+  <run_depend>urdf</run_depend> 
+  <run_depend>forward_command_controller</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>eigen</run_depend>
+  <run_depend>kdl</run_depend>
 
   <export>
     <controller_interface plugin="${prefix}/kuka_controllers_plugins.xml"/>
   </export>
-  
 </package>

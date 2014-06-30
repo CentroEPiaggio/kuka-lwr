@@ -1,4 +1,100 @@
 
+#include "effort_controllers/joint_impedance_controller.h"
+#include <angles/angles.h>
+#include <pluginlib/class_list_macros.h>
+
+namespace kuka_controllers {
+
+JointImpedanceController::JointImpedanceController()
+{}
+
+JointImpedanceController::~JointImpedanceController()
+{
+
+}
+
+bool JointImpedanceController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
+{
+  // Get joint name from parameter server
+  std::string joint_name;
+  if (!n.getParam("joint", joint_name)) 
+  {
+    ROS_ERROR("No joint given (namespace: %s)", n.getNamespace().c_str());
+    return false;
+  }
+
+  // Load PID Controller using gains set on parameter server
+  if (!pid_controller_.init(ros::NodeHandle(n, "pid")))
+    return false;
+
+  // Start realtime state publisher
+  controller_state_publisher_.reset(
+    new realtime_tools::RealtimePublisher<control_msgs::JointControllerState>(n, "state", 1));
+
+  // Start command subscriber
+  // sub_command_ = n.subscribe<std_msgs::Float64>("command", 1, &JointImpedanceController::setCommandCB, this);
+
+  // Get joint handle from hardware interface
+  joint_ = robot->getHandle(joint_name);
+
+  // Get URDF info about joint
+  urdf::Model urdf;
+  if (!urdf.initParam("robot_description"))
+  {
+    ROS_ERROR("Failed to parse urdf file");
+    return false;
+  }
+  joint_urdf_ = urdf.getJoint(joint_name);
+  if (!joint_urdf_)
+  {
+    ROS_ERROR("Could not find joint '%s' in urdf", joint_name.c_str());
+    return false;
+  }
+
+  return true;
+}
+
+void JointImpedanceController::starting(const ros::Time& time)
+{
+  double pos_command = joint_.getPosition();
+
+}
+
+void JointImpedanceController::update(const ros::Time& time, const ros::Duration& period)
+{
+
+  command_struct_.position_ = 0.0;
+  command_struct_.has_velocity_ = false; // Flag to ignore the velocity command since our setCommand method did not include it
+
+  // the writeFromNonRT can be used in RT, if you have the guarantee that
+  //  * no non-rt thread is calling the same function (we're not subscribing to ros callbacks)
+  //  * there is only one single rt thread
+  command_.writeFromNonRT(command_struct_);
+
+}
+
+
+} // namespace
+
+PLUGINLIB_EXPORT_CLASS( kuka_controllers::JointImpedanceController, controller_interface::ControllerBase)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 #include <algorithm>
 
 #include <kdl/tree.hpp>
@@ -8,8 +104,7 @@
 #include <urdf/model.h>
 #include <pluginlib/class_list_macros.h>
 
-#include "joint_impedance_controller.h"
-
+#include "effort_controllers/joint_impedance_controller.h"
 
 namespace kuka_controllers {
 	JointImpedanceController::JointImpedanceController(){
@@ -201,4 +296,6 @@ namespace kuka_controllers {
 
 }
 
-PLUGINLIB_EXPORT_CLASS(kuka_controllers::JointImpedanceController,controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS( kuka_controllers::JointImpedanceController, controller_interface::ControllerBase)
+
+*/
