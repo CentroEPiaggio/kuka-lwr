@@ -10,8 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   urdf
   Eigen
-  orocos_kdl
-  kdl_parser
 )
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
