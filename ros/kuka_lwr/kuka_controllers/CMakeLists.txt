@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(kuka_controllers)
 
 # Load catkin and all dependencies required for this package
+find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
   control_msgs
@@ -10,12 +11,21 @@ find_package(catkin REQUIRED COMPONENTS
   realtime_tools
   urdf
   Eigen
+  roscpp
+
 )
 
+include_directories(include ${orocos_kdl_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
+
+link_directories(${catkin_LIBRARY_DIRS})
+link_directories(${orocos_kdl_LIBRARY_DIRS})
+
+find_library(KDL_LIBRARY REQUIRED NAMES orocos-kdl HINTS ${orocos_kdl_LIBRARY_DIRS})
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
 # Declare catkin package
 catkin_package(
+  DEPENDS orocos_kdl
   CATKIN_DEPENDS
     controller_interface
     control_msgs
@@ -34,7 +44,7 @@ add_library(${PROJECT_NAME}
   src/joint_impedance_controller.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
 
 # Install
 install(DIRECTORY include/${PROJECT_NAME}/

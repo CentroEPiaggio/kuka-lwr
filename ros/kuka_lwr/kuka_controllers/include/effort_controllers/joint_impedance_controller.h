@@ -92,13 +92,13 @@ private:
 	ros::Subscriber sub_posture_;
 
 	KDL::Chain kdl_chain_;
-	// KDL::JntArrayVel dotq_msr_;
-	// KDL::JntArray q_msr_, q_des_;
-	// KDL::JntArray tau_des_, tau_cmd_, tau_gravity_;
-	// KDL::JntArray K_, D_;
+	KDL::JntArrayVel dotq_msr_;
+	KDL::JntArray q_msr_, q_des_;
+	KDL::JntArray tau_des_, tau_cmd_, tau_gravity_;
+	KDL::JntArray K_, D_;
 
-	// boost::scoped_ptr<KDL::ChainIdSolver_RNE> id_solver_;
-	// boost::scoped_ptr<KDL::ChainDynParam> id_solver_gravity_;
+	boost::scoped_ptr<KDL::ChainIdSolver_RNE> id_solver_;
+	boost::scoped_ptr<KDL::ChainDynParam> id_solver_gravity_;
 
 	std::vector<hardware_interface::JointHandle> joint_handles_;
 
