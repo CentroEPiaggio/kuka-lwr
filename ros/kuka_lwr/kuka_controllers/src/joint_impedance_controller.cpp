@@ -2,6 +2,14 @@
 #include "effort_controllers/joint_impedance_controller.h"
 #include <angles/angles.h>
 #include <pluginlib/class_list_macros.h>
+#include <algorithm>
+
+#include <kdl/tree.hpp>
+#include <kdl/chainfksolvervel_recursive.hpp>
+#include <kdl_parser/kdl_parser.hpp>
+
+#include <urdf/model.h>
+#include <pluginlib/class_list_macros.h>
 
 namespace kuka_controllers {
 
@@ -15,8 +23,114 @@ JointImpedanceController::~JointImpedanceController()
 
 bool JointImpedanceController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 {
+
+		nh_ = n;
+
+    // get URDF and name of root and tip from the parameter server
+		std::string robot_description, root_name, tip_name;
+		// ROS_INFO("Aqui empezando ca...");
+		if (!ros::param::search(n.getNamespace(),"robot_description", robot_description)){
+			ROS_ERROR_STREAM("JointImpedanceController: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
+			return false;
+		}
+		if (!nh_.getParam("root_name", root_name)){
+			ROS_ERROR_STREAM("JointImpedanceController: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
+			return false;
+		}
+		if (!nh_.getParam("tip_name", tip_name)){
+			ROS_ERROR_STREAM("JointImpedanceController: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
+			return false;
+		}
+
+	// Get the gravity vector (direction and magnitude)
+		KDL::Vector gravity_ = KDL::Vector::Zero();
+		gravity_(2) = 9.81;
+		// // gravity_[2] = 9.81;
+		// XmlRpc::XmlRpcValue xml_gravity;
+		// nh.getParam("gravity", xml_gravity);
+		// if(xml_gravity.getType() != XmlRpc::XmlRpcValue::TypeArray) {
+		// 	ROS_WARN_STREAM("Gravity list parameter not found under: "
+		// 		<<nh.getNamespace()<<"/gravity, assuming no gravity.");
+		// } else {
+		// 	for (int i = 0; i < 3; ++i) {
+		// 		ROS_ASSERT(xml_gravity[i].getType() == XmlRpc::XmlRpcValue::TypeDouble);
+		// 		gravity_[i] = static_cast<double>(xml_gravity[i]);
+		// 	}
+		// }
+
+    // Construct an URDF model from the xml string
+	/*	urdf::Model urdf_model;
+		urdf_model.initString(robot_description);
+
+    // Get a KDL tree from the robot URDF
+		KDL::Tree kdl_tree;
+		if (!kdl_parser::treeFromUrdfModel(urdf_model, kdl_tree)){
+			ROS_ERROR("Failed to construct kdl tree from URDF model");
+			return false;
+		}
+
+    // Populate the KDL chain
+		/*if(!kdl_tree.getChain(root_name, tip_name, kdl_chain_))
+		{
+			ROS_ERROR_STREAM("Failed to get KDL chain from tree: ");
+			ROS_ERROR_STREAM("  "<<root_name<<" --> "<<tip_name);
+			ROS_ERROR_STREAM("  Tree has "<<kdl_tree.getNrOfJoints()<<" joints");
+			ROS_ERROR_STREAM("  Tree has "<<kdl_tree.getNrOfSegments()<<" segments");
+			ROS_ERROR_STREAM("  The segments are:");
+
+			KDL::SegmentMap segment_map = kdl_tree.getSegments();
+			KDL::SegmentMap::iterator it;
+
+			for( it=segment_map.begin();
+				it != segment_map.end();
+				it++ )
+			{
+				ROS_ERROR_STREAM( "    "<<(*it).first);
+			}
+
+			return false;
+		}
+
+    // Get joint handles for all of the joints in the chain
+		/*for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin();
+			it != kdl_chain_.segments.end();
+			++it)
+		{
+			joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
+		}
+
+
+		for (int i = 0; i < joint_handles_.size(); ++i){
+   			if ( !nh_.getParam("stiffness_gains", K_(i)) ){
+   				ROS_WARN("Stiffness gain not set in yalm file, Using %f", K_(i));
+   			}
+		}
+		for (int i = 0; i < joint_handles_.size(); ++i){
+   			if ( !nh_.getParam("damping_gains", D_(i)) ){
+   				ROS_WARN("Damping gain not set in yalm file, Using %f", D_(i));
+   			}
+		}
+   		
+
+	// Create inverse dynamics solver
+		// id_solver_.reset( new KDL::ChainIdSolver_RNE( kdl_chain_, gravity_) );
+		id_solver_gravity_.reset( new KDL::ChainDynParam( kdl_chain_, gravity_) );
+
+		dotq_msr_.resize(kdl_chain_.getNrOfJoints());
+		q_msr_.resize(kdl_chain_.getNrOfJoints());
+		q_des_.resize(kdl_chain_.getNrOfJoints());
+		tau_des_.resize(kdl_chain_.getNrOfJoints());
+		tau_cmd_.resize(kdl_chain_.getNrOfJoints());
+		tau_gravity_.resize(kdl_chain_.getNrOfJoints());
+		K_.resize(kdl_chain_.getNrOfJoints());
+		D_.resize(kdl_chain_.getNrOfJoints());*/
+
+		// sub_gains_ = n.subscribe("gains", 2*kdl_chain_.getNrOfJoints(), &JointImpedanceController::setGains, this);
+  		// sub_posture_ = n.subscribe("command_configuration", kdl_chain_.getNrOfJoints(), &JointImpedanceController::commandConfiguration, this);
+
+		return true;
   // Get joint name from parameter server
-  std::string joint_name;
+ /* std::string joint_name;
   if (!n.getParam("joint", joint_name)) 
   {
     ROS_ERROR("No joint given (namespace: %s)", n.getNamespace().c_str());
@@ -51,12 +165,12 @@ bool JointImpedanceController::init(hardware_interface::EffortJointInterface *ro
     return false;
   }
 
-  return true;
+  return true;*/
 }
 
 void JointImpedanceController::starting(const ros::Time& time)
 {
-  double pos_command = joint_.getPosition();
+  double pos_command = 0.0;
 
 }
 
