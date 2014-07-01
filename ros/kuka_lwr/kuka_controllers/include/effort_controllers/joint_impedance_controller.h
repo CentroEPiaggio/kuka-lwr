@@ -29,6 +29,8 @@
 // #include <eigen_conversions/eigen_kdl.h>
 // #include <eigen_conversions/eigen_msg.h>
 
+#include <kdl/tree.hpp>
+#include <kdl/kdl.hpp>
 #include <kdl/chain.hpp>
 #include <kdl/chainfksolver.hpp>
 #include <kdl/frames.hpp>
@@ -65,6 +67,9 @@ public:
   void starting(const ros::Time& time);
 
   void update(const ros::Time& time, const ros::Duration& period);
+	void commandConfiguration(const std_msgs::Float64MultiArray::ConstPtr &msg);
+	void setGains(const std_msgs::Float64MultiArray::ConstPtr &msg);
+	// bool getTreeFromURDF(KDL::Tree &tree);
 
 
   hardware_interface::JointHandle joint_;

@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   urdf
   Eigen
   roscpp
+  kdl_parser
 
 )
 
@@ -33,6 +34,7 @@ catkin_package(
     realtime_tools
     urdf
     forward_command_controller
+    kdl_parser
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
@@ -44,7 +46,7 @@ add_library(${PROJECT_NAME}
   src/joint_impedance_controller.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${orocos_kdl_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})
 
 # Install
 install(DIRECTORY include/${PROJECT_NAME}/

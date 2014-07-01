@@ -57,9 +57,9 @@
   #   Joint Impedance Controllers
   JointImpedanceControl:
     type: kuka_controllers/JointImpedanceController
-    root_name: lwr_arm_0_joint
-    tip_name: lwr_arm_6_joint
-    stiffness_gains: 30
+    root_name: world
+    tip_name: lwr_arm_7_link
+    stiffness_gains: 300
     damping_gains: .7
 
   #testing Controllers
