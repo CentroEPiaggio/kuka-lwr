@@ -34,7 +34,7 @@
     joint: lwr_arm_6_joint
     pid: {p: 100.0, i: 0.01, d: 10.0}
 
-  # Separate Trajectory Controllers ---------------------------------------
+  # Trajectory Controllers ---------------------------------------
   lwr_trajectory_controller:
     type: effort_controllers/JointTrajectoryController
     joints: 
@@ -61,9 +61,3 @@
     tip_name: lwr_arm_7_link
     stiffness_gains: 300
     damping_gains: .7
-
-  #testing Controllers
-  kukaControl:
-    type: kuka_controllers/JointImpedanceController
-    joint: lwr_arm_0_joint
-    pid: {p: 100.0, i: 0.01, d: 10.0}
