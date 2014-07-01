@@ -9,17 +9,13 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <controller_interface/controller.h>
 #include <control_msgs/JointControllerState.h>
-#include <control_msgs/JointControllerState.h>
-#include <realtime_tools/realtime_buffer.h>
 #include <ros/ros.h>
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
 #include <std_msgs/Float64MultiArray.h>
 
-#include <Eigen/Core>
-#include <Eigen/Geometry>
-#include <eigen_conversions/eigen_kdl.h>
-#include <eigen_conversions/eigen_msg.h>
+// #include <Eigen/Core>
+// #include <Eigen/Geometry>
+// #include <eigen_conversions/eigen_kdl.h>
+// #include <eigen_conversions/eigen_msg.h>
 
 #include <kdl/tree.hpp>
 #include <kdl/kdl.hpp>
@@ -32,7 +28,7 @@
 
 /*
 	tau_cmd_ = K_*(q_des_ - q_msr_) + D_*dotq_msr_ + G(q_msr_)
-	
+
 */
 
 namespace kuka_controllers

@@ -219,11 +219,21 @@ namespace kuka_controllers {
 	void JointImpedanceController::setGains(const std_msgs::Float64MultiArray::ConstPtr &msg){
 
 		if (msg->data.size() == 2*joint_handles_.size()){
-			for (unsigned int i = 0; i < joint_handles_.size(); ++i)
+			for (unsigned int i = 0; i < joint_handles_.size(); ++i){
 				K_(i) = msg->data[i];
-			for (unsigned int i = joint_handles_.size(); i < 2*joint_handles_.size(); ++i)
-				D_(i)= msg->data[i];
+				D_(i)= msg->data[i + joint_handles_.size()];
+			}
+			// for (unsigned int i = joint_handles_.size(); i < 2*joint_handles_.size(); ++i){
+			// 	D_(i)= msg->data[i];
+			// }
 		}
+		else
+		{
+			ROS_INFO("Num of Joint handles = %lu", joint_handles_.size());
+		}
+
+		ROS_INFO("Num of Joint handles = %lu, dimension of message = %lu", joint_handles_.size(), msg->data.size());
+
 		ROS_INFO("New gains K: %.1lf, %.1lf, %.1lf %.1lf, %.1lf, %.1lf, %.1lf",
 			K_(0), K_(1), K_(2), K_(3), K_(4), K_(5), K_(6));
 		ROS_INFO("New gains D: %.1lf, %.1lf, %.1lf %.1lf, %.1lf, %.1lf, %.1lf",
