@@ -1,0 +1,71 @@
+&ACCESS RVP
+&REL 3
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\vorgabe
+&PARAM EDITMASK = *
+DEF ros_control( )
+;FOLD INI
+  ;FOLD BASISTECH INI
+
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+    
+
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+;close and stop the communication
+retVal=FRISTOP()
+retVal=FRICLOSE()
+
+for i=1 to 16
+$fri_to_int[i]=0
+$fri_to_rea[i]=0.0
+endfor
+
+bas(#tool,1)
+;input correct tool number here and restart
+
+;stay at the same position
+ptp $pos_act_mes
+;HALT
+
+;specify the ip and port
+retVal = friSetup("192.168.0.150", 49939, 49939)
+;Test open FRI with datarate 3 msec
+retVal=friopen(10)
+wait for ($FriState==#MON)
+$fri_to_int[1]=0
+for i=1 to 3
+$fri_to_int[1]=i
+if (i == 2) then
+wait for ($FriQuality==#PERFECT)
+;retVal=FRISTART(1.0)
+;wait for ($FriState==#CMD)
+endif
+endfor
+
+;Wait for a cmd from FRI
+loop
+
+;Only joint impedance control is allowed
+if($fri_frm_int[2]<>30) then
+EXIT
+endif
+
+;Request form FRI to close the comunication
+;if($fri_frm_int[1]==4) then
+;EXIT
+;endif
+
+endloop
+
+retVal=FRISTOP()
+$fri_to_int[1]=4
+wait sec 0.5
+retVal = FRICLOSE()
+
+END

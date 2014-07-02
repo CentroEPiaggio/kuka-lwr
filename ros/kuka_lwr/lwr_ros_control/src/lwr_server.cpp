@@ -23,7 +23,7 @@
 #include "friudp.h"
 #include "friremote.h"
 
-// from terse_roscpp
+// from terse_roscpp for parameters, ToDo: avoid this
 #include <param.h>
 
 #include <stdexcept>
@@ -41,19 +41,18 @@ namespace lwr_ros_control
   public:
     LWRHW(ros::NodeHandle nh);
     bool start();
-    bool read(/*const ros::Time time, const ros::Duration period*/); 
-    void write(/*const ros::Time time, const ros::Duration period*/);
+    bool read();
+    void write();
     void stop();
 
     // Wait for all devices to become active
-    bool wait_for_mode(/*barrett::SafetyModule::SafetyMode mode,*/
-        ros::Duration timeout = ros::Duration(60.0), 
+    bool wait_for_mode(
+        ros::Duration timeout = ros::Duration(60.0),
         ros::Duration poll_duration = ros::Duration(0.1) );
 
-    void set_mode(/*barrett::SafetyModule::SafetyMode mode*/);
+    void set_mode();
 
-    // State structure for a lwr
-    // This provides storage for the joint handles
+    // Structure for a lwr, joint handles, low lever interface, etc
     struct LWRDevice7
     {
       // Low-level interface
@@ -67,10 +66,12 @@ namespace lwr_ros_control
         effort_limits,
         velocity_limits;
 
-      // State
+      // State and commands
       Eigen::Matrix<double,7,1> 
         joint_positions,
         joint_velocities,
+        joint_efforts,
+        joint_positions_cmds,
         joint_effort_cmds;
 
       // FRI values
@@ -90,7 +91,7 @@ namespace lwr_ros_control
 
   private:
 
-    // State
+    // Node handle
     ros::NodeHandle nh_;
 
     // Configuration
@@ -98,7 +99,7 @@ namespace lwr_ros_control
     int port_;
     std::string hintToRemoteHost_;
 
-    // ros-controls interface
+    // ros-controls hardware interfaces
     hardware_interface::JointStateInterface state_interface_;
     hardware_interface::EffortJointInterface effort_interface_;
 
@@ -108,9 +109,7 @@ namespace lwr_ros_control
 
   LWRHW::LWRHW(ros::NodeHandle nh) :
     nh_(nh)
-  {
-    // TODO: Determine pre-existing calibration from ROS parameter server
-  }
+  {}
 
   bool LWRHW::start()
   {
@@ -137,7 +136,7 @@ namespace lwr_ros_control
     // Initialize joint position limits
     //this->device_->position_limits = this->compute_resolver_ranges<DOF>(this->device_->interface);
 
-    // Get URDF links starting at product root link
+    // get URDF links starting at product root link
     std::string tip_joint_name;
     param::require(nh_,"tip_joint",tip_joint_name, "LWR tip joint name in URDF.");
     boost::shared_ptr<const urdf::Joint> joint = urdf_model_.getJoint(tip_joint_name);
@@ -147,22 +146,22 @@ namespace lwr_ros_control
       throw std::runtime_error("Ran out of joints.");
     }
 
-    // Resize joint names
+    // resize joint names
     this->device_->joint_names.resize(7);
 
-    // Create joint handles starting at the tip
+    // create joint handles starting at the tip
     for(int i=7-1; i>=0; i--)
     {
 
         ROS_INFO_STREAM("Handling joint: "<<joint->name);
 
-        // Store the joint name
+        // store the joint name
         this->device_->joint_names[i] = joint->name;
         //this->device_->position_limits(i) = joint->limits->JointLimits;
         this->device_->effort_limits(i) = joint->limits->effort;
         this->device_->velocity_limits(i) = joint->limits->velocity;
 
-        // Joint State Handle
+        // joint state handle
         hardware_interface::JointStateHandle state_handle(joint->name,
             &this->device_->joint_positions(i),
             &this->device_->joint_velocities(i),
@@ -170,29 +169,24 @@ namespace lwr_ros_control
 
         state_interface_.registerHandle(state_handle);
 
-        // Effort Command Handle
+        // effort command handle
         effort_interface_.registerHandle(
             hardware_interface::JointHandle(
               state_interface_.getHandle(joint->name),
               &this->device_->joint_effort_cmds(i)));
 
-        //while(std::find(this->device_->joint_names.begin(), this->device_->joint_names.end(),joint->name) != this->device_->joint_names.end()
-        //            || joint->type != urdf::Joint::REVOLUTE)
-        //{
-            // Get the next joint
-            joint = urdf_model_.getLink(joint->parent_link_name)->parent_joint;
-            // Make sure we didn't run out of links
-            if(!joint.get())
-            {
-              ROS_ERROR_STREAM("Ran out of joints while parsing URDF starting at joint: "<<tip_joint_name);
-              throw std::runtime_error("Ran out of joints.");
-            }
-        //}
+        joint = urdf_model_.getLink(joint->parent_link_name)->parent_joint;
+        // make sure we didn't run out of links
+        if(!joint.get())
+        {
+          ROS_ERROR_STREAM("Ran out of joints while parsing URDF starting at joint: "<<tip_joint_name);
+          throw std::runtime_error("Ran out of joints.");
+        }
     }
 
     ROS_INFO("Register state and effort interfaces");
 
-    // Register ros-controls interfaces
+    // register ros-controls interfaces
     this->registerInterface(&state_interface_);
     this->registerInterface(&effort_interface_);
 
@@ -216,33 +210,28 @@ namespace lwr_ros_control
     //
     this->device_->interface->setToKRLReal(0,this->device_->interface->getFrmKRLReal(1));
 
+    ROS_INFO_STREAM("LWR Status:\n" << this->device_->interface->getMsrBuf().intf);
+
+    this->device_->interface->doDataExchange();
+    ROS_INFO("Done handshake !");
     return true;
   }
 
   void LWRHW::stop()
   {
-    // Set the mode to IDLE
-    //this->set_mode(barrett::SafetyModule::IDLE);
-    // Wait for the system to become active
-    //this->wait_for_mode(barrett::SafetyModule::IDLE);
+    // TODO: decide whether to stop the FRI or just put to idle
   }
 
-  bool LWRHW::read(
-        /*const ros::Time time, 
-        const ros::Duration period*/)
+  bool LWRHW::read()
     {
-      // Get raw state
-      Eigen::Matrix<double,7,1> raw_positions;
-
-        // Prepare a new position command - if we are in command mode
-      float newJntVals[LBR_MNJ];
+      // update the robot positions
       for (int i = 0; i < LBR_MNJ; i++)
       {
-        raw_positions[i] = this->device_->interface->getMsrCmdJntPosition()[i];
+        this->device_->joint_positions[i] = this->device_->interface->getMsrMsrJntPosition()[i];
+        this->device_->joint_efforts[i] = this->device_->interface->getMsrJntTrq()[i];
       }
       
-      // Store position
-      this->device_->joint_positions = raw_positions;
+      this->device_->interface->doDataExchange();
 
       //Eigen::Matrix<double,7,1> raw_velocities = device->interface->getJointVelocities();
 
@@ -256,12 +245,11 @@ namespace lwr_ros_control
       //       0.5);
       // }
 
+
       return true;
     }
 
-  void LWRHW::write(
-        /*const ros::Time time, 
-        const ros::Duration period*/)
+  void LWRHW::write()
     {
       static int warning = 0;
 
@@ -283,6 +271,7 @@ namespace lwr_ros_control
 
       // if position control
       // Call to data exchange - and the like 
+      //float newJntVals[LBR_MNJ];
       //this->device_->interface->doPositionControl(newJntVals);
 
       // Stop request is issued from the other side
@@ -291,7 +280,7 @@ namespace lwr_ros_control
           ROS_INFO(" Stop request issued from the other side");
           this->stop();
       }
-      //
+
       // Quality change leads to output of statistics
       // for informational reasons
       //
@@ -302,6 +291,7 @@ namespace lwr_ros_control
           this->device_->lastQuality = this->device_->interface->getQuality();
       }
 
+      this->device_->interface->doDataExchange();
       return;
     }
 
@@ -309,43 +299,25 @@ namespace lwr_ros_control
       ros::Duration timeout, 
       ros::Duration poll_duration) 
   {
-    // ros::Time polling_start_time = ros::Time::now();
-    // ros::Rate poll_rate(1.0/poll_duration.toSec());
-
-    // for(ManagerMap::iterator it = barrett_managers_.begin(); 
-    //     it != barrett_managers_.end();
-    //     ++it) 
-    // {
-    //   while( ros::ok() 
-    //       && (ros::Time::now() - polling_start_time < timeout)
-    //       && (it->second->getSafetyModule()->getMode() != mode)) 
-    //   {
-    //     poll_rate.sleep();
-    //   }
-    // }
-    // return (ros::Time::now() - polling_start_time < timeout);
-
+    // ToDo
     return true;
   }
 
-  void LWRHW::set_mode(/*barrett::SafetyModule::SafetyMode mode*/)
+  void LWRHW::set_mode()
   {
-    //this->device_->interface->getState();
+    // ToDo: just switch between monitor and command mode
+    // not control strategies!
+      return;
   }
 
 }
 
-int main( int argc, char** argv ){
-
-  // Set up real-time task
-  //mlockall(MCL_CURRENT | MCL_FUTURE);
-  //RT_TASK task;
-  //rt_task_shadow( &task, "GroupLWR", 99, 0 );
-
-  // Initialize ROS
+int main( int argc, char** argv )
+{
+  // initialize ROS
   ros::init(argc, argv, "lwr_server", ros::init_options::NoSigintHandler);
 
-  // Add custom signal handlers
+  // custom signal handlers
   signal(SIGTERM, quitRequested);
   signal(SIGINT, quitRequested);
   signal(SIGHUP, quitRequested);
@@ -354,50 +326,23 @@ int main( int argc, char** argv ){
   ros::NodeHandle lwr_nh("");
 
   lwr_ros_control::LWRHW lwr_robot(lwr_nh);
-  //lwr_robot.start();
 
-  // Timer variables
-  struct timespec ts = {0,0};
+  // configuration routines
+  lwr_robot.start();
 
-  // if(clock_gettime(CLOCK_REALTIME, &ts) != 0) {
-  //   ROS_FATAL("Failed to poll realtime clock!");
-  // }
-
+  // timer variables
+  struct timespec ts = {0, 0};
   ros::Time last(ts.tv_sec, ts.tv_nsec), now(ts.tv_sec, ts.tv_nsec);
   ros::Duration period(1.0);
 
-  //ros::AsyncSpinner spinner(1);
-  //spinner.start();
+  // ros spinner
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
 
-  realtime_tools::RealtimePublisher<std_msgs::Duration> publisher(lwr_nh, "loop_rate", 2);
+  //realtime_tools::RealtimePublisher<std_msgs::Duration> publisher(lwr_nh, "loop_rate", 2);
 
-  // bool lwr_ok = false;
-  // while(!g_quit && !lwr_ok) 
-  // {
-  //   if(!lwr_robot.start()) 
-  //   {
-  //     ROS_ERROR("Could not start LWR!");
-  //   } 
-  //   else 
-  //   {
-  //     ros::Duration(1.0).sleep();
-
-  //     if(!lwr_robot.read(now, period)) 
-  //     {
-  //       ROS_ERROR("Could not read from LWR!");
-  //     } 
-  //     else 
-  //     {
-  //       lwr_ok = true;
-  //     }
-  //   }
-
-  //   ros::Duration(1.0).sleep();
-  // }
-
-  // Construct the controller manager
-  ros::NodeHandle nh;
-  controller_manager::ControllerManager manager(&lwr_robot, nh);
+  //the controller manager
+  controller_manager::ControllerManager manager(&lwr_robot, lwr_nh);
 
   uint32_t count = 0;
 
@@ -418,10 +363,10 @@ int main( int argc, char** argv ){
       break;
     } 
 
-    // Read the state from the lwr
-    if(!lwr_robot.read(/*now, period*/)) 
+    // read the state from the lwr
+    if(!lwr_robot.read())
     {
-      g_quit=true;
+      g_quit = true;
       break;
     }
 
@@ -429,7 +374,7 @@ int main( int argc, char** argv ){
     manager.update(now, period);
 
     // Write the command to the lwr
-    lwr_robot.write(/*now, period)*/);
+    lwr_robot.write();
 
     // if(count++ > 1000)
     // {
@@ -442,10 +387,10 @@ int main( int argc, char** argv ){
     // }
   }
 
-  publisher.stop();
+  //publisher.stop();
 
-  std::cerr<<"Stpping spinner..."<<std::endl;
-  //spinner.stop();
+  std::cerr<<"Stopping spinner..."<<std::endl;
+  spinner.stop();
 
   std::cerr<<"Stopping LWR..."<<std::endl;
   lwr_robot.stop();
