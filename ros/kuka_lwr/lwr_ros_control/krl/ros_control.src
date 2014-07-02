@@ -43,18 +43,23 @@ for i=1 to 3
 $fri_to_int[1]=i
 if (i == 2) then
 wait for ($FriQuality==#PERFECT)
-;retVal=FRISTART(1.0)
-;wait for ($FriState==#CMD)
+retVal=FRISTART(1.0)
+wait for ($FriState==#CMD)
 endif
 endfor
+
+$stiffness.strategy=30
+$stiffness.axisstiffness={ A1 1000, A2 1000, A3 1000, A4 1000, A5 1000, A6 1000, E1 1000}
+$stiffness.axismaxdeltatrq={A1 100, A2 100, A3 100, A4 100, A5 100, A6 30, E1 30}
+$stiffness.commit=true
 
 ;Wait for a cmd from FRI
 loop
 
 ;Only joint impedance control is allowed
-if($fri_frm_int[2]<>30) then
-EXIT
-endif
+;if($fri_frm_int[2]<>30) then
+;EXIT
+;endif
 
 ;Request form FRI to close the comunication
 ;if($fri_frm_int[1]==4) then

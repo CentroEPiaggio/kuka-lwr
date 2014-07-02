@@ -268,6 +268,29 @@ namespace lwr_ros_control
 
       // Set the torques
       device->interface->setTorques(device->joint_effort_cmds);*/
+      float newJntPosition[LBR_MNJ];
+      float newJntStiff[LBR_MNJ];
+      float newJntDamp[LBR_MNJ];
+      float newJntAddTorque[LBR_MNJ];
+      if ( this->device_->interface->getState() == FRI_STATE_CMD)
+      {
+          if ( this->device_->interface->isPowerOn() )
+          {
+              //if(this->device_->interface->getCurrentControlScheme() == FRI_CTRL_JNT_IMP)
+              //{
+                  for (int i = 0; i < LBR_MNJ; i++)
+                  {
+                      // perform some sort of sine wave motion
+                      newJntPosition[i] = this->device_->joint_positions_cmds[i];
+                      newJntAddTorque[i] = this->device_->joint_effort_cmds[i];
+                      newJntStiff[i] = 300.0;
+                      newJntDamp[i] = 50.0;
+                  }
+                  //this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
+                  //this->device_->interface->doPositionControl(newJntPosition, false);
+              //}
+          }
+      }
 
       // if position control
       // Call to data exchange - and the like 
@@ -291,7 +314,8 @@ namespace lwr_ros_control
           this->device_->lastQuality = this->device_->interface->getQuality();
       }
 
-      this->device_->interface->doDataExchange();
+      // this is already done in the doJntImpedance Control
+      //this->device_->interface->doDataExchange();
       return;
     }
 
