@@ -44,29 +44,22 @@ namespace lwr_ros_control
     bool read();
     void write();
     void stop();
-
-    // Wait for all devices to become active
-    bool wait_for_mode(
-        ros::Duration timeout = ros::Duration(60.0),
-        ros::Duration poll_duration = ros::Duration(0.1) );
-
     void set_mode();
 
-    // Structure for a lwr, joint handles, low lever interface, etc
+    // structure for a lwr, joint handles, low lever interface, etc
     struct LWRDevice7
     {
-      // Low-level interface
+      // low-level interface
       boost::shared_ptr<friRemote> interface;
 
-      // Configuration
+      // configuration
       std::vector<std::string> joint_names;
-
       Eigen::Matrix<double,7,1> 
         position_limits,
         effort_limits,
         velocity_limits;
 
-      // State and commands
+      // state and commands
       Eigen::Matrix<double,7,1> 
         joint_positions,
         joint_velocities,
@@ -80,6 +73,7 @@ namespace lwr_ros_control
       FRI_QUALITY lastQuality;
       FRI_CTRL lastCtrlScheme;
 
+      // reset values
       void set_zero() 
       {
         joint_positions.setZero();
@@ -152,7 +146,7 @@ namespace lwr_ros_control
       throw std::runtime_error("Ran out of joints.");
     }
 
-    // resize joint names
+    // initialize to zero the state and command values
     this->device_->joint_names.resize(7);
     this->device_->set_zero();
 
@@ -224,11 +218,6 @@ namespace lwr_ros_control
     return true;
   }
 
-  void LWRHW::stop()
-  {
-    // TODO: decide whether to stop the FRI or just put to idle
-  }
-
   bool LWRHW::read()
     {
       // update the robot positions
@@ -283,26 +272,25 @@ namespace lwr_ros_control
       {
           if ( this->device_->interface->isPowerOn() )
           {
-              //if(this->device_->interface->getCurrentControlScheme() == FRI_CTRL_JNT_IMP)
-              //{
+              if(this->device_->interface->getCurrentControlScheme() == FRI_CTRL_JNT_IMP)
+              {
                   for (int i = 0; i < LBR_MNJ; i++)
                   {
                       // perform some sort of sine wave motion
                       newJntPosition[i] = this->device_->joint_positions_cmds[i];
                       newJntAddTorque[i] = this->device_->joint_effort_cmds[i];
-                      newJntStiff[i] = 300.0; //this->device_->joint_striffness_cmds[i];
-                      newJntDamp[i] = 50.0; //this->device_->joint_damping_cmds[i];
+                      newJntStiff[i] = this->device_->joint_stiffness_cmds[i];
+                      newJntDamp[i] = this->device_->joint_damping_cmds[i];
                   }
+
+                  // only joint impedance control is performed, since it is the only one that provide access to the joint torque directly
+                  // note that stiffness and damping are 0, as well as the position, since only effort is allowed to be sent
+                  // the KRC adds the dynamic terms, such that if zero torque is sent, the robot apply torques necessary to mantain the robot in the current position
+                  // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
                   this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
-                  //this->device_->interface->doPositionControl(newJntPosition, false);
-              //}
+              }
           }
       }
-
-      // if position control
-      // Call to data exchange - and the like 
-      //float newJntVals[LBR_MNJ];
-      //this->device_->interface->doPositionControl(newJntVals);
 
       // Stop request is issued from the other side
       if ( this->device_->interface->getFrmKRLInt(0) == -1)
@@ -326,12 +314,9 @@ namespace lwr_ros_control
       return;
     }
 
-  bool LWRHW::wait_for_mode(
-      ros::Duration timeout, 
-      ros::Duration poll_duration) 
+  void LWRHW::stop()
   {
-    // ToDo
-    return true;
+    // TODO: decide whether to stop the FRI or just put to idle
   }
 
   void LWRHW::set_mode()
@@ -348,14 +333,17 @@ int main( int argc, char** argv )
   // initialize ROS
   ros::init(argc, argv, "lwr_server", ros::init_options::NoSigintHandler);
 
+  // ros spinner
+  ros::AsyncSpinner spinner(1);
+  spinner.start();
+
   // custom signal handlers
   signal(SIGTERM, quitRequested);
   signal(SIGINT, quitRequested);
   signal(SIGHUP, quitRequested);
 
-  // Construct the lwr structure
+  // construct the lwr
   ros::NodeHandle lwr_nh("");
-
   lwr_ros_control::LWRHW lwr_robot(lwr_nh);
 
   // configuration routines
@@ -366,16 +354,12 @@ int main( int argc, char** argv )
   ros::Time last(ts.tv_sec, ts.tv_nsec), now(ts.tv_sec, ts.tv_nsec);
   ros::Duration period(1.0);
 
-  // ros spinner
-  ros::AsyncSpinner spinner(1);
-  spinner.start();
-
   //realtime_tools::RealtimePublisher<std_msgs::Duration> publisher(lwr_nh, "loop_rate", 2);
 
   //the controller manager
   controller_manager::ControllerManager manager(&lwr_robot, lwr_nh);
 
-  uint32_t count = 0;
+  //uint32_t count = 0;
 
   // run as fast as possible
   while( !g_quit ) 
