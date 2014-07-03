@@ -72,6 +72,8 @@ namespace lwr_ros_control
         joint_velocities,
         joint_efforts,
         joint_positions_cmds,
+        joint_stiffness_cmds,
+        joint_damping_cmds,
         joint_effort_cmds;
 
       // FRI values
@@ -82,6 +84,10 @@ namespace lwr_ros_control
       {
         joint_positions.setZero();
         joint_velocities.setZero();
+        joint_efforts.setZero();
+        joint_positions_cmds.setZero();
+        joint_stiffness_cmds.setZero();
+        joint_damping_cmds.setZero();
         joint_effort_cmds.setZero();
       }
 
@@ -148,6 +154,7 @@ namespace lwr_ros_control
 
     // resize joint names
     this->device_->joint_names.resize(7);
+    this->device_->set_zero();
 
     // create joint handles starting at the tip
     for(int i=7-1; i>=0; i--)
@@ -283,10 +290,10 @@ namespace lwr_ros_control
                       // perform some sort of sine wave motion
                       newJntPosition[i] = this->device_->joint_positions_cmds[i];
                       newJntAddTorque[i] = this->device_->joint_effort_cmds[i];
-                      newJntStiff[i] = 300.0;
-                      newJntDamp[i] = 50.0;
+                      newJntStiff[i] = 300.0; //this->device_->joint_striffness_cmds[i];
+                      newJntDamp[i] = 50.0; //this->device_->joint_damping_cmds[i];
                   }
-                  //this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
+                  this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
                   //this->device_->interface->doPositionControl(newJntPosition, false);
               //}
           }
@@ -314,8 +321,8 @@ namespace lwr_ros_control
           this->device_->lastQuality = this->device_->interface->getQuality();
       }
 
-      // this is already done in the doJntImpedance Control
-      //this->device_->interface->doDataExchange();
+      // // this is already done in the doJntImpedance Control
+      this->device_->interface->doDataExchange();
       return;
     }
 
@@ -370,10 +377,10 @@ int main( int argc, char** argv )
 
   uint32_t count = 0;
 
-  // Run as fast as possible
+  // run as fast as possible
   while( !g_quit ) 
   {
-    // Get the time / period
+    // get the time / period
     if (!clock_gettime(CLOCK_REALTIME, &ts)) 
     {
       now.sec = ts.tv_sec;
@@ -394,10 +401,10 @@ int main( int argc, char** argv )
       break;
     }
 
-    // Update the controllers
+    // update the controllers
     manager.update(now, period);
 
-    // Write the command to the lwr
+    // write the command to the lwr
     lwr_robot.write();
 
     // if(count++ > 1000)
