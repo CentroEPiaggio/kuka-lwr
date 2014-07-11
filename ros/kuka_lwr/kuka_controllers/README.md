@@ -24,5 +24,12 @@ You have to be sure that in lwr_control.launch is active the controller that you
 
 Send commands to any joint in terminal 3 (you need to load/start the position controllers in the lwr_control.launch file):
 
+- Impedance Controller:
 `rostopic pub -1  /JointImpedanceControl/command_configuration std_msgs/Float64MultiArray '{ data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}'`
+
+- Inverse Dynamics Controller
+`rostopic pub -1  /InverseDynamicsControl/ext_wrench geometry_msgs/WrenchStamped '{wrench: {force:  {x: 0.0, y: 0.0, z: 0.0}, torque: {x: 0.0,y: 0.0,z: 0.0}}}' `
+
+- Computed Torque Controller:
+`rostopic pub -1  /ComputedTorqueControl/command_configuration std_msgs/Float64MultiArray '{ data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}'`
 

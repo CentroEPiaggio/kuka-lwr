@@ -9,7 +9,6 @@
 #include <kdl_parser/kdl_parser.hpp>
 
 #include <urdf/model.h>
-#include <pluginlib/class_list_macros.h>
 
 
 namespace kuka_controllers {

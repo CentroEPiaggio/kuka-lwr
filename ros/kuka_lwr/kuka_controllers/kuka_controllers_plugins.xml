@@ -24,5 +24,16 @@
     </description>
   </class>
 
+  <class name="kuka_controllers/InverseDynamicsController" type="kuka_controllers::InverseDynamicsController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The InverseDynamicsController compensates for inertial, gravitational, and coriolis effects on a robot.
+    </description>
+  </class> 
+
+  <class name="kuka_controllers/ComputedTorqueController" type="kuka_controllers::ComputedTorqueController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class> 
 
 </library>
