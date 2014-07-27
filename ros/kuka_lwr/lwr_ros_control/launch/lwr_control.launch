@@ -26,10 +26,12 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller InverseDynamicsControl"/> -->
 
-   <!-- Computed Torque Control -->
+   <!-- Computed Torque Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller ComputedTorqueControl"/> 
+    output="screen"  args="joint_state_controller ComputedTorqueControl"/> -->
 
-
+ <!-- One Task Inverse Kinematics Control -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller OneTaskInverseKinematics"/> 
 
 </launch>

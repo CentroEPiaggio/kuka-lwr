@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME}
   src/joint_impedance_controller.cpp	
   src/inverse_dynamics_controller.cpp
   src/computed_torque_controller.cpp
+  src/one_task_inverse_kinematics.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})

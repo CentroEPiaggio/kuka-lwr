@@ -36,4 +36,10 @@
     </description>
   </class> 
 
+  <class name="kuka_controllers/OneTaskInverseKinematics" type="kuka_controllers::OneTaskInverseKinematics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class> 
+
 </library>

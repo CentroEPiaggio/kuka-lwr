@@ -12,7 +12,16 @@
     </include>
 
 
-  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+<!-- Enable visualization in rviz 
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lwr_gazebo)/launch/rviz_config.rviz" /> -->
+ 
+<!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find lwr_gazebo)/worlds/simple_environment.world"/>
     <arg name="paused" value="false"/>

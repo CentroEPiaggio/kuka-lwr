@@ -33,3 +33,12 @@ Send commands to any joint in terminal 3 (you need to load/start the position co
 - Computed Torque Controller:
 `rostopic pub -1  /ComputedTorqueControl/command_configuration std_msgs/Float64MultiArray '{ data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}'`
 
+- One Task Inverse Kinematics Controller:
+`rostopic pub -1  /OneTaskInverseKinematics/command_configuration geometry_msgs/PoseStamped '{pose: {position: {x: -0.3, y: 0.0, z: 1.5}}}'`
+
+`rostopic pub -1  /OneTaskInverseKinematics/command_configuration geometry_msgs/PoseStamped '{pose: {position: {x: -0.3, y: 0.0, z: 1.5}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}}}'`
+
+`rostopic pub -1  /OneTaskInverseKinematics/set_gains std_msgs/Float64MultiArray '{data: [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}'`
+
+
+
