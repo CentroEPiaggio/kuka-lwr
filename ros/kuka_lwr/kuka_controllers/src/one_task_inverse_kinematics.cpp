@@ -149,6 +149,7 @@ namespace kuka_controllers
 
     	//Desired posture 
     	x_des_ = x_;
+    	cmd_flag_ = 0;
 	}
 
 	void OneTaskInverseKinematics::update(const ros::Time& time, const ros::Duration& period)
@@ -161,33 +162,39 @@ namespace kuka_controllers
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     	}
 
-    	// computing Jacobian
-    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
-
-    	// computing J_pinv_
-    	pseudo_inverse(J_,J_pinv_);
-
-    	// computing forward kinematics
-    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
-
-    	// end-effector displacement 
-    	x_err_.vel = x_des_.p - x_.p;
-
-    	for (int i = 0; i < 3; i++)
-    		x_err_.rot(i) = 0.0;	// for now, doesn't count orientation error
-
-    	// computing q_dot
-    	for (int i = 0; i < J_pinv_.rows(); i++)
+    	if (cmd_flag_)
     	{
-    		joint_des_states_.qdot(i) = 0.0;
-    		for (int k = 0; k < J_pinv_.cols(); k++)
-    			joint_des_states_.qdot(i) += J_pinv_(i,k)*(x_err_(k));
-    	}
+	    	// computing Jacobian
+	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 
-    	// integrating q_dot -> getting q (Euler method)
-    	for (int i = 0; i < joint_handles_.size(); i++)
-    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
+	    	// computing J_pinv_
+	    	pseudo_inverse(J_,J_pinv_);
 
+	    	// computing forward kinematics
+	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
+
+	    	// end-effector displacement 
+	    	x_err_.vel = x_des_.p - x_.p;
+
+	    	for (int i = 0; i < 3; i++)
+	    		x_err_.rot(i) = 0.0;	// for now, doesn't count orientation error
+
+	    	// computing q_dot
+	    	for (int i = 0; i < J_pinv_.rows(); i++)
+	    	{
+	    		joint_des_states_.qdot(i) = 0.0;
+	    		for (int k = 0; k < J_pinv_.cols(); k++)
+	    			joint_des_states_.qdot(i) += J_pinv_(i,k)*(x_err_(k));
+	    	}
+
+	    	// integrating q_dot -> getting q (Euler method)
+	    	for (int i = 0; i < joint_handles_.size(); i++)
+	    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
+
+	    	if (x_des_.p == x_.p)
+	    		cmd_flag_ = 0;
+	}
+	    
     	// set controls for joints
     	for (int i = 0; i < joint_handles_.size(); i++)
     	{
@@ -205,6 +212,7 @@ namespace kuka_controllers
 						msg->pose.position.z));
 
 		x_des_ = frame_des_;
+		cmd_flag_ = 1;
 	}
 
 	void OneTaskInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
