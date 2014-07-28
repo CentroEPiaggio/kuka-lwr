@@ -60,6 +60,8 @@ namespace kuka_controllers
 		Eigen::Matrix<double,7,6> J_pinv_;
 		//Eigen::Matrix<double,7,7> I_;
 		//Eigen::Matrix<double,7,7> P_;
+		
+		int cmd_flag_;
 
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
