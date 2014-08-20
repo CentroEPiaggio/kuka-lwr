@@ -74,8 +74,6 @@ namespace kuka_controllers
 		
 		int cmd_flag_;
 
-		int cmd_flag_;
-
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
