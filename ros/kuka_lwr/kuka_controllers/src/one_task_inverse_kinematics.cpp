@@ -155,7 +155,10 @@ namespace kuka_controllers
 
     	//Desired posture 
     	x_des_ = x_;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 4fbc9ecf0cc2fa0615797e227df6e5485546a834
     	cmd_flag_ = 0;
 	}
 
@@ -180,6 +183,7 @@ namespace kuka_controllers
 	    	// computing forward kinematics
 	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
 
+<<<<<<< HEAD
 	    	// end-effector position/orientation error
 	    	x_err_.vel = x_des_.p - x_.p;
 	    	//x_err_.rot = 0.5*(x_des_.M.UnitX()*x_.M.UnitX() + x_des_.M.UnitY()*x_.M.UnitY() + x_des_.M.UnitZ()*x_.M.UnitZ());
@@ -220,7 +224,30 @@ namespace kuka_controllers
 	    		cmd_flag_ = 0;
 	    	}
 	    }
+=======
+	    	// end-effector displacement 
+	    	x_err_.vel = x_des_.p - x_.p;
 
+	    	for (int i = 0; i < 3; i++)
+	    		x_err_.rot(i) = 0.0;	// for now, doesn't count orientation error
+
+	    	// computing q_dot
+	    	for (int i = 0; i < J_pinv_.rows(); i++)
+	    	{
+	    		joint_des_states_.qdot(i) = 0.0;
+	    		for (int k = 0; k < J_pinv_.cols(); k++)
+	    			joint_des_states_.qdot(i) += J_pinv_(i,k)*(x_err_(k));
+	    	}
+
+	    	// integrating q_dot -> getting q (Euler method)
+	    	for (int i = 0; i < joint_handles_.size(); i++)
+	    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
+>>>>>>> 4fbc9ecf0cc2fa0615797e227df6e5485546a834
+
+	    	if (x_des_.p == x_.p)
+	    		cmd_flag_ = 0;
+	}
+	    
     	// set controls for joints
     	for (int i = 0; i < joint_handles_.size(); i++)
     	{

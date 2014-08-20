@@ -3,6 +3,10 @@ KUKA LWR
 
 ROS/hydro metapackage that contains ROS related code to emulate the controllers included in the KUKA LWR 4+
 
+TODO:
+--------
+- tune PID gains on OneTaskInverseKinematics controller and maybe add an error tolerance (sometimes it oscillates around desired posture)
+
 Overview
 --------
 

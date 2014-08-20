@@ -71,6 +71,8 @@ namespace kuka_controllers
 
 		//Eigen::Matrix<double,7,7> I_;
 		//Eigen::Matrix<double,7,7> P_;
+		
+		int cmd_flag_;
 
 		int cmd_flag_;
 
