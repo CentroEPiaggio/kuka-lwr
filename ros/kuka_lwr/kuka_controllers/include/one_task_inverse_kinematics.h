@@ -23,6 +23,7 @@
 #include <kdl/chainiksolvervel_pinv.hpp>
 #include <control_toolbox/pid.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <kuka_controllers/PoseRPY.h>
 
 #include <vector>
 
@@ -37,7 +38,7 @@ namespace kuka_controllers
 		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
-		void command_configuration(const geometry_msgs::PoseStampedConstPtr &msg);
+		void command_configuration(const kuka_controllers::PoseRPY::ConstPtr &msg);
 		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 
 	private:
@@ -58,6 +59,16 @@ namespace kuka_controllers
 		KDL::Jacobian J_;	//Jacobian
 
 		Eigen::Matrix<double,7,6> J_pinv_;
+		Eigen::Matrix<double,3,3> skew_;
+
+		struct quaternion_
+		{
+			KDL::Vector v;
+			double a;
+		} quat_curr_, quat_des_;
+
+		KDL::Vector v_temp_;
+
 		//Eigen::Matrix<double,7,7> I_;
 		//Eigen::Matrix<double,7,7> P_;
 
@@ -71,6 +82,8 @@ namespace kuka_controllers
 
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;
+		control_toolbox::Pid::Gains K_;
+		double Kp,Ki,Kd;
 	};
 
 }

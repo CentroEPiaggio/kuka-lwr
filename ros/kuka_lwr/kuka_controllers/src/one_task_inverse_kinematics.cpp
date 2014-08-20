@@ -3,7 +3,8 @@
 #include <kdl_parser/kdl_parser.hpp>
 #include <math.h>
 #include <Eigen/LU>
-#include "misc/pseudo_inversion.h"
+#include <misc/pseudo_inversion.h>
+#include <misc/skew_symmetric.h>
 
 namespace kuka_controllers 
 {
@@ -138,8 +139,13 @@ namespace kuka_controllers
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     	}
 
+    	Kp = 60;
+    	Ki = 1.2;
+    	Kd = 10;
+
     	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(200,1,0,0.0,0.0);
+    		PIDs_[i].initPid(Kp,Ki,Kd,0.3,-0.3);
+    	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	//I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
     	//P_ = Eigen::Matrix<double,7,7>::Zero();
@@ -174,26 +180,45 @@ namespace kuka_controllers
 	    	// computing forward kinematics
 	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
 
-	    	// end-effector displacement 
+	    	// end-effector position/orientation error
 	    	x_err_.vel = x_des_.p - x_.p;
+	    	//x_err_.rot = 0.5*(x_des_.M.UnitX()*x_.M.UnitX() + x_des_.M.UnitY()*x_.M.UnitY() + x_des_.M.UnitZ()*x_.M.UnitZ());
 
-	    	for (int i = 0; i < 3; i++)
-	    		x_err_.rot(i) = 0.0;	// for now, doesn't count orientation error
+	    	// getting quaternion from rotation matrix
+	    	x_.M.GetQuaternion(quat_curr_.v(0),quat_curr_.v(1),quat_curr_.v(2),quat_curr_.a);
+	    	x_des_.M.GetQuaternion(quat_des_.v(0),quat_des_.v(1),quat_des_.v(2),quat_des_.a);
+
+	    	skew_symmetric(quat_des_.v,skew_);
+
+	    	for (int i = 0; i < skew_.rows(); i++)
+	    	{
+	    		v_temp_(i) = 0.0;
+	    		for (int k = 0; k < skew_.cols(); k++)
+	    			v_temp_(i) += skew_(i,k)*(quat_curr_.v(k));
+	    	}
+
+	    	x_err_.rot = quat_curr_.a*quat_des_.v - quat_des_.a*quat_curr_.v - v_temp_; 
+
+	    	//for (int i = 0; i < 3; i++)
+	    	//	x_err_.rot(i) = 0.0;	// for now, doesn't count orientation error
 
 	    	// computing q_dot
 	    	for (int i = 0; i < J_pinv_.rows(); i++)
 	    	{
 	    		joint_des_states_.qdot(i) = 0.0;
 	    		for (int k = 0; k < J_pinv_.cols(); k++)
-	    			joint_des_states_.qdot(i) += J_pinv_(i,k)*(x_err_(k));
+	    			joint_des_states_.qdot(i) += J_pinv_(i,k)*x_err_(k);
 	    	}
 
 	    	// integrating q_dot -> getting q (Euler method)
 	    	for (int i = 0; i < joint_handles_.size(); i++)
 	    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
 
-	    	if (x_des_.p == x_.p)
+	    	if (Equal(x_,x_des_,0.005))
+	    	{
+	    		ROS_INFO("On target");
 	    		cmd_flag_ = 0;
+	    	}
 	    }
 
     	// set controls for joints
@@ -204,27 +229,56 @@ namespace kuka_controllers
     	}
 	}
 
-	void OneTaskInverseKinematics::command_configuration(const geometry_msgs::PoseStampedConstPtr &msg)
-	{
+	void OneTaskInverseKinematics::command_configuration(const kuka_controllers::PoseRPY::ConstPtr &msg)
+	{	
 		// TODO: read orientation message. (now reads only position)
-		KDL::Frame frame_des_(
-			KDL::Vector(msg->pose.position.x,
-						msg->pose.position.y,
-						msg->pose.position.z));
+		KDL::Frame frame_des_;
 
+		switch(msg->id)
+		{
+			case 0:
+			frame_des_ = KDL::Frame(
+					KDL::Rotation::RPY(msg->orientation.roll,
+						 			  msg->orientation.pitch,
+								 	  msg->orientation.yaw),
+					KDL::Vector(msg->position.x,
+								msg->position.y,
+								msg->position.z));
+			break;
+	
+			case 1: // position only
+			frame_des_ = KDL::Frame(
+				KDL::Vector(msg->position.x,
+							msg->position.y,
+							msg->position.z));
+			break;
+		
+			case 2: // orientation only
+			frame_des_ = KDL::Frame(
+				KDL::Rotation::RPY(msg->orientation.roll,
+				   	 			   msg->orientation.pitch,
+								   msg->orientation.yaw));
+			break;
+
+			default:
+			ROS_INFO("Wrong message ID");
+			return;
+		}
+		
 		x_des_ = frame_des_;
 		cmd_flag_ = 1;
 	}
 
 	void OneTaskInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
 	{
-		if(msg->data.size() == 2*PIDs_.size())
+		if(msg->data.size() == 2)
 		{
 			for(int i = 0; i < PIDs_.size(); i++)
-				PIDs_[i].setGains(msg->data[i],msg->data[i + PIDs_.size()],0.0,0.0,0.0);
+				PIDs_[i].setGains(msg->data[0],msg->data[1],0.0,0.0,0.0);
+			ROS_INFO("New gains set: Kp = %f, Kd = %f",msg->data[0],msg->data[1]);
 		}
 		else
-			ROS_INFO("Number of PIDs gains must be = %lu", PIDs_.size());
+			ROS_INFO("PIDs gains needed are 2 (Kp and Kd)");
 	}
 }
 
