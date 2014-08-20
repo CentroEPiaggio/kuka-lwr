@@ -34,6 +34,7 @@ Send commands to any joint in terminal 3 (you need to load/start the position co
 `rostopic pub -1  /ComputedTorqueControl/command_configuration std_msgs/Float64MultiArray '{ data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}'`
 
 - One Task Inverse Kinematics Controller: 
+
   -Full pose (note the IDs)
 `rostopic pub -1  /OneTaskInverseKinematics/command_configuration kuka_controllers/PoseRPY '{id: 0, position: {x: -0.3, y: 0.1, z: 1.5}, orientation: {roll: 0.1, pitch: 0.2, yaw: 0.0}}'`
 
