@@ -18,6 +18,8 @@
   <!-- </node> -->
 
 
+
+
     <!--   Joint Impedance Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller JointImpedanceControl"/> -->
@@ -32,6 +34,10 @@
 
  <!-- One Task Inverse Kinematics Control -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller OneTaskInverseKinematics"/> 
+    output="screen"  args="joint_state_controller OneTaskInverseKinematics"/>  
+
+ <!-- Circle Task Inverse Kinematics Control 
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller CircleTaskInverseKinematics"/> -->
 
 </launch>

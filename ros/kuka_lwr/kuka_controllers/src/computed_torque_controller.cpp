@@ -1,4 +1,3 @@
-
 #include "inverse_dynamics_controllers/computed_torque_controller.h"
 #include <pluginlib/class_list_macros.h>
 #include <kdl_parser/kdl_parser.hpp>
@@ -6,7 +5,6 @@
 
 namespace kuka_controllers 
 {
-
 	ComputedTorqueController::ComputedTorqueController() {}
 	ComputedTorqueController::~ComputedTorqueController() {}
 

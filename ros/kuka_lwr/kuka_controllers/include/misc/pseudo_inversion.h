@@ -2,14 +2,15 @@
 // pseudo_inverse() computes the pseudo inverse of Jacobian J_
 // returns the pseudo inverted Jacobian J_pinv_
 
+#ifndef PSEUDO_INVERSION_H
+#define PSEUDO_INVERSION_H
+
 #include <kdl/kdl.hpp>
 #include <Eigen/Core>
 #include <Eigen/LU>
 
-
-void pseudo_inverse(KDL::Jacobian &J_, Eigen::Matrix<double,7,6> &J_pinv_)
+inline void pseudo_inverse(KDL::Jacobian &J_, Eigen::Matrix<double,7,6> &J_pinv_)
 {
-
 	Eigen::Matrix<double,6,6> temp_ = Eigen::Matrix<double,6,6>::Zero();
 	J_pinv_ = Eigen::Matrix<double,7,6>::Zero();
 
@@ -29,3 +30,4 @@ void pseudo_inverse(KDL::Jacobian &J_, Eigen::Matrix<double,7,6> &J_pinv_)
 				J_pinv_(i,j) += J_(k,i)*temp_(k,j);
 
 }
+#endif

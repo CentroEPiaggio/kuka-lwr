@@ -2,7 +2,7 @@
   # Publish all joint states -----------------------------------
   joint_state_controller:
     type: joint_state_controller/JointStateController
-    publish_rate: 10  
+    publish_rate: 50  
 
   # Position Controllers ---------------------------------------
   joint0_position_controller:
@@ -77,6 +77,12 @@
   # One Task Inverse Kinematics
   OneTaskInverseKinematics: 
      type: kuka_controllers/OneTaskInverseKinematics
+     root_name: world
+     tip_name: lwr_arm_7_link
+
+  # Circle Task Inverse Kinematics
+  CircleTaskInverseKinematics: 
+     type: kuka_controllers/CircleTaskInverseKinematics
      root_name: world
      tip_name: lwr_arm_7_link
 

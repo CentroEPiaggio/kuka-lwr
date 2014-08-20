@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   Eigen
   roscpp
   kdl_parser
-
+  message_generation
 )
 
 include_directories(include ${orocos_kdl_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
@@ -23,6 +23,18 @@ link_directories(${orocos_kdl_LIBRARY_DIRS})
 
 find_library(KDL_LIBRARY REQUIRED NAMES orocos-kdl HINTS ${orocos_kdl_LIBRARY_DIRS})
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
+add_message_files(
+   FILES
+   PoseRPY.msg
+   RPY.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+std_msgs
+geometry_msgs
+)
+
 
 # Declare catkin package
 catkin_package(
@@ -35,6 +47,7 @@ catkin_package(
     urdf
     forward_command_controller
     kdl_parser
+    message_runtime
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
@@ -47,6 +60,7 @@ add_library(${PROJECT_NAME}
   src/inverse_dynamics_controller.cpp
   src/computed_torque_controller.cpp
   src/one_task_inverse_kinematics.cpp
+  src/circle_task_inverse_kinematics.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})

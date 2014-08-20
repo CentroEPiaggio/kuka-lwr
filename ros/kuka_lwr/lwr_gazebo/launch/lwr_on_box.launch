@@ -11,15 +11,20 @@
       <arg name="init_pose" value="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" />
     </include>
 
+<!-- this enables joint states -->
+
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+     output="screen" /> 
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> 
+
+<!-- Enable visualization in rviz -->
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lwr_gazebo)/launch/rviz_config.rviz" /> 
 
 
-<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+<!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-
-<!-- Enable visualization in rviz 
-
-<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lwr_gazebo)/launch/rviz_config.rviz" /> -->
+<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
  
 <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
