@@ -80,9 +80,9 @@
      root_name: world
      tip_name: lwr_arm_7_link
 
-  # Circle Task Inverse Kinematics
-  CircleTaskInverseKinematics: 
-     type: kuka_controllers/CircleTaskInverseKinematics
+  # Multi Priority Task Inverse Kinematics
+  MultiPriorityTaskInverseKinematics: 
+     type: kuka_controllers/MultiPriorityTaskInverseKinematics
      root_name: world
      tip_name: lwr_arm_7_link
 

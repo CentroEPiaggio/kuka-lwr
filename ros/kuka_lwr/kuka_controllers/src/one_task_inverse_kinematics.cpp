@@ -147,9 +147,6 @@ namespace kuka_controllers
     		PIDs_[i].initPid(Kp,Ki,Kd,0.3,-0.3);
     	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
-    	//I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
-    	//P_ = Eigen::Matrix<double,7,7>::Zero();
-
     	// computing forward kinematics
     	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
 
@@ -175,14 +172,13 @@ namespace kuka_controllers
 	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 
 	    	// computing J_pinv_
-	    	pseudo_inverse(J_,J_pinv_);
+	    	pseudo_inverse(J_.data,J_pinv_);
 
 	    	// computing forward kinematics
 	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
 
 	    	// end-effector position/orientation error
 	    	x_err_.vel = x_des_.p - x_.p;
-	    	//x_err_.rot = 0.5*(x_des_.M.UnitX()*x_.M.UnitX() + x_des_.M.UnitY()*x_.M.UnitY() + x_des_.M.UnitZ()*x_.M.UnitZ());
 
 	    	// getting quaternion from rotation matrix
 	    	x_.M.GetQuaternion(quat_curr_.v(0),quat_curr_.v(1),quat_curr_.v(2),quat_curr_.a);
@@ -198,9 +194,6 @@ namespace kuka_controllers
 	    	}
 
 	    	x_err_.rot = quat_curr_.a*quat_des_.v - quat_des_.a*quat_curr_.v - v_temp_; 
-
-	    	//for (int i = 0; i < 3; i++)
-	    	//	x_err_.rot(i) = 0.0;	// for now, doesn't count orientation error
 
 	    	// computing q_dot
 	    	for (int i = 0; i < J_pinv_.rows(); i++)
@@ -231,7 +224,6 @@ namespace kuka_controllers
 
 	void OneTaskInverseKinematics::command_configuration(const kuka_controllers::PoseRPY::ConstPtr &msg)
 	{	
-		// TODO: read orientation message. (now reads only position)
 		KDL::Frame frame_des_;
 
 		switch(msg->id)

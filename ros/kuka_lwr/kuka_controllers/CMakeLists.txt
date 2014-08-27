@@ -27,6 +27,7 @@ add_message_files(
    FILES
    PoseRPY.msg
    RPY.msg
+   MultiPriorityTask.msg
 )
 
 generate_messages(
@@ -60,7 +61,7 @@ add_library(${PROJECT_NAME}
   src/inverse_dynamics_controller.cpp
   src/computed_torque_controller.cpp
   src/one_task_inverse_kinematics.cpp
-  src/circle_task_inverse_kinematics.cpp
+  src/multi_priority_task_inverse_kinematics.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})

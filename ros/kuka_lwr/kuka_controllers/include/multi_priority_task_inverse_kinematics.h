@@ -1,5 +1,5 @@
-#ifndef KUKA_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
-#define KUKA_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
+#ifndef KUKA_CONTROLLERS__MULTI_PRIORITY_TASK_INVERSE_KINEMATICS_H
+#define KUKA_CONTROLLERS__MULTI_PRIORITY_TASK_INVERSE_KINEMATICS_H
 
 #include <ros/node_handle.h>
 #include <urdf/model.h>
@@ -22,23 +22,21 @@
 #include <kdl/chainiksolverpos_nr.hpp>
 #include <kdl/chainiksolvervel_pinv.hpp>
 #include <control_toolbox/pid.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <kuka_controllers/PoseRPY.h>
-
+#include <kuka_controllers/MultiPriorityTask.h>
 #include <vector>
 
 namespace kuka_controllers
 {
-	class OneTaskInverseKinematics: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+	class MultiPriorityTaskInverseKinematics: public controller_interface::Controller<hardware_interface::EffortJointInterface>
 	{
 	public:
-		OneTaskInverseKinematics();
-		~OneTaskInverseKinematics();
+		MultiPriorityTaskInverseKinematics();
+		~MultiPriorityTaskInverseKinematics();
 
 		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
-		void command_configuration(const kuka_controllers::PoseRPY::ConstPtr &msg);
+		void command_configuration(const kuka_controllers::MultiPriorityTask::ConstPtr &msg);
 		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 
 	private:
@@ -47,16 +45,18 @@ namespace kuka_controllers
 		ros::Subscriber sub_gains_;
 
 		KDL::Chain kdl_chain_;
+
 		KDL::JntArrayAcc joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
 
 		KDL::Frame x_;		//current pose
-		KDL::Frame x_des_;	//desired pose
+		std::vector<KDL::Frame> x_des_;	//desired pose
 
 		KDL::Twist x_err_;
 
 		KDL::JntArray tau_cmd_;
 
 		KDL::Jacobian J_;	//Jacobian
+		KDL::Jacobian J_star_; // it will be J_*P_
 
 		Eigen::Matrix<double,7,6> J_pinv_;
 		Eigen::Matrix<double,3,3> skew_;
@@ -69,10 +69,15 @@ namespace kuka_controllers
 
 		KDL::Vector v_temp_;
 
-		//Eigen::Matrix<double,7,7> I_;
-		//Eigen::Matrix<double,7,7> P_;
-		
+		Eigen::Matrix<double,6,1> e_dot_;
+		Eigen::Matrix<double,7,7> I_;
+		Eigen::Matrix<double,7,7> P_;
+
 		int cmd_flag_;
+		int ntasks_;
+		std::vector<bool> on_target_flag_;
+
+		std::vector<int> links_index_;
 
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;

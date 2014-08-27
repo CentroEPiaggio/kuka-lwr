@@ -42,7 +42,7 @@
     </description>
   </class> 
 
-  <class name="kuka_controllers/CircleTaskInverseKinematics" type="kuka_controllers::CircleTaskInverseKinematics" base_class_type="controller_interface::ControllerBase">
+  <class name="kuka_controllers/MultiPriorityTaskInverseKinematics" type="kuka_controllers::MultiPriorityTaskInverseKinematics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>

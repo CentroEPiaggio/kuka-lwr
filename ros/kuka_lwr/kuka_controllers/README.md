@@ -36,16 +36,24 @@ Send commands to any joint in terminal 3 (you need to load/start the position co
 - One Task Inverse Kinematics Controller: 
 
   - Full pose (note the IDs)
-`rostopic pub -1  /OneTaskInverseKinematics/command_configuration kuka_controllers/PoseRPY '{id: 0, position: {x: -0.3, y: 0.1, z: 1.5}, orientation: {roll: 0.1, pitch: 0.2, yaw: 0.0}}'`
+`rostopic pub -1  /OneTaskInverseKinematics/command_configuration kuka_controllers/PoseRPY '{id: 0, position: {x: -0.4, y: 0.3, z: 1.5}, orientation: {roll: 0.1, pitch: 0.2, yaw: 0.0}}'`
 
   - Position only
-`rostopic pub -1  /OneTaskInverseKinematics/command_configuration kuka_controllers/PoseRPY '{id: 1, position: {x: -0.3, y: 0.1, z: 1.5}}'`
+`rostopic pub -1  /OneTaskInverseKinematics/command_configuration kuka_controllers/PoseRPY '{id: 1, position: {x: -0.4, y: 0.3, z: 1.5}}'`
 
   - Orientation only
 `rostopic pub -1  /OneTaskInverseKinematics/command_configuration kuka_controllers/PoseRPY '{id: 2, orientation: {roll: 0.1, pitch: 0.2, yaw: 0.0}}'`
 
   - PID Gains setting
 `rostopic pub -1  /OneTaskInverseKinematics/set_gains std_msgs/Float64MultiArray '{data: [60, 1.2, 10]}'`
+
+- Multi Priority Task Inverse Kinematics Controller:
+  
+  - Tasks description (Notes: Link index -1 is EndEffector and Task parameters are [x,y,x,roll,pitch,yaw])
+`rostopic pub -1  /MultiPriorityTaskInverseKinematics/command_configuration kuka_controllers/MultiPriorityTask '{links: [-1,2], tasks: [-0.4,0.3,1.5,0,0,0,0,0,1.3,-3.1,1.2,-1.3]}'`
+
+  - PID Gains setting
+`rostopic pub -1  /MultiPriorityTaskInverseKinematics/set_gains std_msgs/Float64MultiArray '{data: [60, 1.2, 10]}'`
 
 
 
