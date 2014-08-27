@@ -50,7 +50,7 @@ Send commands to any joint in terminal 3 (you need to load/start the position co
 - Multi Priority Task Inverse Kinematics Controller:
   
   - Tasks description (Notes: Link index -1 is EndEffector and Task parameters are [x,y,x,roll,pitch,yaw])
-`rostopic pub -1  /MultiPriorityTaskInverseKinematics/command_configuration kuka_controllers/MultiPriorityTask '{links: [-1,2], tasks: [-0.4,0.3,1.5,0,0,0,0,0,1.3,-3.1,1.2,-1.3]}'`
+`rostopic pub -1  /MultiPriorityTaskInverseKinematics/command_configuration kuka_controllers/MultiPriorityTask '{links: [-1,3], tasks: [-0.4,0.3,1.5,0,0,0,-0.02,0.2,1.311,-1.568,0.291,0.1]}'`
 
   - PID Gains setting
 `rostopic pub -1  /MultiPriorityTaskInverseKinematics/set_gains std_msgs/Float64MultiArray '{data: [60, 1.2, 10]}'`
