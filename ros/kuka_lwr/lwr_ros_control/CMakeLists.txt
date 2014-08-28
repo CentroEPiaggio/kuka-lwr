@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
   urdf
+  cmake_modules
 )
 
 find_package(Eigen REQUIRED)
