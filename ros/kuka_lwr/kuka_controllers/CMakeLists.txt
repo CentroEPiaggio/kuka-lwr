@@ -10,10 +10,11 @@ find_package(catkin REQUIRED COMPONENTS
   control_toolbox
   realtime_tools
   urdf
-  Eigen
+  #Eigen
   roscpp
   kdl_parser
   message_generation
+  cmake_modules
 )
 
 include_directories(include ${orocos_kdl_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
