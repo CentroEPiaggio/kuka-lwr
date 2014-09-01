@@ -172,7 +172,7 @@ namespace kuka_controllers
 	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 
 	    	// computing J_pinv_
-	    	pseudo_inverse(J_.data,J_pinv_);
+	    	pseudo_inverse_DLS(J_.data,J_pinv_);
 
 	    	// computing forward kinematics
 	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
