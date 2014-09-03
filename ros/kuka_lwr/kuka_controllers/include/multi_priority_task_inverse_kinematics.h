@@ -43,6 +43,9 @@ namespace kuka_controllers
 		ros::NodeHandle nh_;
 		ros::Subscriber sub_command_;
 		ros::Subscriber sub_gains_;
+		ros::Publisher pub_error_;
+
+		std_msgs::Float64MultiArray msg_err_;
 
 		KDL::Chain kdl_chain_;
 

@@ -23,11 +23,13 @@ namespace kuka_controllers
 		    ROS_ERROR_STREAM("MultiPriorityTaskInverseKinematics: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
 		    return false;
 		}
+
 		if (!nh_.getParam("root_name", root_name))
 		{
 		    ROS_ERROR_STREAM("MultiPriorityTaskInverseKinematics: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
 		    return false;
 		}
+
 		if (!nh_.getParam("tip_name", tip_name))
 		{
 		    ROS_ERROR_STREAM("MultiPriorityTaskInverseKinematics: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
@@ -77,7 +79,6 @@ namespace kuka_controllers
 		    return false;
 		}
 
-
 		// Populate the KDL chain
 		if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
 		{
@@ -96,11 +97,8 @@ namespace kuka_controllers
 		  	return false;
 		}
 
-
 		ROS_DEBUG("Number of segments: %d", kdl_chain_.getNrOfSegments());
 		ROS_DEBUG("Number of joints in chain: %d", kdl_chain_.getNrOfJoints());
-
-
 
 		// Get joint handles for all of the joints in the chain
 		for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1; it != kdl_chain_.segments.end(); ++it)
@@ -127,6 +125,8 @@ namespace kuka_controllers
 		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiPriorityTaskInverseKinematics::command_configuration, this);
 		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiPriorityTaskInverseKinematics::set_gains, this);
 
+		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
+
 		return true;
 	}
 
@@ -140,15 +140,16 @@ namespace kuka_controllers
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     	}
 
-    	Kp = 60;
-    	Ki = 1.2;
-    	Kd = 10;
+    	Kp = 300;
+    	Ki = 1;
+    	Kd = 3;
 
     	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.3,-0.3);
+    		PIDs_[i].initPid(Kp,Ki,Kd,0.2,-0.2);
     	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
+    	e_dot_ = Eigen::Matrix<double,6,1>::Zero();
 
     	cmd_flag_ = 0;
 	}
@@ -162,6 +163,9 @@ namespace kuka_controllers
     		joint_msr_states_.q(i) = joint_handles_[i].getPosition();
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     	}
+
+    	// clearing error msg before publishing
+    	msg_err_.data.clear();
 
     	if (cmd_flag_)
     	{
@@ -177,8 +181,10 @@ namespace kuka_controllers
 		    	// computing forward kinematics
 		    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_,links_index_[index]);
 
+		    	/* <---- old code for position/orientation error based on quaternion units (*might* still be useful) ---->
+
 		    	// end-effector position/orientation error
-		    	x_err_.vel = x_des_[index].p - x_.p;
+		    	//x_err_.vel = x_des_[index].p - x_.p;
 
 		    	// getting quaternion from rotation matrix
 		    	x_.M.GetQuaternion(quat_curr_.v(0),quat_curr_.v(1),quat_curr_.v(2),quat_curr_.a);
@@ -193,10 +199,18 @@ namespace kuka_controllers
 		    			v_temp_(i) += skew_(i,k)*(quat_curr_.v(k));
 		    	}
 
-		    	x_err_.rot = quat_curr_.a*quat_des_.v - quat_des_.a*quat_curr_.v - v_temp_; 
+		    	//x_err_.rot = quat_curr_.a*quat_des_.v - quat_des_.a*quat_curr_.v - v_temp_; 
 
-		    	for(int i = 0; i < 6; i++)
+		    	<----- end old code ----> */
+
+		    	// computing end-effector position/orientation error w.r.t. desired frame
+		    	x_err_ = diff(x_,x_des_[index]);
+
+		    	for(int i = 0; i < e_dot_.size(); i++)
+		    	{
 		    		e_dot_(i) = x_err_(i);
+	    			msg_err_.data.push_back(e_dot_(i));
+		    	}
 
 		    	// computing (J[i]*P[i-1])^pinv
 		    	J_star_.data = J_.data*P_;
@@ -211,8 +225,8 @@ namespace kuka_controllers
 			    	{
 			    		ROS_INFO("Task %d on target",index);
 			    		on_target_flag_[index] = true;
-			    		//if (index == (ntasks_ - 1))
-			    			//cmd_flag_ = 0;
+			    		if (index == (ntasks_ - 1))
+			    			cmd_flag_ = 0;
 			    	}
 			    }
 
@@ -228,9 +242,9 @@ namespace kuka_controllers
 			// set controls for joints
 	    	for (int i = 0; i < joint_handles_.size(); i++)
 	    	{
-	    		tau_cmd_(i) = PIDs_[i].computeCommand(joint_des_states_.q(i) - joint_msr_states_.q(i),period);
+	    		tau_cmd_(i) = PIDs_[i].computeCommand(joint_des_states_.q(i) - joint_msr_states_.q(i),joint_des_states_.qdot(i) - joint_msr_states_.qdot(i),period);
 			   	joint_handles_[i].setCommand(tau_cmd_(i));
-	    	}		    
+	    	}
     	}
 	    else
 	    {
@@ -239,7 +253,11 @@ namespace kuka_controllers
 	    		tau_cmd_(i) = PIDs_[i].computeCommand(joint_des_states_.q(i) - joint_msr_states_.q(i),period);
 	    		joint_handles_[i].setCommand(tau_cmd_(i));
 	    	}
-	    }
+	    }	 
+
+	    // publishing error for all tasks as an array of ntasks*6
+	    pub_error_.publish(msg_err_);
+	    ros::spinOnce();
 
 	}
 
