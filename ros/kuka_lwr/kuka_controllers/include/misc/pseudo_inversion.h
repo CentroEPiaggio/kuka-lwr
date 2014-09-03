@@ -2,8 +2,8 @@
 // pseudo_inverse() computes the pseudo inverse of Jacobian J_ using SVD decomposition
 // returns the pseudo inverted Jacobian J_pinv_
 
-#ifndef PSEUDO_INVERSION_MULTI_H
-#define PSEUDO_INVERSION_MULTI_H
+#ifndef PSEUDO_INVERSION_H
+#define PSEUDO_INVERSION_H
 
 #include <Eigen/Core>
 #include <Eigen/LU>
@@ -12,13 +12,15 @@ using namespace Eigen;
 
 inline void pseudo_inverse_DLS(const Eigen::Matrix<double,6,7> &J_, Eigen::Matrix<double,7,6> &J_pinv_)
 {	
-	double lambda_ = 0.1;
+	double lambda_ = 0.2;
 
 	JacobiSVD<MatrixXd> svd(J_, ComputeFullU | ComputeFullV);
 	MatrixXd U_ = svd.matrixU();
 	MatrixXd V_ = svd.matrixV();
 	JacobiSVD<MatrixXd>::SingularValuesType sing_vals_ = svd.singularValues();
 	Matrix<double,6,7> S_ = Matrix<double,6,7>::Zero();
+
+	//std::cout<<"singvals:"<<std::endl<<sing_vals_<<std::endl<<std::endl;
 
     for (int i = 0; i < S_.rows(); i++)
         S_(i,i) = (sing_vals_(i))/(sing_vals_(i)*sing_vals_(i) + lambda_*lambda_);
