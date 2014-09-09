@@ -58,7 +58,7 @@ namespace kuka_controllers
 
 		KDL::Jacobian J_;	//Jacobian
 
-		Eigen::Matrix<double,7,6> J_pinv_;
+		Eigen::MatrixXd J_pinv_;
 		Eigen::Matrix<double,3,3> skew_;
 
 		struct quaternion_
@@ -68,9 +68,6 @@ namespace kuka_controllers
 		} quat_curr_, quat_des_;
 
 		KDL::Vector v_temp_;
-
-		//Eigen::Matrix<double,7,7> I_;
-		//Eigen::Matrix<double,7,7> P_;
 		
 		int cmd_flag_;
 

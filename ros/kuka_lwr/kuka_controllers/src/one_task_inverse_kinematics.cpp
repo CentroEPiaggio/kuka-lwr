@@ -1,4 +1,4 @@
-#include "one_task_inverse_kinematics.h"
+#include <one_task_inverse_kinematics.h>
 #include <pluginlib/class_list_macros.h>
 #include <kdl_parser/kdl_parser.hpp>
 #include <math.h>
@@ -172,7 +172,7 @@ namespace kuka_controllers
 	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 
 	    	// computing J_pinv_
-	    	pseudo_inverse_DLS(J_.data,J_pinv_);
+	    	pseudo_inverse(J_.data,J_pinv_);
 
 	    	// computing forward kinematics
 	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
@@ -267,7 +267,7 @@ namespace kuka_controllers
 		{
 			for(int i = 0; i < PIDs_.size(); i++)
 				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
+			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
 		}
 		else
 			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");

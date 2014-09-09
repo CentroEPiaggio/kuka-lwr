@@ -1,4 +1,4 @@
-#include "multi_priority_task_inverse_kinematics.h"
+#include <multi_priority_task_inverse_kinematics.h>
 #include <pluginlib/class_list_macros.h>
 #include <kdl_parser/kdl_parser.hpp>
 #include <math.h>
@@ -126,6 +126,7 @@ namespace kuka_controllers
 		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiPriorityTaskInverseKinematics::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
+		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
 
 		return true;
 	}
@@ -138,14 +139,15 @@ namespace kuka_controllers
     		joint_msr_states_.q(i) = joint_handles_[i].getPosition();
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
+    		joint_des_states_.qdot(i) = joint_msr_states_.qdot(i);
     	}
 
-    	Kp = 300;
-    	Ki = 1;
-    	Kd = 3;
+    	Kp = 200;
+    	Ki = 1; 
+    	Kd = 5;
 
     	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.2,-0.2);
+    		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
     	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
@@ -181,27 +183,8 @@ namespace kuka_controllers
 		    	// computing forward kinematics
 		    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_,links_index_[index]);
 
-		    	/* <---- old code for position/orientation error based on quaternion units (*might* still be useful) ---->
-
-		    	// end-effector position/orientation error
-		    	//x_err_.vel = x_des_[index].p - x_.p;
-
-		    	// getting quaternion from rotation matrix
-		    	x_.M.GetQuaternion(quat_curr_.v(0),quat_curr_.v(1),quat_curr_.v(2),quat_curr_.a);
-		    	x_des_[index].M.GetQuaternion(quat_des_.v(0),quat_des_.v(1),quat_des_.v(2),quat_des_.a);
-
-		    	skew_symmetric(quat_des_.v,skew_);
-
-		    	for (int i = 0; i < skew_.rows(); i++)
-		    	{
-		    		v_temp_(i) = 0.0;
-		    		for (int k = 0; k < skew_.cols(); k++)
-		    			v_temp_(i) += skew_(i,k)*(quat_curr_.v(k));
-		    	}
-
-		    	//x_err_.rot = quat_curr_.a*quat_des_.v - quat_des_.a*quat_curr_.v - v_temp_; 
-
-		    	<----- end old code ----> */
+		    	// setting marker parameters
+		    	set_marker(x_,index,msg_id_);
 
 		    	// computing end-effector position/orientation error w.r.t. desired frame
 		    	x_err_ = diff(x_,x_des_[index]);
@@ -214,11 +197,12 @@ namespace kuka_controllers
 
 		    	// computing (J[i]*P[i-1])^pinv
 		    	J_star_.data = J_.data*P_;
-		    	pseudo_inverse_DLS(J_star_.data,J_pinv_);
+		    	pseudo_inverse(J_star_.data,J_pinv_);
 
 		    	// computing q_dot (qdot(i) = qdot[i-1] + (J[i]*P[i-1])^pinv*(x_err[i] - J[i]*qdot[i-1]))
 		    	joint_des_states_.qdot.data = joint_des_states_.qdot.data + J_pinv_*(e_dot_ - J_.data*joint_des_states_.qdot.data);
 
+		    	// stop condition
 		    	if (!on_target_flag_[index])
 		    	{
 			    	if (Equal(x_,x_des_[index],0.01))
@@ -231,7 +215,7 @@ namespace kuka_controllers
 			    }
 
 		    	// updating P_ (it mustn't make use of the damped pseudo inverse)
-		    	pseudo_inverse(J_star_.data,J_pinv_);
+		    	pseudo_inverse(J_star_.data,J_pinv_,false);
 		    	P_ = P_ - J_pinv_*J_star_.data;
 		    }
 
@@ -243,9 +227,13 @@ namespace kuka_controllers
     	// set controls for joints
     	for (int i = 0; i < joint_handles_.size(); i++)
     	{
-    		tau_cmd_(i) = PIDs_[i].computeCommand(joint_des_states_.q(i) - joint_msr_states_.q(i),period);
+    		tau_cmd_(i) = PIDs_[i].computeCommand(joint_des_states_.q(i) - joint_msr_states_.q(i),joint_des_states_.qdot(i) - joint_msr_states_.qdot(i),period);
     		joint_handles_[i].setCommand(tau_cmd_(i));
     	}
+
+    	// publishing markers for visualization in rviz
+    	pub_marker_.publish(msg_marker_);
+    	msg_id_++;
 
 	    // publishing error for all tasks as an array of ntasks*6
 	    pub_error_.publish(msg_err_);
@@ -263,6 +251,8 @@ namespace kuka_controllers
 			x_des_.resize(ntasks_);
 			links_index_.resize(ntasks_);
 			on_target_flag_.resize(ntasks_);
+			msg_marker_.markers.resize(ntasks_);
+			msg_id_ = 0;
 
 			for (int i = 0; i < ntasks_; i++)
 			{
@@ -304,10 +294,43 @@ namespace kuka_controllers
 		{
 			for(int i = 0; i < PIDs_.size(); i++)
 				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
+			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
 		}
 		else
 			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
+	}
+
+	void MultiPriorityTaskInverseKinematics::set_marker(KDL::Frame x, int index, int id)
+	{			
+				sstr_.str("");
+				sstr_.clear();
+
+				if (links_index_[index] == -1)
+					sstr_<<"end_effector";		
+				else
+					sstr_<<"link_"<<(links_index_[index]-1);
+
+
+				msg_marker_.markers[index].header.frame_id = "world";
+				msg_marker_.markers[index].header.stamp = ros::Time();
+				msg_marker_.markers[index].ns = sstr_.str();
+				msg_marker_.markers[index].id = id;
+				msg_marker_.markers[index].type = visualization_msgs::Marker::SPHERE;
+				msg_marker_.markers[index].action = visualization_msgs::Marker::ADD;
+				msg_marker_.markers[index].pose.position.x = x.p(0);
+				msg_marker_.markers[index].pose.position.y = x.p(1);
+				msg_marker_.markers[index].pose.position.z = x.p(2);
+				msg_marker_.markers[index].pose.orientation.x = 0.0;
+				msg_marker_.markers[index].pose.orientation.y = 0.0;
+				msg_marker_.markers[index].pose.orientation.z = 0.0;
+				msg_marker_.markers[index].pose.orientation.w = 1.0;
+				msg_marker_.markers[index].scale.x = 0.01;
+				msg_marker_.markers[index].scale.y = 0.01;
+				msg_marker_.markers[index].scale.z = 0.01;
+				msg_marker_.markers[index].color.a = 1.0;
+				msg_marker_.markers[index].color.r = 0.0;
+				msg_marker_.markers[index].color.g = 1.0;
+				msg_marker_.markers[index].color.b = 0.0;	
 	}
 }
 

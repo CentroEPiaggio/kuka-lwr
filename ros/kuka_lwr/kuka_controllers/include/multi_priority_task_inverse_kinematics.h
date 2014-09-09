@@ -10,6 +10,8 @@
 #include <control_msgs/JointControllerState.h>
 #include <ros/ros.h>
 #include <std_msgs/Float64MultiArray.h>
+#include <visualization_msgs/MarkerArray.h>
+#include <sstream>
 
 #include <kdl/tree.hpp>
 #include <kdl/kdl.hpp>
@@ -38,14 +40,18 @@ namespace kuka_controllers
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const kuka_controllers::MultiPriorityTask::ConstPtr &msg);
 		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
+		void set_marker(KDL::Frame x, int index, int id);
 
 	private:
 		ros::NodeHandle nh_;
 		ros::Subscriber sub_command_;
 		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
+		ros::Publisher pub_marker_;
 
 		std_msgs::Float64MultiArray msg_err_;
+		visualization_msgs::MarkerArray msg_marker_;
+		std::stringstream sstr_;
 
 		KDL::Chain kdl_chain_;
 
@@ -61,26 +67,18 @@ namespace kuka_controllers
 		KDL::Jacobian J_;	//Jacobian
 		KDL::Jacobian J_star_; // it will be J_*P_
 
-		Eigen::Matrix<double,7,6> J_pinv_;
-		Eigen::Matrix<double,3,3> skew_;
-
-		struct quaternion_
-		{
-			KDL::Vector v;
-			double a;
-		} quat_curr_, quat_des_;
-
-		KDL::Vector v_temp_;
+		Eigen::MatrixXd J_pinv_;//<double,7,6> J_pinv_;
 
 		Eigen::Matrix<double,6,1> e_dot_;
 		Eigen::Matrix<double,7,7> I_;
 		Eigen::Matrix<double,7,7> P_;
 
+		int msg_id_;
 		int cmd_flag_;
 		int ntasks_;
 		std::vector<bool> on_target_flag_;
-
 		std::vector<int> links_index_;
+
 
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
