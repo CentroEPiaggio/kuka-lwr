@@ -6,7 +6,9 @@
 
 	    <transmission name="${name}_arm_0_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_0_joint"/>
+			<joint name="${name}_arm_0_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_0_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
@@ -15,7 +17,9 @@
 
 		<transmission name="${name}_arm_1_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_1_joint"/>
+			<joint name="${name}_arm_1_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_1_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
@@ -24,7 +28,9 @@
 
 		<transmission name="${name}_arm_2_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_2_joint"/>
+			<joint name="${name}_arm_2_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_2_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
@@ -33,7 +39,9 @@
 
 		<transmission name="${name}_arm_3_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_3_joint"/>
+			<joint name="${name}_arm_3_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_3_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
@@ -42,7 +50,9 @@
 
 		<transmission name="${name}_arm_4_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_4_joint"/>
+			<joint name="${name}_arm_4_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_4_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
@@ -51,7 +61,9 @@
 
 		<transmission name="${name}_arm_5_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_5_joint"/>
+			<joint name="${name}_arm_5_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_5_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
@@ -60,7 +72,9 @@
 
 		<transmission name="${name}_arm_6_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_arm_6_joint"/>
+			<joint name="${name}_arm_6_joint">
+				<hardwareInterface>EffortJointInterface</hardwareInterface>
+			</joint>
 			<actuator name="${name}_arm_6_motor">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
