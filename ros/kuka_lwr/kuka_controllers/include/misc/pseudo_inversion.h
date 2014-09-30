@@ -25,26 +25,4 @@ inline void pseudo_inverse(const Eigen::MatrixXd &M_, Eigen::MatrixXd &M_pinv_,b
     M_pinv_ = MatrixXd(svd.matrixV()*S_.transpose()*svd.matrixU().transpose());
 }
 
-/*inline void pseudo_inverse(const Eigen::Matrix<double,6,7> &M_, Eigen::MatrixXd &M_pinv_)
-{
-	Eigen::Matrix<double,6,6> temp_ = Eigen::Matrix<double,6,6>::Zero();
-	M_pinv_ = Eigen::Matrix<double,7,6>::Zero();
-
-	// computing J*J^T
-	for (int i = 0; i < M_.rows(); i++)	// 6
-		for (int j = 0; j < M_.rows(); j++)	// 6
-			for (int k = 0; k < M_.cols(); k++)	// 7
-				temp_(i,j) += M_(i,k)*M_(j,k);
-
-	// computing (J*J^T)^-1
-	temp_ = temp_.inverse();
-
-	// computing J^T(J*J^T)^-1
-	for (int i = 0; i < M_.cols(); i++)	// 7
-		for (int j = 0; j < M_.rows(); j++)	// 6
-			for (int k = 0; k < M_.rows(); k++)	// 6
-				M_pinv_(i,j) += M_(k,i)*temp_(k,j);
-
-}*/
-
 #endif
