@@ -288,7 +288,7 @@ namespace kuka_controllers
 			msg_marker_.markers.resize(ntasks_);
 			J_last_.resize(ntasks_);
 			for (int i = 0; i < ntasks_; i++)
-				sJ_last_[i].resize(kdl_chain_.getNrOfJoints());
+				J_last_[i].resize(kdl_chain_.getNrOfJoints());
 			msg_id_ = 0;
 
 			for (int i = 0; i < ntasks_; i++)
