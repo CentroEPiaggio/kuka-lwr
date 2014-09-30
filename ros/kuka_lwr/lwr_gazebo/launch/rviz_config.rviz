@@ -10,6 +10,7 @@ Panels:
         - /TF1
         - /MarkerArray1
         - /MarkerArray1/Namespaces1
+        - /Marker1
       Splitter Ratio: 0.577181
     Tree Height: 463
   - Class: rviz/Selection
@@ -162,6 +163,14 @@ Visualization Manager:
         {}
       Queue Size: 25
       Value: false
+    - Class: rviz/Marker
+      Enabled: false
+      Marker Topic: /MinimumEffortInverseDynamics/marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 25
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -186,7 +195,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 3.08292
+      Distance: 3.35414
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -198,10 +207,10 @@ Visualization Manager:
         Z: 1.10319
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.274797
+      Pitch: 0.154797
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.37544
+      Yaw: 3.05044
     Saved: ~
 Window Geometry:
   Displays:
@@ -219,5 +228,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1317
-  X: 279
+  X: 269
   Y: 14

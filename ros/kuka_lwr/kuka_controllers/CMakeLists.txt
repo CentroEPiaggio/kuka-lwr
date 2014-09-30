@@ -64,7 +64,7 @@ add_library(${PROJECT_NAME}
   src/one_task_inverse_kinematics.cpp
   src/multi_priority_task_inverse_kinematics.cpp
   src/multi_priority_task_inverse_dynamics.cpp
-  #src/trajectory_task_inverse_kinematics.cpp
+  src/minimum_effort_inverse_dynamics.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})

@@ -92,5 +92,9 @@
      root_name: world
      tip_name: lwr_arm_7_link
 
-
+  # Minimum Effort Task Inverse Dynamics
+  MinimumEffortInverseDynamics: 
+     type: kuka_controllers/MinimumEffortInverseDynamics
+     root_name: world
+     tip_name: lwr_arm_7_link
 

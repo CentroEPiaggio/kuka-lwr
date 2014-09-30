@@ -40,9 +40,13 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller MultiPriorityTaskInverseKinematics"/>  -->
 
-<!-- Multi Prority Task Inverse Dynamics Control -->
+<!-- Multi Prority Task Inverse Dynamics Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller MultiPriorityTaskInverseDynamics"/>  
+    output="screen"  args="joint_state_controller MultiPriorityTaskInverseDynamics"/>  -->
+
+<!-- Minimum Effort Inverse Dynamics Control -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller MinimumEffortInverseDynamics"/>   
 
 
 </launch>

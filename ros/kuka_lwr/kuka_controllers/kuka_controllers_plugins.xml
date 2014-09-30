@@ -54,4 +54,10 @@
     </description>
   </class>   
 
+  <class name="kuka_controllers/MinimumEffortInverseDynamics" type="kuka_controllers::MinimumEffortInverseDynamics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
 </library>
