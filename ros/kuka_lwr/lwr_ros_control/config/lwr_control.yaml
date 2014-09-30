@@ -86,4 +86,11 @@
      root_name: world
      tip_name: lwr_arm_7_link
 
+  # Multi Priority Task Inverse Dynamics
+  MultiPriorityTaskInverseDynamics: 
+     type: kuka_controllers/MultiPriorityTaskInverseDynamics
+     root_name: world
+     tip_name: lwr_arm_7_link
+
+
 

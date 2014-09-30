@@ -48,4 +48,10 @@
     </description>
   </class> 
 
+  <class name="kuka_controllers/MultiPriorityTaskInverseDynamics" type="kuka_controllers::MultiPriorityTaskInverseDynamics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>   
+
 </library>

@@ -9,7 +9,6 @@ Panels:
         - /RobotModel1
         - /TF1
         - /MarkerArray1
-        - /MarkerArray1/Status1
         - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.577181
     Tree Height: 463
@@ -157,11 +156,11 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: false
-      Marker Topic: /MultiPriorityTaskInverseKinematics/marker
+      Marker Topic: /MultiPriorityTaskInverseDynamics/marker
       Name: MarkerArray
       Namespaces:
         {}
-      Queue Size: 100
+      Queue Size: 25
       Value: false
   Enabled: true
   Global Options:
@@ -187,22 +186,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.79212
+      Distance: 3.08292
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.151035
-        Y: -0.289804
-        Z: 1.32006
+        X: 0.282437
+        Y: 0.197938
+        Z: 1.10319
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.181249
+      Pitch: 0.274797
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.98544
+      Yaw: 3.37544
     Saved: ~
 Window Geometry:
   Displays:
@@ -220,5 +219,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1317
-  X: 309
-  Y: 27
+  X: 279
+  Y: 14

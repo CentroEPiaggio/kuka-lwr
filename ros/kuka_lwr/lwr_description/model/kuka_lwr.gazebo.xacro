@@ -10,42 +10,42 @@
 		</gazebo> -->
 
 		<gazebo reference="${name}_arm_base_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_1_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_2_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_3_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_4_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_5_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_6_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
 		<gazebo reference="${name}_arm_7_link">
-			<!-- <gravity>true</gravity> -->
+			<gravity>true</gravity>
 			<material>Gazebo/Grey</material>
 		</gazebo>
 
