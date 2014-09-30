@@ -36,7 +36,7 @@ namespace kuka_controllers
 	 
 		// Get the gravity vector (direction and magnitude)
 		KDL::Vector gravity_ = KDL::Vector::Zero();
-		gravity_(2) = 9.81;
+		gravity_(2) = -9.81;
 
 		// Construct an URDF model from the xml string
 		std::string xml_string;
