@@ -1,5 +1,5 @@
-#ifndef KUKA_CONTROLLERS__MULTI_PRIORITY_TASK_INVERSE_DYNAMICS_H
-#define KUKA_CONTROLLERS__MULTI_PRIORITY_TASK_INVERSE_DYNAMICS_H
+#ifndef KUKA_CONTROLLERS__MULTI_TASK_PRIORITY_INVERSE_KINEMATICS_H
+#define KUKA_CONTROLLERS__MULTI_TASK_PRIORITY_INVERSE_KINEMATICS_H
 
 #include <ros/node_handle.h>
 #include <urdf/model.h>
@@ -21,17 +21,19 @@
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
+#include <kdl/chainiksolverpos_nr.hpp>
+#include <kdl/chainiksolvervel_pinv.hpp>
 #include <control_toolbox/pid.h>
 #include <kuka_controllers/MultiPriorityTask.h>
 #include <vector>
 
 namespace kuka_controllers
 {
-	class MultiPriorityTaskInverseDynamics: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+	class MultiTaskPriorityInverseKinematics: public controller_interface::Controller<hardware_interface::EffortJointInterface>
 	{
 	public:
-		MultiPriorityTaskInverseDynamics();
-		~MultiPriorityTaskInverseDynamics();
+		MultiTaskPriorityInverseKinematics();
+		~MultiTaskPriorityInverseKinematics();
 
 		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
@@ -53,49 +55,36 @@ namespace kuka_controllers
 
 		KDL::Chain kdl_chain_;
 
-		KDL::JntArrayVel joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
-		KDL::JntArray qdot_last_;
+		KDL::JntArrayAcc joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
 
-		KDL::Frame x_;	//current e-e pose
-		Eigen::Matrix<double,6,1> x_dot_;	//current e-e velocity
-		KDL::Twist x_dot_dot_;	//current e-e acceleration
+		KDL::Frame x_;		//current pose
 		std::vector<KDL::Frame> x_des_;	//desired pose
 
-		KDL::Twist x_err_;	// position error
+		KDL::Twist x_err_;
 
-		KDL::JntArray Kp_,Kd_;	// velocity error, position error
+		KDL::JntArray tau_cmd_;
 
-		KDL::JntArray tau_;	// control torque
+		KDL::Jacobian J_;	//Jacobian
+		KDL::Jacobian J_star_; // it will be J_*P_
 
-		KDL::JntSpaceInertiaMatrix M_;	// intertia matrix
-		KDL::JntArray C_;	// coriolis
-		KDL::JntArray G_;	// gravity
+		Eigen::MatrixXd J_pinv_;//<double,7,6> J_pinv_;
 
-		KDL::Jacobian J_;	//Jacobian J(q)
-		std::vector<KDL::Jacobian> J_last_;	//Jacobian of the last step
-		KDL::Jacobian J_dot_;	//d/dt(J(q))
+		Eigen::Matrix<double,6,1> e_dot_;
+		Eigen::Matrix<double,7,7> I_;
+		Eigen::Matrix<double,7,7> P_;
 
-		Eigen::MatrixXd J_pinv_;	// Jacobian pseudo-inv
-
-		Eigen::Matrix<double,6,1> e_ref_;	// reference error
-		Eigen::Matrix<double,7,7> I_;		// Identity
-		Eigen::Matrix<double,7,7> N_trans_;	// null-space matrix
-		Eigen::MatrixXd M_inv_;
-		Eigen::MatrixXd omega_;
-		Eigen::MatrixXd lambda_;
-		Eigen::Matrix<double,6,1> b_;
-
-		int first_step_;	// first step flag
-		int msg_id_;		// marker message id
-		int cmd_flag_;		// command received flag
-		int ntasks_;		// # of task
-		std::vector<bool> on_target_flag_;	
+		int msg_id_;
+		int cmd_flag_;
+		int ntasks_;
+		std::vector<bool> on_target_flag_;
 		std::vector<int> links_index_;
 
 
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
+		boost::scoped_ptr<KDL::ChainIkSolverVel_pinv> ik_vel_solver_;
+		boost::scoped_ptr<KDL::ChainIkSolverPos_NR> ik_pos_solver_;
 
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;

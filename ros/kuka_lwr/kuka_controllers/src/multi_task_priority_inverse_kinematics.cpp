@@ -1,4 +1,4 @@
-#include <multi_priority_task_inverse_kinematics.h>
+#include <multi_task_priority_inverse_kinematics.h>
 #include <pluginlib/class_list_macros.h>
 #include <kdl_parser/kdl_parser.hpp>
 #include <math.h>
@@ -8,10 +8,10 @@
 
 namespace kuka_controllers 
 {
-	MultiPriorityTaskInverseKinematics::MultiPriorityTaskInverseKinematics() {}
-	MultiPriorityTaskInverseKinematics::~MultiPriorityTaskInverseKinematics() {}
+	MultiTaskPriorityInverseKinematics::MultiTaskPriorityInverseKinematics() {}
+	MultiTaskPriorityInverseKinematics::~MultiTaskPriorityInverseKinematics() {}
 
-	bool MultiPriorityTaskInverseKinematics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
+	bool MultiTaskPriorityInverseKinematics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
 		nh_ = n;
 
@@ -20,19 +20,19 @@ namespace kuka_controllers
 
 		if (!ros::param::search(n.getNamespace(),"robot_description", robot_description))
 		{
-		    ROS_ERROR_STREAM("MultiPriorityTaskInverseKinematics: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
+		    ROS_ERROR_STREAM("MultiTaskPriorityInverseKinematics: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
 		    return false;
 		}
 
 		if (!nh_.getParam("root_name", root_name))
 		{
-		    ROS_ERROR_STREAM("MultiPriorityTaskInverseKinematics: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
+		    ROS_ERROR_STREAM("MultiTaskPriorityInverseKinematics: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
 		    return false;
 		}
 
 		if (!nh_.getParam("tip_name", tip_name))
 		{
-		    ROS_ERROR_STREAM("MultiPriorityTaskInverseKinematics: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
+		    ROS_ERROR_STREAM("MultiTaskPriorityInverseKinematics: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
 		    return false;
 		}
 	 
@@ -122,8 +122,8 @@ namespace kuka_controllers
 		J_star_.resize(kdl_chain_.getNrOfJoints());
 		PIDs_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiPriorityTaskInverseKinematics::command_configuration, this);
-		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiPriorityTaskInverseKinematics::set_gains, this);
+		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseKinematics::command_configuration, this);
+		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiTaskPriorityInverseKinematics::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -131,7 +131,7 @@ namespace kuka_controllers
 		return true;
 	}
 
-	void MultiPriorityTaskInverseKinematics::starting(const ros::Time& time)
+	void MultiTaskPriorityInverseKinematics::starting(const ros::Time& time)
 	{
 		// get joint positions
   		for(int i=0; i < joint_handles_.size(); i++) 
@@ -156,7 +156,7 @@ namespace kuka_controllers
     	cmd_flag_ = 0;
 	}
 
-	void MultiPriorityTaskInverseKinematics::update(const ros::Time& time, const ros::Duration& period)
+	void MultiTaskPriorityInverseKinematics::update(const ros::Time& time, const ros::Duration& period)
 	{
 
 		// get joint positions
@@ -241,7 +241,7 @@ namespace kuka_controllers
 
 	}
 
-	void MultiPriorityTaskInverseKinematics::command_configuration(const kuka_controllers::MultiPriorityTask::ConstPtr &msg)
+	void MultiTaskPriorityInverseKinematics::command_configuration(const kuka_controllers::MultiPriorityTask::ConstPtr &msg)
 	{
 		if (msg->links.size() == msg->tasks.size()/6)
 		{
@@ -288,7 +288,7 @@ namespace kuka_controllers
 		
 	}
 
-	void MultiPriorityTaskInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
+	void MultiTaskPriorityInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
 	{
 		if(msg->data.size() == 3)
 		{
@@ -300,7 +300,7 @@ namespace kuka_controllers
 			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
 	}
 
-	void MultiPriorityTaskInverseKinematics::set_marker(KDL::Frame x, int index, int id)
+	void MultiTaskPriorityInverseKinematics::set_marker(KDL::Frame x, int index, int id)
 	{			
 				sstr_.str("");
 				sstr_.clear();
@@ -334,4 +334,4 @@ namespace kuka_controllers
 	}
 }
 
-PLUGINLIB_EXPORT_CLASS(kuka_controllers::MultiPriorityTaskInverseKinematics, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(kuka_controllers::MultiTaskPriorityInverseKinematics, controller_interface::ControllerBase)

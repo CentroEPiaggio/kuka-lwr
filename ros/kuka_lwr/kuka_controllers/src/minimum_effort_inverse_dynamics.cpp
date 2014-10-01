@@ -270,7 +270,7 @@ namespace kuka_controllers
 
 	    	// computing end-effector position/orientation error w.r.t. desired frame
 	    	x_err_ = diff(x_,x_des_);
-
+	    	
 	    	x_dot_ = J_.data*joint_msr_states_.qdot.data;    	
 
 	    	// setting error reference

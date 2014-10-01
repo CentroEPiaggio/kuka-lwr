@@ -42,13 +42,13 @@
     </description>
   </class> 
 
-  <class name="kuka_controllers/MultiPriorityTaskInverseKinematics" type="kuka_controllers::MultiPriorityTaskInverseKinematics" base_class_type="controller_interface::ControllerBase">
+  <class name="kuka_controllers/MultiTaskPriorityInverseKinematics" type="kuka_controllers::MultiTaskPriorityInverseKinematics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
   </class> 
 
-  <class name="kuka_controllers/MultiPriorityTaskInverseDynamics" type="kuka_controllers::MultiPriorityTaskInverseDynamics" base_class_type="controller_interface::ControllerBase">
+  <class name="kuka_controllers/MultiTaskPriorityInverseDynamics" type="kuka_controllers::MultiTaskPriorityInverseDynamics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>

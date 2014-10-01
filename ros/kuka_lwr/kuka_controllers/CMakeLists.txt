@@ -62,8 +62,8 @@ add_library(${PROJECT_NAME}
   src/inverse_dynamics_controller.cpp
   src/computed_torque_controller.cpp
   src/one_task_inverse_kinematics.cpp
-  src/multi_priority_task_inverse_kinematics.cpp
-  src/multi_priority_task_inverse_dynamics.cpp
+  src/multi_task_priority_inverse_kinematics.cpp
+  src/multi_task_priority_inverse_dynamics.cpp
   src/minimum_effort_inverse_dynamics.cpp
 )
 

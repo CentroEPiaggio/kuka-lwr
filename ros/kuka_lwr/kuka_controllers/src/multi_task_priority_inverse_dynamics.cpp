@@ -1,4 +1,4 @@
-#include <multi_priority_task_inverse_dynamics.h>
+#include <multi_task_priority_inverse_dynamics.h>
 #include <pluginlib/class_list_macros.h>
 #include <kdl_parser/kdl_parser.hpp>
 #include <math.h>
@@ -8,10 +8,10 @@
 
 namespace kuka_controllers 
 {
-	MultiPriorityTaskInverseDynamics::MultiPriorityTaskInverseDynamics() {}
-	MultiPriorityTaskInverseDynamics::~MultiPriorityTaskInverseDynamics() {}
+	MultiTaskPriorityInverseDynamics::MultiTaskPriorityInverseDynamics() {}
+	MultiTaskPriorityInverseDynamics::~MultiTaskPriorityInverseDynamics() {}
 
-	bool MultiPriorityTaskInverseDynamics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
+	bool MultiTaskPriorityInverseDynamics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
 		nh_ = n;
 
@@ -20,19 +20,19 @@ namespace kuka_controllers
 
 		if (!ros::param::search(n.getNamespace(),"robot_description", robot_description))
 		{
-		    ROS_ERROR_STREAM("MultiPriorityTaskInverseDynamics: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
+		    ROS_ERROR_STREAM("MultiTaskPriorityInverseDynamics: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
 		    return false;
 		}
 
 		if (!nh_.getParam("root_name", root_name))
 		{
-		    ROS_ERROR_STREAM("MultiPriorityTaskInverseDynamics: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
+		    ROS_ERROR_STREAM("MultiTaskPriorityInverseDynamics: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
 		    return false;
 		}
 
 		if (!nh_.getParam("tip_name", tip_name))
 		{
-		    ROS_ERROR_STREAM("MultiPriorityTaskInverseDynamics: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
+		    ROS_ERROR_STREAM("MultiTaskPriorityInverseDynamics: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
 		    return false;
 		}
 	 
@@ -126,8 +126,8 @@ namespace kuka_controllers
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiPriorityTaskInverseDynamics::command_configuration, this);
-		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiPriorityTaskInverseDynamics::set_gains, this);
+		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseDynamics::command_configuration, this);
+		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiTaskPriorityInverseDynamics::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -135,7 +135,7 @@ namespace kuka_controllers
 		return true;
 	}
 
-	void MultiPriorityTaskInverseDynamics::starting(const ros::Time& time)
+	void MultiTaskPriorityInverseDynamics::starting(const ros::Time& time)
 	{
 		// get joint positions
   		for(int i=0; i < joint_handles_.size(); i++) 
@@ -164,7 +164,7 @@ namespace kuka_controllers
 
 	}
 
-	void MultiPriorityTaskInverseDynamics::update(const ros::Time& time, const ros::Duration& period)
+	void MultiTaskPriorityInverseDynamics::update(const ros::Time& time, const ros::Duration& period)
 	{
 		// get joint positions
   		for(int i=0; i < joint_handles_.size(); i++) 
@@ -275,7 +275,7 @@ namespace kuka_controllers
 
 	}
 
-	void MultiPriorityTaskInverseDynamics::command_configuration(const kuka_controllers::MultiPriorityTask::ConstPtr &msg)
+	void MultiTaskPriorityInverseDynamics::command_configuration(const kuka_controllers::MultiPriorityTask::ConstPtr &msg)
 	{
 		if (msg->links.size() == msg->tasks.size()/6)
 		{
@@ -326,7 +326,7 @@ namespace kuka_controllers
 		
 	}
 
-	void MultiPriorityTaskInverseDynamics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
+	void MultiTaskPriorityInverseDynamics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
 	{
 		if(msg->data.size() == 3)
 		{
@@ -338,7 +338,7 @@ namespace kuka_controllers
 			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
 	}
 
-	void MultiPriorityTaskInverseDynamics::set_marker(KDL::Frame x, int index, int id)
+	void MultiTaskPriorityInverseDynamics::set_marker(KDL::Frame x, int index, int id)
 	{			
 				sstr_.str("");
 				sstr_.clear();
@@ -372,4 +372,4 @@ namespace kuka_controllers
 	}
 }
 
-PLUGINLIB_EXPORT_CLASS(kuka_controllers::MultiPriorityTaskInverseDynamics, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(kuka_controllers::MultiTaskPriorityInverseDynamics, controller_interface::ControllerBase)

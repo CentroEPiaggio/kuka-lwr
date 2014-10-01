@@ -80,19 +80,19 @@
      root_name: world
      tip_name: lwr_arm_7_link
 
-  # Multi Priority Task Inverse Kinematics
-  MultiPriorityTaskInverseKinematics: 
-     type: kuka_controllers/MultiPriorityTaskInverseKinematics
+  # Multi Task Priority Inverse Kinematics
+  MultiTaskPriorityInverseKinematics: 
+     type: kuka_controllers/MultiTaskPriorityInverseKinematics
      root_name: world
      tip_name: lwr_arm_7_link
 
-  # Multi Priority Task Inverse Dynamics
-  MultiPriorityTaskInverseDynamics: 
-     type: kuka_controllers/MultiPriorityTaskInverseDynamics
+  # Multi Task Priority Inverse Dynamics
+  MultiTaskPriorityInverseDynamics: 
+     type: kuka_controllers/MultiTaskPriorityInverseDynamics
      root_name: world
      tip_name: lwr_arm_7_link
 
-  # Minimum Effort Task Inverse Dynamics
+  # Minimum Effort Inverse Dynamics
   MinimumEffortInverseDynamics: 
      type: kuka_controllers/MinimumEffortInverseDynamics
      root_name: world
