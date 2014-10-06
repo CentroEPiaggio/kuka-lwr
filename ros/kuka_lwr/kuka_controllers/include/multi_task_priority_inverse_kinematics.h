@@ -83,8 +83,6 @@ namespace kuka_controllers
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
-		boost::scoped_ptr<KDL::ChainIkSolverVel_pinv> ik_vel_solver_;
-		boost::scoped_ptr<KDL::ChainIkSolverPos_NR> ik_pos_solver_;
 
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;

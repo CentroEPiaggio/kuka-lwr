@@ -112,8 +112,6 @@ namespace kuka_controllers
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
 		fk_pos_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));
-		ik_vel_solver_.reset(new KDL::ChainIkSolverVel_pinv(kdl_chain_));
-		ik_pos_solver_.reset(new KDL::ChainIkSolverPos_NR(kdl_chain_,*fk_pos_solver_,*ik_vel_solver_));
 
 		joint_msr_states_.resize(kdl_chain_.getNrOfJoints());
 		joint_des_states_.resize(kdl_chain_.getNrOfJoints());
@@ -158,14 +156,13 @@ namespace kuka_controllers
 
 	void MultiTaskPriorityInverseKinematics::update(const ros::Time& time, const ros::Duration& period)
 	{
-
 		// get joint positions
   		for(int i=0; i < joint_handles_.size(); i++) 
   		{
     		joint_msr_states_.q(i) = joint_handles_[i].getPosition();
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     	}
-
+    	
     	// clearing error msg before publishing
     	msg_err_.data.clear();
 

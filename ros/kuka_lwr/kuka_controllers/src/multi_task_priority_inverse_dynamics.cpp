@@ -157,7 +157,6 @@ namespace kuka_controllers
     		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
-    	e_ref_ = Eigen::Matrix<double,6,1>::Zero();
 
     	first_step_ = 0;
     	cmd_flag_ = 0;
