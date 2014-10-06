@@ -65,6 +65,7 @@ add_library(${PROJECT_NAME}
   src/multi_task_priority_inverse_kinematics.cpp
   src/multi_task_priority_inverse_dynamics.cpp
   src/minimum_effort_inverse_dynamics.cpp
+  src/backstepping_controller.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})

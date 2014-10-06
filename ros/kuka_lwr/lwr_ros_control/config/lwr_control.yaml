@@ -2,7 +2,7 @@
   # Publish all joint states -----------------------------------
   joint_state_controller:
     type: joint_state_controller/JointStateController
-    publish_rate: 50  
+    publish_rate: 100  
 
   # Position Controllers ---------------------------------------
   joint0_position_controller:
@@ -95,6 +95,12 @@
   # Minimum Effort Inverse Dynamics
   MinimumEffortInverseDynamics: 
      type: kuka_controllers/MinimumEffortInverseDynamics
+     root_name: world
+     tip_name: lwr_arm_7_link
+
+  # Backstepping Controller
+  BacksteppingController: 
+     type: kuka_controllers/BacksteppingController
      root_name: world
      tip_name: lwr_arm_7_link
 

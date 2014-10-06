@@ -60,4 +60,11 @@
     </description>
   </class>
 
+  <class name="kuka_controllers/BacksteppingController" type="kuka_controllers::BacksteppingController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
+
 </library>
