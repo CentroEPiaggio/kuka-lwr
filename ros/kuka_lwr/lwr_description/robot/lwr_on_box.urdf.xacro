@@ -3,18 +3,12 @@
 
 	<xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
 
-	<gazebo>
-		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-			<!-- <robotNamespace>/lwr</robotNamespace> -->
-		</plugin>
-	</gazebo>
-
 	<link name="world">
-		<!-- <inertial>
+		<inertial>
 			<mass value="50.0"/>
 			<com xyz="0 0 0"/>
 			<inertia  ixx="0.01" ixy="0.00"  ixz="0.00" iyy="0.01" iyz="0.00" izz="0.01" />
-		</inertial> -->
+		</inertial>
 		<visual>
 			<origin xyz="0 0 0.50" rpy="0 0 0"/>
 			<geometry>

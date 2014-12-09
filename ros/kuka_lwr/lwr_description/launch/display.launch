@@ -1,20 +1,46 @@
 <launch>
-	
-	<!-- Model definition-->
-	<arg name="model" default="$(find lwr_description)/robot/lwr_on_box.urdf.xacro"/>
-	<param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
-	<!-- Enable slider controllers. Just visualization purposes-->
-	<arg name="gui" default="False" />
+	<!-- LAUNCH INTERFACE -->
+	<arg name="gui" default="false" />
+	<arg name="robot_name" default="lwr_on_box"/>
+	<arg name="use_rviz" default="true"/>
+	<arg name="use_joint_state_publisher" default="true"/>
+	<arg name="use_lwr_sim" default="true"/>
+
+	<!-- LAUNCH IMPLEMENTATION -->
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find lwr_description)/robot/$(arg robot_name).urdf.xacro" />
 	<param name="use_gui" value="$(arg gui)"/>
 
-	<!-- Enable feedback from dynamic simulator -->
-	<!-- <rosparam param="source_list">[/lwr/joint_states]</rosparam> /-->
-	
-	<!-- Enable needed topics -->
-	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+	<group if="$(arg use_joint_state_publisher)">
+		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+	</group>
 
-	<!-- Enable visualization in rviz -->
-  	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find lwr_description)/launch/rviz_config.rviz" />
-	
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"  />
+
+	<group if="$(arg use_rviz)">
+		<node name="my_rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find lwr_description)/launch/rviz_config.rviz" output="screen"/>
+	</group>
+
+	<group if="$(arg use_lwr_sim)">
+		<!-- spawn the robot in gazebo -->
+		<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model $(arg robot_name)"  respawn="false" output="screen" />
+
+		<!-- load controllers -->
+		<include file="$(find lwr_ros_control)/launch/lwr_control.launch"/>
+
+		<!-- enable/disable gui at will, the rviz listens to the simulation -->
+		<include file="$(find gazebo_ros)/launch/empty_world.launch">
+			<arg name="world_name" value="$(find lwr_description)/worlds/simple_environment.world"/>
+			<arg name="paused" value="false"/>
+			<arg name="use_sim_time" value="true"/>
+			<arg name="gui" value="false"/>
+			<arg name="headless" value="false"/>
+			<arg name="debug" value="false"/>
+		</include>
+
+		<!-- finally, listens to the simulation, the "lwr" depends on the namespace of the model and controllers -->
+		<rosparam param="source_list">[/lwr/joint_states]</rosparam>
+	</group>
+	<group unless="$(arg use_lwr_sim)">
+		<include file="$(find lwr_ros_control)/launch/lwr_control.launch"/>
+	</group>
 </launch>

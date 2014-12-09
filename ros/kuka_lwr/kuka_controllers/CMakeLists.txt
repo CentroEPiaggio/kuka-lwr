@@ -33,8 +33,8 @@ add_message_files(
 
 generate_messages(
   DEPENDENCIES
-std_msgs
-geometry_msgs
+  std_msgs
+  geometry_msgs
 )
 
 
@@ -67,6 +67,8 @@ add_library(${PROJECT_NAME}
   src/minimum_effort_inverse_dynamics.cpp
   src/backstepping_controller.cpp
 )
+
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})
 

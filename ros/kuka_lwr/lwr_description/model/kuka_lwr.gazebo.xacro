@@ -3,11 +3,11 @@
 
 	<xacro:macro name="kuka_lwr_gazebo" params="name">
 
-<!-- 		<gazebo>
-			<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"> -->
-				<!-- <robotNamespace>/lwr</robotNamespace> -->
-<!-- 			</plugin>
-		</gazebo> -->
+		<gazebo>
+			<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+				<robotNamespace>${name}</robotNamespace>
+			</plugin>
+		</gazebo>
 
 		<gazebo reference="${name}_arm_base_link">
 			<gravity>true</gravity>
