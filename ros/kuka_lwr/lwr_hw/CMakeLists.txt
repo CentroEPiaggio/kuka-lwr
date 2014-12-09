@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(lwr_ros_control)
+project(lwr_hw)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -64,7 +64,7 @@ add_definitions (-fpermissive)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES lwr_ros_control
+#  LIBRARIES lwr_hw
 #  CATKIN_DEPENDS other_catkin_pkg
 #  DEPENDS system_lib
 )
@@ -91,16 +91,16 @@ add_library(terse_roscpp
 )
 
 ## Declare a cpp executable
-add_executable(lwr_server
-    src/lwr_server.cpp
+add_executable(lwr_hw
+    src/lwr_hw.cpp
 )
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(lwr_ros_control_node lwr_ros_control_generate_messages_cpp)
+# add_dependencies(lwr_hw_node lwr_hw_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(lwr_server
+target_link_libraries(lwr_hw
     friremote
     terse_roscpp
     ${catkin_LIBRARIES}
@@ -121,7 +121,7 @@ target_link_libraries(lwr_server
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS lwr_ros_control lwr_ros_control_node
+# install(TARGETS lwr_hw lwr_hw_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -146,7 +146,7 @@ target_link_libraries(lwr_server
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_lwr_ros_control.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_lwr_hw.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
