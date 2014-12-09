@@ -5,7 +5,6 @@
 	<arg name="ip" default="192.168.0.10"/>
 	
 	<!-- LAUNCH IMPLEMENTATION -->
-
 	<!-- ToDo: avoid the terse_roscpp approach, load and parse parameters within /-->
 	<param name="tip_joint" value="lwr_arm_6_joint"/>
 
@@ -14,6 +13,6 @@
 	<param name="ip" value="$(arg ip)"/>
 
 	<!-- the real hardware interface /-->
-	<node name="lwr_hw_interface" pkg="lwr_ros_control" type="lwr_server" respawn="false" output="screen"/>
-    
+	<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
+
 </launch>

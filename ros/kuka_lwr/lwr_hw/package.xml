@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>lwr_ros_control</name>
+  <name>lwr_hw</name>
   <version>0.0.0</version>
-  <description>The lwr_ros_control package</description>
+  <description>The lwr_hw package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://ros.org/wiki/lwr_ros_control</url> -->
+  <!-- <url type="website">http://ros.org/wiki/lwr_hw</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
