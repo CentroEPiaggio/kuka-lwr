@@ -1,3 +1,0 @@
-<launch>
-  <node pkg="socket_comm" name="emul_kuka_socket_SERVER" type="emul_kuka_socket_SERVER" respawn="true" output="screen" />
-</launch>

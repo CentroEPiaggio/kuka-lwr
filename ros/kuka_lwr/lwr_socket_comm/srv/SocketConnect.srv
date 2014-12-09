@@ -1,9 +1,0 @@
-# A generic message to be sent by a socket
-
-std_msgs/String message_sent
-
----
-
-std_msgs/String message_recv
-
-std_msgs/Bool comm_result

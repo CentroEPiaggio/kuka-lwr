@@ -1,3 +1,0 @@
-<launch>
-  <node pkg="socket_comm" name="kuka_socket_CLIENT" type="kuka_socket_CLIENT" respawn="true" output="screen" />
-</launch>
