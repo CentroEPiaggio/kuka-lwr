@@ -1,0 +1,52 @@
+<library path="lib/liblwr_controllers">
+
+  <class name="lwr_controllers/JointImpedanceController" type="lwr_controllers::JointImpedanceController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The JointImpedanceController tracks effort commands. It expects a EffortJointInterface type of hardware interface.
+    </description>
+  </class>
+
+  <class name="lwr_controllers/InverseDynamicsController" type="lwr_controllers::InverseDynamicsController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The InverseDynamicsController compensates for inertial, gravitational, and coriolis effects on a robot.
+    </description>
+  </class> 
+
+  <class name="lwr_controllers/ComputedTorqueController" type="lwr_controllers::ComputedTorqueController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class> 
+
+  <class name="lwr_controllers/OneTaskInverseKinematics" type="lwr_controllers::OneTaskInverseKinematics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class> 
+
+  <class name="lwr_controllers/MultiTaskPriorityInverseKinematics" type="lwr_controllers::MultiTaskPriorityInverseKinematics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class> 
+
+  <class name="lwr_controllers/MultiTaskPriorityInverseDynamics" type="lwr_controllers::MultiTaskPriorityInverseDynamics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>   
+
+  <class name="lwr_controllers/MinimumEffortInverseDynamics" type="lwr_controllers::MinimumEffortInverseDynamics" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
+  <class name="lwr_controllers/BacksteppingController" type="lwr_controllers::BacksteppingController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
+
+</library>

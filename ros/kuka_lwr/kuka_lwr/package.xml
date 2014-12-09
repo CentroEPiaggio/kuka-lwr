@@ -10,19 +10,18 @@
   
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!--> PACKAGES </-->
-  
-  <!--> Kuka LWR description </-->
+  <!-- PACKAGES -->
+  <!-- Model -->
   <run_depend> lwr_description </run_depend>
 
-  <!--> Socket communication with Kuka LWR external programs </-->
-  <run_depend> lwr_socket_comm </run_depend>
+  <!-- ROSControl-based controllers -->
+  <run_depend> lwr_controllers </run_depend>
 
-  <!--> ROS_CONTROL pkgs with Kuka LWR </-->
-  <run_depend> lwr_ros_control </run_depend>
+  <!-- Real hardware interface -->
+  <run_depend> lwr_hw </run_depend>
 
-  <!--> GAZEBO pkgs with Kuka LWR </-->
-  <run_depend> lwr_gazebo </run_depend>
+  <!-- The kinematics (ToDo) -->
+  <!-- run_depend> lwr_kinematics </run_depend -->
 
   <export>
     <metapackage/>
