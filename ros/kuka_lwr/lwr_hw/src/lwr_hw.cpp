@@ -307,7 +307,7 @@ namespace lwr_ros_control
             // the KRC adds the dynamic terms, such that if zero torque is sent, the robot apply torques necessary to mantain the robot in the current position
             // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
             this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, true);
-        }
+          }
         }
       }
 
