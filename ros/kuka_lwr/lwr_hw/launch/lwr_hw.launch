@@ -3,21 +3,15 @@
 	<!-- LAUNCH INTERFACE -->
 	<arg name="port" default="49939"/>
 	<arg name="ip" default="192.168.0.10"/>
-	<arg name="namespace" default="lwr"/>
 	
 	<!-- LAUNCH IMPLEMENTATION -->
-	<!-- ToDo: avoid the terse_roscpp approach, load and parse parameters within /-->
-	<param name="tip_joint" value="lwr_arm_6_joint"/>
+	<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
 
-		<group ns="$(arg namespace)">
+	<!-- addresses /-->
+	<param name="port" value="$(arg port)"/>
+	<param name="ip" value="$(arg ip)"/>
 
-		<!-- addresses /-->
-		<param name="port" value="$(arg port)"/>
-		<param name="ip" value="$(arg ip)"/>
-
-		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
-		
-	</group>
+	<!-- the real hardware interface /-->
+	<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
 
 </launch>

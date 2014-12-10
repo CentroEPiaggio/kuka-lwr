@@ -9,42 +9,42 @@
 			</plugin>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_base_link">
+		<gazebo reference="${name}_base_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_1_link">
+		<gazebo reference="${name}_1_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_2_link">
+		<gazebo reference="${name}_2_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_3_link">
+		<gazebo reference="${name}_3_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_4_link">
+		<gazebo reference="${name}_4_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_5_link">
+		<gazebo reference="${name}_5_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_6_link">
+		<gazebo reference="${name}_6_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Orange</material>
 		</gazebo>
 
-		<gazebo reference="${name}_arm_7_link">
+		<gazebo reference="${name}_7_link">
 			<gravity>true</gravity>
 			<material>Gazebo/Grey</material>
 		</gazebo>

@@ -16,10 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
 )
 
-find_package(Eigen REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIRS})
-add_definitions(${EIGEN_DEFINITIONS})
-
 add_definitions (-fpermissive)
 
 ################################################
@@ -86,10 +82,6 @@ add_library(friremote
     src/friudp.cpp
 )
 
-add_library(terse_roscpp 
-    src/params.cpp
-)
-
 ## Declare a cpp executable
 add_executable(lwr_hw
     src/lwr_hw.cpp
@@ -102,7 +94,6 @@ add_executable(lwr_hw
 ## Specify libraries to link a library or executable target against
 target_link_libraries(lwr_hw
     friremote
-    terse_roscpp
     ${catkin_LIBRARIES}
 )
 
