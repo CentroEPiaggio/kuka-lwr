@@ -194,7 +194,7 @@ namespace lwr_ros_control
       joint = urdf_model_.getJoint(this->device_->joint_names[i]);
       if(!joint.get())
       {
-        ROS_ERROR_STREAM("The specified joint "<< this->device_->joint_names[i] << " can be found in the URDF model. Check that you loaded an URDF model in the robot description, or that you spelled correctly the joint name.");
+        ROS_ERROR_STREAM("The specified joint "<< this->device_->joint_names[i] << " can't be found in the URDF model. Check that you loaded an URDF model in the robot description, or that you spelled correctly the joint name.");
         throw std::runtime_error("Wrong joint name specification");
       }
 

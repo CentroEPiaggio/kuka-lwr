@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   controller_manager
   hardware_interface
   realtime_tools
+  joint_limits_interface
   roscpp
   tf
   urdf
