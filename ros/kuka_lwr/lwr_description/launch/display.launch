@@ -4,7 +4,7 @@
 	<arg name="robot_name" default="lwr_on_box"/>
 	<arg name="use_rviz" default="true"/>
 	<arg name="use_joint_state_publisher" default="true"/>
-	<arg name="use_lwr_sim" default="true"/>
+	<arg name="use_lwr_sim" default="false"/>
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
@@ -13,7 +13,9 @@
 	<param name="use_gui" value="$(arg gui)"/>
 
 	<group if="$(arg use_joint_state_publisher)">
-		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+			<rosparam param="source_list">[/lwr/joint_states]</rosparam>
+		</node>
 	</group>
 
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"  />
@@ -34,18 +36,16 @@
 			<arg name="world_name" value="$(find lwr_description)/worlds/simple_environment.world"/>
 			<arg name="paused" value="false"/>
 			<arg name="use_sim_time" value="true"/>
-			<arg name="gui" value="false"/>
+			<arg name="gui" value="true"/>
 			<arg name="headless" value="false"/>
 			<arg name="debug" value="false"/>
 		</include>
 
-		<!-- finally, listens to the simulation, the "lwr" depends on the namespace of the model and controllers -->
-		<rosparam param="source_list">[/lwr/joint_states]</rosparam>
 	</group>
 	<group unless="$(arg use_lwr_sim)">
 		<include file="$(find lwr_hw)/launch/lwr_hw.launch">
-			<arg name="port" default="49939"/>
-			<arg name="ip" default="192.168.0.10"/>
+			<arg name="port" default="49948"/>
+			<arg name="ip" default="192.168.0.20"/>
 		</include>
 	</group>
 </launch>

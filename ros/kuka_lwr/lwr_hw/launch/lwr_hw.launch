@@ -1,17 +1,18 @@
 <launch>
 
 	<!-- LAUNCH INTERFACE -->
-	<arg name="port" default="49939"/>
-	<arg name="ip" default="192.168.0.10"/>
-	
+	<arg name="port" default="49948"/>
+	<arg name="ip" default="192.168.0.20"/>
+
 	<!-- LAUNCH IMPLEMENTATION -->
-	<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
 
 	<!-- addresses /-->
 	<param name="port" value="$(arg port)"/>
 	<param name="ip" value="$(arg ip)"/>
-
-	<!-- the real hardware interface /-->
-	<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
+	<group ns="lwr">
+		<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
+		<!-- the real hardware interface /-->
+		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
+	</group>
 
 </launch>

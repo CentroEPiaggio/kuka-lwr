@@ -104,8 +104,8 @@ namespace lwr_ros_control
           joint_effort_command[j] = 0.0;
 
           // set default values for these two for now
-          joint_stiffness_command[j] = 10.0;
-          joint_damping_command[j] = 0.7;
+          joint_stiffness_command[j] = 0.0;
+          joint_damping_command[j] = 0.0;
         }
       }
 
@@ -265,7 +265,7 @@ namespace lwr_ros_control
         this->device_->joint_velocity[j] = 0.0; // until we use a proper filter
       }
       
-      this->device_->interface->doDataExchange();
+      //this->device_->interface->doDataExchange();
 
       return true;
     }
@@ -289,14 +289,15 @@ namespace lwr_ros_control
       if ( this->device_->interface->isPowerOn() )
       { 
         // check control mode
-        if ( this->device_->interface->getState() == FRI_STATE_CMD )
-        {
+        //if ( this->device_->interface->getState() == FRI_STATE_CMD )
+        //{
           // check control scheme
           if( this->device_->interface->getCurrentControlScheme() == FRI_CTRL_JNT_IMP )
           {
             for (int i = 0; i < LBR_MNJ; i++)
             {
                 newJntPosition[i] = this->device_->joint_position_command[i]; // zero for now
+		            //std::cout << "joint_effor_command " << i << " " << this->device_->joint_effort_command[i] << std::endl;
                 newJntAddTorque[i] = this->device_->joint_effort_command[i]; // comes from the controllers
                 newJntStiff[i] = this->device_->joint_stiffness_command[i]; // default values for now
                 newJntDamp[i] = this->device_->joint_damping_command[i]; // default values for now
@@ -306,27 +307,28 @@ namespace lwr_ros_control
             // note that stiffness and damping are 0, as well as the position, since only effort is allowed to be sent
             // the KRC adds the dynamic terms, such that if zero torque is sent, the robot apply torques necessary to mantain the robot in the current position
             // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
-            this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, true);
+            this->device_->interface->doJntImpedanceControl(NULL, newJntStiff, newJntDamp, newJntAddTorque, true);
           }
-        }
+        //}
       }
 
       // Stop request is issued from the other side
+      /*
       if ( this->device_->interface->getFrmKRLInt(0) == -1)
       {
           ROS_INFO(" Stop request issued from the other side");
           this->stop();
-      }
+      }*/
 
       // Quality change leads to output of statistics
       // for informational reasons
       //
-      if ( this->device_->interface->getQuality() != this->device_->lastQuality )
+      /*if ( this->device_->interface->getQuality() != this->device_->lastQuality )
       {
           ROS_INFO_STREAM("Quality change detected "<< this->device_->interface->getQuality()<< " \n");
           ROS_INFO_STREAM("" << this->device_->interface->getMsrBuf().intf);
           this->device_->lastQuality = this->device_->interface->getQuality();
-      }
+      }*/
 
       // this is already done in the doJntImpedance Control setting to true the last flag
       // this->device_->interface->doDataExchange();
@@ -403,7 +405,7 @@ namespace lwr_ros_control
 int main( int argc, char** argv )
 {
   // initialize ROS
-  ros::init(argc, argv, "lwr_server", ros::init_options::NoSigintHandler);
+  ros::init(argc, argv, "lwr_hw_interface", ros::init_options::NoSigintHandler);
 
   // ros spinner
   ros::AsyncSpinner spinner(1);
