@@ -33,6 +33,19 @@ bas(#tool,1)
 ptp $pos_act_mes
 ;HALT
 
+; Only joint impedance control is implemented
+$stiffness.strategy = 30
+$stiffness.axisstiffness={ A1 1000, A2 1000, A3 1000, A4 1000, A5 1000, A6 1000, E1 1000}
+$stiffness.axismaxdeltatrq={A1 100, A2 100, A3 100, A4 100, A5 100, A6 30, E1 30}
+$stiffness.maxforce = {X 300.0, Y 300.0, Z 300.0, A 30.0, B 30.0, C 30.0}
+$stiffness.cpmaxdelta = {X 100.0, Y 100.0, Z 100.0, A 100.0, B 100.0, C 100.0}
+$stiffness.axismaxdelta = {A1 100.0, A2 100.0, A3 100.0, A4 100.0, A5 100.0, A6 100.0, E1 100.0}            
+$stiffness.axisdamping = {A1 0.7, A2 0.7, A3 0.7, A4 0.7, A5 0.7, A6 0.7, E1 0.7}
+$stiffness.axisstiffness = {A1 1000.0, A2 1000.0, A3 1000.0, A4 1000.0, A5 1000.0, A6 1000.0, E1 1000.0}
+$stiffness.cpstiffness = {x 200, y 200, z 200, a 20, b 20, c 20}
+$stiffness.cpdamping = { x 0.7, y 0.7, z 0.7, a 0.7, b 0.7, c 0.7}
+$stiffness.commit=true
+
 ;specify the ip and port
 retVal = friSetup("192.168.0.150", 49939, 49939)
 ;Test open FRI with datarate 3 msec
@@ -47,19 +60,6 @@ for i=1 to 3
         wait for ($FriState==#CMD)
     endif
 endfor
-
-; Only joint impedance control is implemented
-$stiffness.strategy = 30
-$stiffness.axisstiffness={ A1 1000, A2 1000, A3 1000, A4 1000, A5 1000, A6 1000, E1 1000}
-$stiffness.axismaxdeltatrq={A1 100, A2 100, A3 100, A4 100, A5 100, A6 30, E1 30}
-$stiffness.maxforce = {X 300.0, Y 300.0, Z 300.0, A 30.0, B 30.0, C 30.0}
-$stiffness.cpmaxdelta = {X 100.0, Y 100.0, Z 100.0, A 100.0, B 100.0, C 100.0}
-$stiffness.axismaxdelta = {A1 100.0, A2 100.0, A3 100.0, A4 100.0, A5 100.0, A6 100.0, E1 100.0}            
-$stiffness.axisdamping = {A1 0.7, A2 0.7, A3 0.7, A4 0.7, A5 0.7, A6 0.7, E1 0.7}
-$stiffness.axisstiffness = {A1 1000.0, A2 1000.0, A3 1000.0, A4 1000.0, A5 1000.0, A6 1000.0, E1 1000.0}
-$stiffness.cpstiffness = {x 200, y 200, z 200, a 20, b 20, c 20}
-$stiffness.cpdamping = { x 0.7, y 0.7, z 0.7, a 0.7, b 0.7, c 0.7}
-$stiffness.commit=true
 
 ;Wait for a cmd from FRI remote
 loop
