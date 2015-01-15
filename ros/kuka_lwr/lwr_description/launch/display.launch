@@ -4,7 +4,8 @@
 	<arg name="robot_name" default="lwr_on_box"/>
 	<arg name="use_rviz" default="true"/>
 	<arg name="use_joint_state_publisher" default="true"/>
-	<arg name="use_lwr_sim" default="false"/>
+	<arg name="use_lwr_sim" default="true"/>
+	<arg name="load_moveit" default="true"/>
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
@@ -26,6 +27,28 @@
 
 	<!-- load controllers -->
 	<include file="$(find lwr_controllers)/launch/load_controllers.launch"/>
+
+	<group if="$(arg load_moveit)">
+		<!-- Run the main MoveIt executable without trajectory execution (we do not have controllers configured by default) -->
+		<include file="$(find lwr_moveit)/launch/move_group.launch">
+			<arg name="allow_trajectory_execution" value="true"/>  
+			<arg name="fake_execution" value="false"/>
+			<arg name="info" value="true"/>
+			<arg name="debug" value="false"/>
+		</include>
+
+		<!-- Launch the c++ interface for the planner -->
+		<!-- adjust the planner parameters -->
+		<param name="max_points_in_trajectory" value="50" />
+		<param name="max_planning_attempts" value="2" />
+		<param name="max_planning_time" value="2" />
+		<param name="tolerance_in_position" value="0.1" />
+		<param name="tolerance_in_orientation" value="0.1" />
+		<!-- choose the group you want to plan for -->
+		<param name="group_name" value="lwr" />
+		<!-- load the node that implements the /trajectory_planning_srv -->
+		<node name="lwr_path_planner" pkg="lwr_moveit" type="lwr_path_planner" respawn="true" output="screen"/>
+	</group>
 
 	<group if="$(arg use_lwr_sim)">
 		<!-- spawn the robot in gazebo -->

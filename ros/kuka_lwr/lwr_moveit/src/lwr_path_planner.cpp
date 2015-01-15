@@ -69,8 +69,8 @@ class LWRPlanner
 
         // define the names passed in the urdf files corresponding to the current move group for planning
         nh_.param<std::string>("arm_name", group_name_, "lwr");
-        nh_.param<std::string>("base_frame_for_goal", base_frame_for_goal_, "calib_lwr_arm_base_link");
-		nh_.param<std::string>("plan_for_frame", plan_for_frame_, "lwr_arm_7_link");
+        nh_.param<std::string>("base_frame_for_goal", base_frame_for_goal_, "lwr_base_link");
+		nh_.param<std::string>("plan_for_frame", plan_for_frame_, "lwr_7_link");
 
 		srv_trajectory_planning_ = nh_.advertiseService(nh_.resolveName("/lwr_planning_srv"),&LWRPlanner::planTrajectory, this);
 

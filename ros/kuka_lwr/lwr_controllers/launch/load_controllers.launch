@@ -5,9 +5,11 @@
 
   <!-- load position controllers -->
   <group ns="lwr">
+  <!-- node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller joint0_position_controller joint1_position_controller joint2_position_controller joint3_position_controller joint4_position_controller joint5_position_controller joint6_position_controller"/-->
+
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller joint0_position_controller joint1_position_controller joint2_position_controller joint3_position_controller joint4_position_controller joint5_position_controller joint6_position_controller"/>
-  </group>
+    output="screen"  args="joint_state_controller joint_trajectory_controller"/>
 
     <!--   Joint Impedance Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
@@ -40,6 +42,6 @@
 <!-- Backstepping Controller 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller BacksteppingController"/>  --> 
-
+</group>
 
 </launch>
