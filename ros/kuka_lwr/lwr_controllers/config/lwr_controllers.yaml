@@ -117,3 +117,8 @@ lwr:
      root_name: world
      tip_name: lwr_7_link
 
+  # Dynamic Sliding Mode Controller Task Space
+  DynamicSlidingModeControllerTaskSpace: 
+     type: lwr_controllers/DynamicSlidingModeControllerTaskSpace
+     root_name: world
+     tip_name: lwr_7_link

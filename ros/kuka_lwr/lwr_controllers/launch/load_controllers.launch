@@ -44,8 +44,12 @@
     output="screen"  args="joint_state_controller BacksteppingController"/>  --> 
 
 <!-- Dynamic Sliding Mode Controller --> 
+<!--  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller DynamicSlidingModeController"/>   -->
+
+<!-- Dynamic Sliding Mode Controller Task Space--> 
  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller DynamicSlidingModeController"/>  
+    output="screen"  args="joint_state_controller DynamicSlidingModeControllerTaskSpace"/>  
 
 </group>
 </launch>

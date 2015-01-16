@@ -54,5 +54,12 @@
     </description>
   </class>
 
+  <class name="lwr_controllers/DynamicSlidingModeControllerTaskSpace" type="lwr_controllers::DynamicSlidingModeControllerTaskSpace" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
+
 
 </library>
