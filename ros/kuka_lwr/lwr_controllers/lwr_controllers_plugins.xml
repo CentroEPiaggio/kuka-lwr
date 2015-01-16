@@ -48,5 +48,11 @@
     </description>
   </class>
 
+  <class name="lwr_controllers/DynamicSlidingModeController" type="lwr_controllers::DynamicSlidingModeController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
 
 </library>

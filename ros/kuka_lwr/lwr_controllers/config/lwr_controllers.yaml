@@ -111,3 +111,9 @@ lwr:
      root_name: world
      tip_name: lwr_7_link
 
+  # Dynamic Sliding Mode Controller
+  DynamicSlidingModeController: 
+     type: lwr_controllers/DynamicSlidingModeController
+     root_name: world
+     tip_name: lwr_7_link
+
