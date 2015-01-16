@@ -14,6 +14,7 @@
 #include <joint_limits_interface/joint_limits_interface.h>
 #include <joint_limits_interface/joint_limits_rosparam.h>
 #include <joint_limits_interface/joint_limits_urdf.h>
+#include <control_toolbox/filters.h>
 #include <urdf/model.h>
 
 // fri remote 
@@ -66,6 +67,7 @@ namespace lwr_ros_control
       // state and commands
       std::vector<double>
         joint_position,
+        joint_position_prev,
         joint_velocity,
         joint_effort,
         joint_position_command,
@@ -80,6 +82,7 @@ namespace lwr_ros_control
       void init()
       {
         joint_position.resize(LBR_MNJ);
+        joint_position_prev.resize(LBR_MNJ);
         joint_velocity.resize(LBR_MNJ);
         joint_effort.resize(LBR_MNJ);
         joint_position_command.resize(LBR_MNJ);
@@ -98,6 +101,7 @@ namespace lwr_ros_control
         for (int j = 0; j < LBR_MNJ; ++j)
         {
           joint_position[j] = 0.0;
+          joint_position_prev[j] = 0.0;
           joint_velocity[j] = 0.0;
           joint_effort[j] = 0.0;
           joint_position_command[j] = 0.0;
@@ -260,9 +264,10 @@ namespace lwr_ros_control
       // update the robot positions
       for (int j = 0; j < LBR_MNJ; j++)
       {
+      	this->device_->joint_position_prev[j] = this->device_->joint_position[j];
         this->device_->joint_position[j] = this->device_->interface->getMsrMsrJntPosition()[j];
         this->device_->joint_effort[j] = this->device_->interface->getMsrJntTrq()[j];
-        this->device_->joint_velocity[j] = 0.0; // until we use a proper filter
+        this->device_->joint_velocity[j] = filters::exponentialSmoothing((this->device_->joint_position[j]-this->device_->joint_position_prev[j])/period.toSec(), this->device_->joint_velocity[j], 0.2);
       }
       
       //this->device_->interface->doDataExchange();
