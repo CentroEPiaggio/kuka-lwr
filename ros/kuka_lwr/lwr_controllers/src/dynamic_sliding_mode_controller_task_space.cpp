@@ -179,12 +179,13 @@ namespace lwr_controllers
   			sigma_(i) = 0;
 
   			// coefficients > 0
-  			Kd_(i) = 25;
-  			gamma_(i) = 2;
-  			alpha_(i) = 20;
+  			Kd_(i) = 10;
+  			gamma_(i) = 1;
+  			alpha_(i) = 12;
   			lambda_(i) = 1;
   			k_(i) = 3;
     	}
+
 
     	Kp = 200;
     	Ki = 1; 
@@ -294,8 +295,8 @@ namespace lwr_controllers
 	    	{
 	    		
 	    		ROS_INFO("On target");
-	    		//cmd_flag_ = 0;
-	    		//return;
+	    		cmd_flag_ = 0;
+	    		return;
 	    	}
 	    } 
 

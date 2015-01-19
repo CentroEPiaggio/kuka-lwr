@@ -31,9 +31,9 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller MultiTaskPriorityInverseKinematics"/>  -->
 
-<!-- Multi Task Priority Inverse Dynamics Control 
+<!-- Multi Task Priority Inverse Dynamics Control -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller MultiTaskPriorityInverseDynamics"/>  -->
+    output="screen"  args="joint_state_controller MultiTaskPriorityInverseDynamics"/>  
 
 <!-- Minimum Effort Inverse Dynamics Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
@@ -47,9 +47,9 @@
 <!--  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller DynamicSlidingModeController"/>   -->
 
-<!-- Dynamic Sliding Mode Controller Task Space--> 
+<!-- Dynamic Sliding Mode Controller Task Space
  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller DynamicSlidingModeControllerTaskSpace"/>  
+    output="screen"  args="joint_state_controller DynamicSlidingModeControllerTaskSpace"/>  --> 
 
 </group>
 </launch>

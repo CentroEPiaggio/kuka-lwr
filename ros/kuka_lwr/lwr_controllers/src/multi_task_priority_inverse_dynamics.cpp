@@ -145,8 +145,8 @@ namespace lwr_controllers
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     		joint_des_states_.qdot(i) = joint_msr_states_.qdot(i);
-    		Kp_(i) = 300;
-  			Kd_(i) = 1;
+    		Kp_(i) = 100;
+  			Kd_(i) = 20;
     	}
 
     	// setting joint-space PIDs, useful only to stop the robot when starting the control (temporary solution)
@@ -182,6 +182,8 @@ namespace lwr_controllers
 	    	id_solver_->JntToMass(joint_msr_states_.q, M_);
 	    	id_solver_->JntToCoriolis(joint_msr_states_.q, joint_msr_states_.qdot, C_);
 	    	id_solver_->JntToGravity(joint_msr_states_.q, G_);
+	    	// deleting gravity contribute
+	    	G_.data.setZero();
 	    	
 	    	// computing the inverse of M_ now, since it will be used often
 	    	pseudo_inverse(M_.data,M_inv_,false);
@@ -243,8 +245,8 @@ namespace lwr_controllers
 			    	{
 			    		ROS_INFO("Task %d on target",index);
 			    		on_target_flag_[index] = true;
-			    		//if (index == (ntasks_ - 1))
-			    			//cmd_flag_ = 0;
+			    		if (index == (ntasks_ - 1))
+			    			cmd_flag_ = 0;
 			    	}
 			    }
 
