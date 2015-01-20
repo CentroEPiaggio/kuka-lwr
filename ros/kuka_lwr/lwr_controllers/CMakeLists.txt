@@ -64,6 +64,7 @@ add_library(${PROJECT_NAME}
   src/backstepping_controller.cpp
   src/dynamic_sliding_mode_controller.cpp
   src/dynamic_sliding_mode_controller_task_space.cpp
+  src/one_task_inverse_dynamics_jl.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)

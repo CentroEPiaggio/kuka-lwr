@@ -122,3 +122,9 @@ lwr:
      type: lwr_controllers/DynamicSlidingModeControllerTaskSpace
      root_name: world
      tip_name: lwr_7_link
+
+  # One Task Inverse Dynamics JL
+  OneTaskInverseDynamicsJL: 
+     type: lwr_controllers/OneTaskInverseDynamicsJL
+     root_name: world
+     tip_name: lwr_7_link

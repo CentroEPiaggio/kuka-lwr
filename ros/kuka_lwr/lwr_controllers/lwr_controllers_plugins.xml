@@ -36,6 +36,12 @@
     </description>
   </class>   
 
+  <class name="lwr_controllers/OneTaskInverseDynamicsJL" type="lwr_controllers::OneTaskInverseDynamicsJL" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class> 
+
   <class name="lwr_controllers/MinimumEffortInverseDynamics" type="lwr_controllers::MinimumEffortInverseDynamics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...

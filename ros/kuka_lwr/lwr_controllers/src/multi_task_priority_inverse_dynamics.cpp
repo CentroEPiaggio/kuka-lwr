@@ -249,7 +249,7 @@ namespace lwr_controllers
 			    			cmd_flag_ = 0;
 			    	}
 			    }
-
+ 
 		    	// updating N_^T
 		    	N_trans_ = N_trans_ - J_.data.transpose()*lambda_*J_.data*M_inv_;
 

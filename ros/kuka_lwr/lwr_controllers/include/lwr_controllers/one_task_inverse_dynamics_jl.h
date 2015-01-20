@@ -1,5 +1,5 @@
-#ifndef LWR_CONTROLLERS__MULTI_TASK_PRIORITY_INVERSE_DYNAMICS_H
-#define LWR_CONTROLLERS__MULTI_TASK_PRIORITY_INVERSE_DYNAMICS_H
+#ifndef LWR_CONTROLLERS__ONE_TASK_INVERSE_DYNAMICS_JL_H
+#define LWR_CONTROLLERS__ONE_TASK_INVERSE_DYNAMICS_JL_H
 
 #include <ros/node_handle.h>
 #include <urdf/model.h>
@@ -11,8 +11,8 @@
 #include <ros/ros.h>
 #include <std_msgs/Float64MultiArray.h>
 #include <visualization_msgs/MarkerArray.h>
-#include <sstream>
-
+#include <sstream> 
+ 
 #include <kdl/tree.hpp>
 #include <kdl/kdl.hpp>
 #include <kdl/chain.hpp>
@@ -21,35 +21,39 @@
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
+//#include <kdl/chainfksolvervel_recursive.hpp>
+//#include <kdl/chainfksolveracc_recursive.hpp>
 #include <control_toolbox/pid.h>
+#include <lwr_controllers/PoseRPY.h>
 #include <vector>
-
-#include <lwr_controllers/MultiPriorityTask.h>
 
 namespace lwr_controllers
 {
-	class MultiTaskPriorityInverseDynamics: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+	class OneTaskInverseDynamicsJL: public controller_interface::Controller<hardware_interface::EffortJointInterface>
 	{
 	public:
-		MultiTaskPriorityInverseDynamics();
-		~MultiTaskPriorityInverseDynamics();
+		OneTaskInverseDynamicsJL();
+		~OneTaskInverseDynamicsJL();
 
 		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
-		void command_configuration(const lwr_controllers::MultiPriorityTask::ConstPtr &msg);
+		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
 		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
-		void set_marker(KDL::Frame x, int index, int id);
+		void set_marker(KDL::Frame x, int id);
+		double task_objective_function(KDL::JntArray q);
 
 	private:
 		ros::NodeHandle nh_;
 		ros::Subscriber sub_command_;
 		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
+		ros::Publisher pub_pose_;
 		ros::Publisher pub_marker_;
 
 		std_msgs::Float64MultiArray msg_err_;
-		visualization_msgs::MarkerArray msg_marker_;
+		std_msgs::Float64MultiArray msg_pose_;
+		visualization_msgs::Marker msg_marker_;
 		std::stringstream sstr_;
 
 		KDL::Chain kdl_chain_;
@@ -57,47 +61,63 @@ namespace lwr_controllers
 		KDL::JntArrayVel joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
 		KDL::JntArray qdot_last_;
 
-		KDL::Frame x_;	//current e-e pose
+		KDL::Frame x_,x0_;	//current e-e pose
 		Eigen::Matrix<double,6,1> x_dot_;	//current e-e velocity
-		KDL::Twist x_dot_dot_;	//current e-e acceleration
-		std::vector<KDL::Frame> x_des_;	//desired pose
 
-		KDL::Twist x_err_;	// position error
+		KDL::Frame x_des_;	//desired pose
+		KDL::Twist x_des_dot_;
+		KDL::Twist x_des_dotdot_;
 
-		KDL::JntArray Kp_,Kd_;	// velocity error, position error
+		struct limits_
+		{
+			KDL::JntArray min;
+			KDL::JntArray max;
+			KDL::JntArray center;
+		} joint_limits_;
 
-		KDL::JntArray tau_;	// control torque
+		KDL::Twist x_err_;
+
+		KDL::JntArray Kp_,Kd_;
+
+		KDL::JntArray tau_;
 
 		KDL::JntSpaceInertiaMatrix M_;	// intertia matrix
 		KDL::JntArray C_;	// coriolis
 		KDL::JntArray G_;	// gravity
 
 		KDL::Jacobian J_;	//Jacobian J(q)
-		std::vector<KDL::Jacobian> J_last_;	//Jacobian of the last step
+		KDL::Jacobian J_last_;	//Jacobian of the last step
 		KDL::Jacobian J_dot_;	//d/dt(J(q))
+		KDL::Jacobian J_star_; // it will be J_*P_
 
-		Eigen::MatrixXd J_pinv_;	// Jacobian pseudo-inv
+		Eigen::MatrixXd J_pinv_;
 
-		Eigen::Matrix<double,6,1> e_ref_;	// reference error
-		Eigen::Matrix<double,7,7> I_;		// Identity
-		Eigen::Matrix<double,7,7> N_trans_;	// null-space matrix
+		Eigen::Matrix<double,6,1> e_ref_;
+		Eigen::Matrix<double,7,7> I_;
+		Eigen::Matrix<double,7,7> N_trans_;
 		Eigen::MatrixXd M_inv_;
 		Eigen::MatrixXd omega_;
 		Eigen::MatrixXd lambda_;
 		Eigen::Matrix<double,6,1> b_;
 
-		int first_step_;	// first step flag
-		int msg_id_;		// marker message id
-		int cmd_flag_;		// command received flag
-		int ntasks_;		// # of task
-		std::vector<bool> on_target_flag_;	
-		std::vector<int> links_index_;
+		double phi_;	
+		double phi_last_;
+
+		int step_;
+		int first_step_;
+		int msg_id_;
+		int cmd_flag_;
+		int ntasks_;
+		bool on_target_flag_;
+		int links_index_;
 
 
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
- 
+		//boost::scoped_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver_;
+		//boost::scoped_ptr<KDL::ChainFkSolverAcc_recursive> fk_acc_solver_;
+
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;
 		double Kp,Ki,Kd;
