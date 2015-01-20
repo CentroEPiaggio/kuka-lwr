@@ -23,17 +23,17 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller ComputedTorqueControl"/> -->
 
- <!-- One Task Inverse Kinematics Control 
+ <!-- One Task Inverse Kinematics Control -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller OneTaskInverseKinematics"/>  -->
-
+    output="screen"  args="joint_state_controller OneTaskInverseKinematics"/>  
+    
 <!-- Multi Task Priority Inverse Kinematics Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller MultiTaskPriorityInverseKinematics"/>  -->
 
 <!-- Multi Task Priority Inverse Dynamics Control -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller MultiTaskPriorityInverseDynamics"/>  
+  <!-- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller MultiTaskPriorityInverseDynamics"/>   -->
 
 <!-- Minimum Effort Inverse Dynamics Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"

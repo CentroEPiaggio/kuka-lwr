@@ -19,7 +19,7 @@
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
-#include <kdl/chainiksolverpos_nr.hpp>
+#include <kdl/chainiksolverpos_nr_jl.hpp>
 #include <kdl/chainiksolvervel_pinv.hpp>
 #include <control_toolbox/pid.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -62,6 +62,13 @@ namespace lwr_controllers
 		Eigen::MatrixXd J_pinv_;
 		Eigen::Matrix<double,3,3> skew_;
 
+		struct limits_
+		{
+			KDL::JntArray min;
+			KDL::JntArray max;
+			KDL::JntArray center;
+		} joint_limits_;
+
 		struct quaternion_
 		{
 			KDL::Vector v;
@@ -76,7 +83,7 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 		boost::scoped_ptr<KDL::ChainIkSolverVel_pinv> ik_vel_solver_;
-		boost::scoped_ptr<KDL::ChainIkSolverPos_NR> ik_pos_solver_;
+		boost::scoped_ptr<KDL::ChainIkSolverPos_NR_JL> ik_pos_solver_;
 
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;

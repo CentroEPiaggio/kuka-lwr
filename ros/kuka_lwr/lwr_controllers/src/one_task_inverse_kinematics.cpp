@@ -78,6 +78,26 @@ namespace lwr_controllers
 		    return false;
 		}
 
+		// Parsing joint limits from urdf model
+		boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
+    	boost::shared_ptr<const urdf::Joint> joint_;
+    	joint_limits_.min.resize(kdl_tree_.getNrOfJoints());
+		joint_limits_.max.resize(kdl_tree_.getNrOfJoints());
+		joint_limits_.center.resize(kdl_tree_.getNrOfJoints());
+		int index;
+
+    	for (int i = 0; i < kdl_tree_.getNrOfJoints() && link_; i++)
+    	{
+    		joint_ = model.getJoint(link_->parent_joint->name);  
+    		index = kdl_tree_.getNrOfJoints() - i - 1;
+
+    		joint_limits_.min(index) = joint_->limits->lower;
+    		joint_limits_.max(index) = joint_->limits->upper;
+    		joint_limits_.center(index) = (joint_limits_.min(index) + joint_limits_.max(index))/2;
+
+    		link_ = model.getLink(link_->getParent()->name);
+    	}
+
 
 		// Populate the KDL chain
 		if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
@@ -116,7 +136,7 @@ namespace lwr_controllers
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
 		fk_pos_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));
 		ik_vel_solver_.reset(new KDL::ChainIkSolverVel_pinv(kdl_chain_));
-		ik_pos_solver_.reset(new KDL::ChainIkSolverPos_NR(kdl_chain_,*fk_pos_solver_,*ik_vel_solver_));
+		ik_pos_solver_.reset(new KDL::ChainIkSolverPos_NR_JL(kdl_chain_,joint_limits_.min,joint_limits_.max,*fk_pos_solver_,*ik_vel_solver_));
 
 		joint_msr_states_.resize(kdl_chain_.getNrOfJoints());
 		joint_des_states_.resize(kdl_chain_.getNrOfJoints());
@@ -169,6 +189,7 @@ namespace lwr_controllers
 
     	if (cmd_flag_)
     	{
+    		/* ANALYTIC METHOD FOR INVERSE KINEMATICS
 	    	// computing Jacobian
 	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 
@@ -207,8 +228,15 @@ namespace lwr_controllers
 	    	// integrating q_dot -> getting q (Euler method)
 	    	for (int i = 0; i < joint_handles_.size(); i++)
 	    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
+			*/
 
-	    	if (Equal(x_,x_des_,0.005))
+	    	// computing differential inverse kinematics
+	    	ik_pos_solver_->CartToJnt(joint_msr_states_.q,x_des_,joint_des_states_.q);
+
+			// computing forward kinematics
+	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
+
+	    	if (Equal(x_,x_des_,0.025))
 	    	{
 	    		ROS_INFO("On target");
 	    		cmd_flag_ = 0;
