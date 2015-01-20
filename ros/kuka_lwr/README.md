@@ -1,7 +1,7 @@
 KUKA LWR
 ========
 
-ROS/hydro metapackage that contains ROS related code to work with the KUKA LWR 4+
+ROS indigo metapackage that contains ROS related code to work with the KUKA LWR 4+
 
 Overview
 --------
