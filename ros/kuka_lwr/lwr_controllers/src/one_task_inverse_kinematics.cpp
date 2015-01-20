@@ -165,7 +165,9 @@ namespace lwr_controllers
     	Kd = 10;
 
     	for (int i = 0; i < PIDs_.size(); i++)
+      {
     		PIDs_[i].initPid(Kp,Ki,Kd,0.3,-0.3);
+      }
     	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	// computing forward kinematics
@@ -222,7 +224,7 @@ namespace lwr_controllers
 	    	{
 	    		joint_des_states_.qdot(i) = 0.0;
 	    		for (int k = 0; k < J_pinv_.cols(); k++)
-	    			joint_des_states_.qdot(i) += .3*J_pinv_(i,k)*x_err_(k);
+	    			joint_des_states_.qdot(i) += .7*J_pinv_(i,k)*x_err_(k);
           
 	    	}
 
@@ -244,7 +246,7 @@ namespace lwr_controllers
 			// computing forward kinematics
 	    //	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
 
-	    	if (Equal(x_,x_des_,0.025))
+	    	if (Equal(x_,x_des_,0.005))
 	    	{
 	    		ROS_INFO("On target");
 	    		cmd_flag_ = 0;
