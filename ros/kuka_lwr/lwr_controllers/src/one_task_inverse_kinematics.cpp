@@ -189,7 +189,7 @@ namespace lwr_controllers
 
     	if (cmd_flag_)
     	{
-    		/* ANALYTIC METHOD FOR INVERSE KINEMATICS
+    		// ANALYTIC METHOD FOR INVERSE KINEMATICS
 	    	// computing Jacobian
 	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 
@@ -222,19 +222,27 @@ namespace lwr_controllers
 	    	{
 	    		joint_des_states_.qdot(i) = 0.0;
 	    		for (int k = 0; k < J_pinv_.cols(); k++)
-	    			joint_des_states_.qdot(i) += J_pinv_(i,k)*x_err_(k);
+	    			joint_des_states_.qdot(i) += .3*J_pinv_(i,k)*x_err_(k);
+          
 	    	}
 
 	    	// integrating q_dot -> getting q (Euler method)
 	    	for (int i = 0; i < joint_handles_.size(); i++)
 	    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
-			*/
+			
+        for (int i =0;  i < joint_handles_.size(); i++)
+        {
+          if (joint_des_states_.q(i) < joint_limits_.min(i) )
+            joint_des_states_.q(i) = joint_limits_.min(i);
+          if (joint_des_states_.q(i) > joint_limits_.max(i) )
+            joint_des_states_.q(i) = joint_limits_.max(i);
+        }
 
 	    	// computing differential inverse kinematics
-	    	ik_pos_solver_->CartToJnt(joint_msr_states_.q,x_des_,joint_des_states_.q);
+	    //	ik_pos_solver_->CartToJnt(joint_msr_states_.q,x_des_,joint_des_states_.q);
 
 			// computing forward kinematics
-	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
+	    //	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
 
 	    	if (Equal(x_,x_des_,0.025))
 	    	{
