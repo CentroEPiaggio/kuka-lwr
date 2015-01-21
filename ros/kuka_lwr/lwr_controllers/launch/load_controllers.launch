@@ -36,7 +36,7 @@
     output="screen"  args="joint_state_controller MultiTaskPriorityInverseDynamics"/>   -->
 
 <!-- One Task Inverse Dynamics JL Control -->
-  s <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller OneTaskInverseDynamicsJL"/>  
 
 <!-- Minimum Effort Inverse Dynamics Control 
