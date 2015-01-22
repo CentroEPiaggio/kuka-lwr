@@ -87,7 +87,7 @@ namespace lwr_controllers
 
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;
-		double Kp,Ki,Kd;
+    std::vector<double> Kp,Ki,Kd;
 	};
 
 }

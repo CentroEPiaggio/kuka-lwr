@@ -143,6 +143,9 @@ namespace lwr_controllers
 		tau_cmd_.resize(kdl_chain_.getNrOfJoints());
 		J_.resize(kdl_chain_.getNrOfJoints());
 		PIDs_.resize(kdl_chain_.getNrOfJoints());
+    Kp.resize(PIDs_.size()); 
+    Ki.resize(PIDs_.size()); 
+    Kd.resize(PIDs_.size()); 
 
 		sub_command_ = nh_.subscribe("command_configuration", 1, &OneTaskInverseKinematics::command_configuration, this);
 		sub_gains_ = nh_.subscribe("set_gains", 1, &OneTaskInverseKinematics::set_gains, this);
@@ -159,16 +162,40 @@ namespace lwr_controllers
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     	}
-
-    	Kp = 60;
-    	Ki = 1.2;
-    	Kd = 10;
+      //Joint 1
+    	Kp[0] = 250;
+    	Ki[0] = 10;
+    	Kd[0] = 30;
+      //Joint 2
+    	Kp[1] = 220;
+    	Ki[1] = 10;
+    	Kd[1] = 30;
+      //Joint 3
+    	Kp[2] = 150;
+    	Ki[2] = 6;
+    	Kd[2] = 20;
+      //Joint 4
+    	Kp[3] = 150;
+    	Ki[3] = 5;
+    	Kd[3] = 12;
+      //Joint 5
+    	Kp[4] = 90;
+    	Ki[4] = 5;
+    	Kd[4] = 10;
+      //Joint 6
+    	Kp[5] = 40;
+    	Ki[5] = 5;
+    	Kd[5] = 7;
+      //Joint 7
+    	Kp[6] = 15;
+    	Ki[6] = 2;
+    	Kd[6] = 5;
 
     	for (int i = 0; i < PIDs_.size(); i++)
       {
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.3,-0.3);
+    		PIDs_[i].initPid(Kp[i],Ki[i],Kd[i],0.3,-0.3);
+    	  ROS_INFO("PIDs gains for joint %d are: Kp = %f, Ki = %f, Kd = %f",i,Kp[i],Ki[i],Kd[i]);
       }
-    	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	// computing forward kinematics
     	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
@@ -224,7 +251,7 @@ namespace lwr_controllers
 	    	{
 	    		joint_des_states_.qdot(i) = 0.0;
 	    		for (int k = 0; k < J_pinv_.cols(); k++)
-	    			joint_des_states_.qdot(i) += .7*J_pinv_(i,k)*x_err_(k);
+	    			joint_des_states_.qdot(i) += J_pinv_(i,k)*x_err_(k); //removed scaling factor of .7
           
 	    	}
 
@@ -299,7 +326,8 @@ namespace lwr_controllers
 		x_des_ = frame_des_;
 		cmd_flag_ = 1;
 	}
-
+  
+  // TODO add the joint number to change gains, not them all
 	void OneTaskInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
 	{
 		if(msg->data.size() == 3)
