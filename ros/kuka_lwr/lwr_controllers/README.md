@@ -44,8 +44,8 @@ Send commands to any joint in terminal 3 (you need to load/start the position co
   - Orientation only
 `rostopic pub -1  /lwr/OneTaskInverseKinematics/command_configuration lwr_controllers/PoseRPY '{id: 2, orientation: {roll: 0.1, pitch: 0.2, yaw: 0.0}}'`
 
-  - PID Gains setting
-`rostopic pub -1  /lwr/OneTaskInverseKinematics/set_gains std_msgs/Float64MultiArray '{data: [60, 1.2, 10]}'`
+  - PID Gains setting (just set the desired joint(s) gains, as in the following example)
+`rostopic pub -1  /lwr/OneTaskInverseKinematics/set_gains lwr_controllers/PIDgains '{lwr_1_joint: {p: 100, i: 1, d: 10}, lwr_2_joint: {p: 20, i: 0, d: 20}}'`
 
 - Multi Task Priority Inverse Kinematics Controller:
   

@@ -121,8 +121,6 @@ namespace lwr_controllers
 		ROS_DEBUG("Number of segments: %d", kdl_chain_.getNrOfSegments());
 		ROS_DEBUG("Number of joints in chain: %d", kdl_chain_.getNrOfJoints());
 
-
-
 		// Get joint handles for all of the joints in the chain
 		for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1; it != kdl_chain_.segments.end(); ++it)
 		{
@@ -131,6 +129,38 @@ namespace lwr_controllers
 		}
 
 		ROS_DEBUG(" Number of joints in handle = %lu", joint_handles_.size() );
+
+		PIDs_.resize(kdl_chain_.getNrOfJoints()); 
+		Kp.resize(PIDs_.size()); 
+	    Ki.resize(PIDs_.size()); 
+	    Kd.resize(PIDs_.size());		
+
+	    // Parsing parameters from YAML 
+	    std::stringstream sstr_;
+		for (int i = 0; i < joint_handles_.size(); ++i)
+		{
+			sstr_.str("");
+			sstr_<<"gains/lwr_"<<i<<"_joint/p";
+    		if (!nh_.getParam(sstr_.str(), Kp[i]))
+    		{
+      			ROS_ERROR("Failed to parse parameter lwr_%d_joint/p",i);
+		    	return false;
+    		}
+      		sstr_.str("");
+			sstr_<<"gains/lwr_"<<i<<"_joint/i";
+      		if (!nh_.getParam(sstr_.str(), Ki[i]))
+      		{
+      			ROS_ERROR("Failed to parse parameter lwr_%d_joint/i",i);
+		    	return false;
+      		}
+      		sstr_.str("");
+			sstr_<<"gains/lwr_"<<i<<"_joint/d";
+      		if (!nh_.getParam(sstr_.str(), Kd[i]))
+      		{
+      			ROS_ERROR("Failed to parse parameter lwr_%d_joint/d",i);
+		    	return false;
+      		}
+      	}
 
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
@@ -142,10 +172,6 @@ namespace lwr_controllers
 		joint_des_states_.resize(kdl_chain_.getNrOfJoints());
 		tau_cmd_.resize(kdl_chain_.getNrOfJoints());
 		J_.resize(kdl_chain_.getNrOfJoints());
-		PIDs_.resize(kdl_chain_.getNrOfJoints());
-    Kp.resize(PIDs_.size()); 
-    Ki.resize(PIDs_.size()); 
-    Kd.resize(PIDs_.size()); 
 
 		sub_command_ = nh_.subscribe("command_configuration", 1, &OneTaskInverseKinematics::command_configuration, this);
 		sub_gains_ = nh_.subscribe("set_gains", 1, &OneTaskInverseKinematics::set_gains, this);
@@ -162,40 +188,12 @@ namespace lwr_controllers
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     	}
-      //Joint 1
-    	Kp[0] = 250;
-    	Ki[0] = 10;
-    	Kd[0] = 30;
-      //Joint 2
-    	Kp[1] = 220;
-    	Ki[1] = 10;
-    	Kd[1] = 30;
-      //Joint 3
-    	Kp[2] = 150;
-    	Ki[2] = 6;
-    	Kd[2] = 20;
-      //Joint 4
-    	Kp[3] = 150;
-    	Ki[3] = 5;
-    	Kd[3] = 12;
-      //Joint 5
-    	Kp[4] = 90;
-    	Ki[4] = 5;
-    	Kd[4] = 10;
-      //Joint 6
-    	Kp[5] = 40;
-    	Ki[5] = 5;
-    	Kd[5] = 7;
-      //Joint 7
-    	Kp[6] = 15;
-    	Ki[6] = 2;
-    	Kd[6] = 5;
 
     	for (int i = 0; i < PIDs_.size(); i++)
-      {
-    		PIDs_[i].initPid(Kp[i],Ki[i],Kd[i],0.3,-0.3);
-    	  ROS_INFO("PIDs gains for joint %d are: Kp = %f, Ki = %f, Kd = %f",i,Kp[i],Ki[i],Kd[i]);
-      }
+	    {
+	    	PIDs_[i].initPid(Kp[i],Ki[i],Kd[i],0.3,-0.3);
+	    	ROS_INFO("PIDs gains for joint %d are: Kp = %f, Ki = %f, Kd = %f",i,Kp[i],Ki[i],Kd[i]);
+	    }
 
     	// computing forward kinematics
     	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
@@ -259,19 +257,14 @@ namespace lwr_controllers
 	    	for (int i = 0; i < joint_handles_.size(); i++)
 	    		joint_des_states_.q(i) += period.toSec()*joint_des_states_.qdot(i);
 			
-        for (int i =0;  i < joint_handles_.size(); i++)
-        {
-          if (joint_des_states_.q(i) < joint_limits_.min(i) )
-            joint_des_states_.q(i) = joint_limits_.min(i);
-          if (joint_des_states_.q(i) > joint_limits_.max(i) )
-            joint_des_states_.q(i) = joint_limits_.max(i);
-        }
-
-	    	// computing differential inverse kinematics
-	    //	ik_pos_solver_->CartToJnt(joint_msr_states_.q,x_des_,joint_des_states_.q);
-
-			// computing forward kinematics
-	    //	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
+			// joint limits saturation
+	        for (int i =0;  i < joint_handles_.size(); i++)
+	        {
+	        	if (joint_des_states_.q(i) < joint_limits_.min(i))
+	            	joint_des_states_.q(i) = joint_limits_.min(i);
+	          	if (joint_des_states_.q(i) > joint_limits_.max(i))
+	            	joint_des_states_.q(i) = joint_limits_.max(i);
+	        }
 
 	    	if (Equal(x_,x_des_,0.005))
 	    	{
@@ -327,17 +320,57 @@ namespace lwr_controllers
 		cmd_flag_ = 1;
 	}
   
-  // TODO add the joint number to change gains, not them all
-	void OneTaskInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
+	void OneTaskInverseKinematics::set_gains(const lwr_controllers::PIDgains::ConstPtr &msg)
 	{
-		if(msg->data.size() == 3)
+		if (!(!msg->lwr_0_joint.p && !msg->lwr_0_joint.i && !msg->lwr_0_joint.d))
 		{
-			for(int i = 0; i < PIDs_.size(); i++)
-				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
+			Kp[0] = msg->lwr_0_joint.p;
+			Ki[0] = msg->lwr_0_joint.i;
+			Kd[0] = msg->lwr_0_joint.d;
+			ROS_INFO("New PID gains for lwr_0_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[0],Ki[0],Kd[0]);
 		}
-		else
-			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
+		if (!(!msg->lwr_1_joint.p && !msg->lwr_1_joint.i && !msg->lwr_1_joint.d))
+		{
+			Kp[1] = msg->lwr_1_joint.p;
+			Ki[1] = msg->lwr_1_joint.i;
+			Kd[1] = msg->lwr_1_joint.d;
+			ROS_INFO("New PID gains for lwr_1_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[1],Ki[1],Kd[1]);
+		}
+		if (!(!msg->lwr_2_joint.p && !msg->lwr_2_joint.i && !msg->lwr_2_joint.d))
+		{
+			Kp[2] = msg->lwr_2_joint.p;
+			Ki[2] = msg->lwr_2_joint.i;
+			Kd[2] = msg->lwr_2_joint.d;
+			ROS_INFO("New PID gains for lwr_2_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[2],Ki[2],Kd[2]);
+		}
+		if (!(!msg->lwr_3_joint.p && !msg->lwr_3_joint.i && !msg->lwr_3_joint.d))
+		{
+			Kp[3] = msg->lwr_3_joint.p;
+			Ki[3] = msg->lwr_3_joint.i;
+			Kd[3] = msg->lwr_3_joint.d;
+			ROS_INFO("New PID gains for lwr_3_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[3],Ki[3],Kd[3]);
+		}
+		if (!(!msg->lwr_4_joint.p && !msg->lwr_4_joint.i && !msg->lwr_4_joint.d))
+		{
+			Kp[4] = msg->lwr_4_joint.p;
+			Ki[4] = msg->lwr_4_joint.i;
+			Kd[4] = msg->lwr_4_joint.d;
+			ROS_INFO("New PID gains for lwr_4_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[4],Ki[4],Kd[4]);
+		}
+		if (!(!msg->lwr_5_joint.p && !msg->lwr_5_joint.i && !msg->lwr_5_joint.d))
+		{
+			Kp[5] = msg->lwr_5_joint.p;
+			Ki[5] = msg->lwr_5_joint.i;
+			Kd[5] = msg->lwr_5_joint.d;
+			ROS_INFO("New PID gains for lwr_5_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[5],Ki[5],Kd[5]);
+		}
+		if (!(!msg->lwr_6_joint.p && !msg->lwr_6_joint.i && !msg->lwr_6_joint.d))
+		{
+			Kp[5] = msg->lwr_6_joint.p;
+			Ki[5] = msg->lwr_6_joint.i;
+			Kd[5] = msg->lwr_6_joint.d;
+			ROS_INFO("New PID gains for lwr_6_joint set-> Kp: %f, Ki: %f, Kd: %f",Kp[6],Ki[6],Kd[6]);
+		}
 	}
 }
 

@@ -28,6 +28,8 @@ add_message_files(
    PoseRPY.msg
    RPY.msg
    MultiPriorityTask.msg
+   PID.msg
+   PIDgains.msg
 )
 
 generate_messages(

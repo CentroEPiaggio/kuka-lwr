@@ -11,9 +11,9 @@
 <!--   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller joint_trajectory_controller"/> -->
 
-    <!--   Joint Impedance Control 
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen"  args="joint_state_controller JointImpedanceControl"/> -->
+    <!--   Joint Impedance Control -->
+<!--   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen"  args="joint_state_controller JointImpedanceControl"/>  -->
 
    <!-- Inverse Dynamics Control 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
@@ -24,7 +24,6 @@
     output="screen"  args="joint_state_controller ComputedTorqueControl"/> -->
 
  <!-- One Task Inverse Kinematics Control --> 
-
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen"  args="joint_state_controller OneTaskInverseKinematics"/>       
 

@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <lwr_controllers/PoseRPY.h>
+#include <lwr_controllers/PIDgains.h>
 
 namespace lwr_controllers
 {
@@ -40,7 +41,7 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
-		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
+		void set_gains(const lwr_controllers::PIDgains::ConstPtr &msg);
 
 	private:
 		ros::NodeHandle nh_;
@@ -78,7 +79,7 @@ namespace lwr_controllers
 		KDL::Vector v_temp_;
 		
 		int cmd_flag_;
-
+		
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
