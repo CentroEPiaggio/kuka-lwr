@@ -327,6 +327,7 @@ namespace lwr_controllers
 			Kp[0] = msg->lwr_0_joint.p;
 			Ki[0] = msg->lwr_0_joint.i;
 			Kd[0] = msg->lwr_0_joint.d;
+			PIDs_[0].setGains(Kp[0],Ki[0],Kd[0],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_0_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[0],Ki[0],Kd[0]);
 		}
 		if (!(!msg->lwr_1_joint.p && !msg->lwr_1_joint.i && !msg->lwr_1_joint.d))
@@ -334,6 +335,7 @@ namespace lwr_controllers
 			Kp[1] = msg->lwr_1_joint.p;
 			Ki[1] = msg->lwr_1_joint.i;
 			Kd[1] = msg->lwr_1_joint.d;
+			PIDs_[1].setGains(Kp[1],Ki[1],Kd[1],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_1_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[1],Ki[1],Kd[1]);
 		}
 		if (!(!msg->lwr_2_joint.p && !msg->lwr_2_joint.i && !msg->lwr_2_joint.d))
@@ -341,6 +343,7 @@ namespace lwr_controllers
 			Kp[2] = msg->lwr_2_joint.p;
 			Ki[2] = msg->lwr_2_joint.i;
 			Kd[2] = msg->lwr_2_joint.d;
+			PIDs_[2].setGains(Kp[2],Ki[2],Kd[2],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_2_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[2],Ki[2],Kd[2]);
 		}
 		if (!(!msg->lwr_3_joint.p && !msg->lwr_3_joint.i && !msg->lwr_3_joint.d))
@@ -348,6 +351,7 @@ namespace lwr_controllers
 			Kp[3] = msg->lwr_3_joint.p;
 			Ki[3] = msg->lwr_3_joint.i;
 			Kd[3] = msg->lwr_3_joint.d;
+			PIDs_[3].setGains(Kp[3],Ki[3],Kd[3],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_3_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[3],Ki[3],Kd[3]);
 		}
 		if (!(!msg->lwr_4_joint.p && !msg->lwr_4_joint.i && !msg->lwr_4_joint.d))
@@ -355,6 +359,7 @@ namespace lwr_controllers
 			Kp[4] = msg->lwr_4_joint.p;
 			Ki[4] = msg->lwr_4_joint.i;
 			Kd[4] = msg->lwr_4_joint.d;
+			PIDs_[4].setGains(Kp[4],Ki[4],Kd[4],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_4_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[4],Ki[4],Kd[4]);
 		}
 		if (!(!msg->lwr_5_joint.p && !msg->lwr_5_joint.i && !msg->lwr_5_joint.d))
@@ -362,6 +367,7 @@ namespace lwr_controllers
 			Kp[5] = msg->lwr_5_joint.p;
 			Ki[5] = msg->lwr_5_joint.i;
 			Kd[5] = msg->lwr_5_joint.d;
+			PIDs_[5].setGains(Kp[5],Ki[5],Kd[5],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_5_joint set -> Kp: %f, Ki: %f, Kd: %f",Kp[5],Ki[5],Kd[5]);
 		}
 		if (!(!msg->lwr_6_joint.p && !msg->lwr_6_joint.i && !msg->lwr_6_joint.d))
@@ -369,6 +375,7 @@ namespace lwr_controllers
 			Kp[5] = msg->lwr_6_joint.p;
 			Ki[5] = msg->lwr_6_joint.i;
 			Kd[5] = msg->lwr_6_joint.d;
+			PIDs_[6].setGains(Kp[6],Ki[6],Kd[6],0.3,-0.3);
 			ROS_INFO("New PID gains for lwr_6_joint set-> Kp: %f, Ki: %f, Kd: %f",Kp[6],Ki[6],Kd[6]);
 		}
 	}
