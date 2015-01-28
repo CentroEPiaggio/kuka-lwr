@@ -41,7 +41,6 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
-		void set_gains(const lwr_controllers::PIDgains::ConstPtr &msg);
 
 	private:
 		ros::NodeHandle nh_;
@@ -88,7 +87,6 @@ namespace lwr_controllers
 
 		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;
-    std::vector<double> Kp,Ki,Kd;
 	};
 
 }
