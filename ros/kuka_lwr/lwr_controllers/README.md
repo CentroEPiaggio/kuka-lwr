@@ -53,7 +53,7 @@ Send commands to any joint in terminal 3 (you need to load/start the position co
 `rostopic pub -1  /lwr/MultiTaskPriorityInverseKinematics/command_configuration lwr_controllers/MultiPriorityTask '{links: [-1,3], tasks: [-0.4,0.3,1.5,0,0,0,-0.02,0.2,1.311,-1.568,0.291,0.1]}'`
 
   - PID Gains setting
-`rostopic pub -1  /lwr/MultiTaskPriorityInverseKinematics/set_gains std_msgs/Float64MultiArray '{data: [60, 1.2, 10]}'`
+`rosrun rqt_reconfigure rqt_reconfigure`
 
 - Multi Task Priority Inverse Dynamics Controller:
   
