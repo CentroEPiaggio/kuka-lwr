@@ -190,7 +190,6 @@ namespace lwr_controllers
 
     	if (cmd_flag_)
     	{
-    		// ANALYTIC METHOD FOR INVERSE KINEMATICS
 	    	// computing Jacobian
 	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
 

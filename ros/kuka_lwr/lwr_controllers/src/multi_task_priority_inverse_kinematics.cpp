@@ -110,6 +110,19 @@ namespace lwr_controllers
 
 		ROS_DEBUG(" Number of joints in handle = %lu", joint_handles_.size() );
 
+		PIDs_.resize(kdl_chain_.getNrOfJoints());
+
+		// Parsing PID gains from YAML 
+	    std::string pid_ = ("pid_");
+	    for (int i = 0; i < joint_handles_.size(); ++i)
+		{
+		    if (!PIDs_[i].init(ros::NodeHandle(n, pid_ + joint_handles_[i].getName())))
+		    {
+		        ROS_ERROR("Error initializing the PID for joint %d",i);
+		        return false;
+		    }
+		}
+
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
 		fk_pos_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));
@@ -119,10 +132,8 @@ namespace lwr_controllers
 		tau_cmd_.resize(kdl_chain_.getNrOfJoints());
 		J_.resize(kdl_chain_.getNrOfJoints());
 		J_star_.resize(kdl_chain_.getNrOfJoints());
-		PIDs_.resize(kdl_chain_.getNrOfJoints());
 
 		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseKinematics::command_configuration, this);
-		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiTaskPriorityInverseKinematics::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -140,14 +151,6 @@ namespace lwr_controllers
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     		joint_des_states_.qdot(i) = joint_msr_states_.qdot(i);
     	}
-
-    	Kp = 200;
-    	Ki = 1; 
-    	Kd = 5;
-
-    	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
-    	ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
     	e_dot_ = Eigen::Matrix<double,6,1>::Zero();
@@ -284,18 +287,6 @@ namespace lwr_controllers
 			return;
 		}
 		
-	}
-
-	void MultiTaskPriorityInverseKinematics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
-	{
-		if(msg->data.size() == 3)
-		{
-			for(int i = 0; i < PIDs_.size(); i++)
-				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
-		}
-		else
-			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
 	}
 
 	void MultiTaskPriorityInverseKinematics::set_marker(KDL::Frame x, int index, int id)
