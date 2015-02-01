@@ -6,6 +6,8 @@
 	<arg name="robot_name" default="lwr_on_box"/>
 	<arg name="use_rviz" default="false"/>
 	<arg name="use_joint_state_publisher" default="true"/>
+	<arg name="port" default="49948"/>
+	<arg name="ip" default="192.168.0.20"/>
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
@@ -48,8 +50,8 @@
 	</group>
 	<group unless="$(arg use_lwr_sim)">
 		<include file="$(find lwr_hw)/launch/lwr_hw.launch">
-			<arg name="port" default="49948"/>
-			<arg name="ip" default="192.168.0.20"/>
+			<arg name="port" value="49948"/>
+			<arg name="ip" value="192.168.0.20"/>
 		</include>
 	</group>
 </launch>
