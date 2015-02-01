@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+  <name>lwr_launch</name>
+  <version>0.0.0</version>
+  <description>Launch files for lwr_controllers without MoveIt!</description>
+
+  <maintainer email="marco_esposito@mytum.de">Marco Esposito</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>lwr_description</run_depend>
+  <run_depend>lwr_hw</run_depend>
+  <run_depend>lwr_controllers</run_depend>
+
+  <export>
+  </export>
+  
+</package>

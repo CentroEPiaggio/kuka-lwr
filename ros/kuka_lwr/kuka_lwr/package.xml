@@ -19,6 +19,9 @@
 
   <!-- Real hardware interface -->
   <run_depend> lwr_hw </run_depend>
+  
+  <!-- Launch files -->
+  <run_depend> lwr_launch </run_depend>
 
   <!-- The kinematics (ToDo) -->
   <!-- run_depend> lwr_kinematics </run_depend -->
