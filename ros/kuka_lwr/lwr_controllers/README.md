@@ -12,7 +12,10 @@ This package contains the implementation of different control strategies for the
 The desired controller can be ran with the aid of the launch files from the _lwr_launch_ package. 
 The following example loads the OneTaskInverseKinematics controller:  
 ```roslaunch lwr_launch lwr_launch.launch controller:=OneTaskInverseKinematics```  
-Each of the controllers listed here can be loaded this way, either for use on a simulated robot or on a real one, depending on the value of the _use_lwr_sim_ parameter.
+Each of the controllers listed here can be loaded this way, either for use on a simulated robot or on a real one, depending on the value of the _use_lwr_sim_ parameter.  
+Also more than one controller can be loaded at once:  
+```roslaunch lwr_launch lwr_launch.launch controller:="OneTaskInverseKinematics ComputedTorqueController"```  
+(please note the quotes surrounding the list of controllers to be loaded).
 
 Once the planning environment has loaded, commands can be sent to any joint in another terminal.
 
