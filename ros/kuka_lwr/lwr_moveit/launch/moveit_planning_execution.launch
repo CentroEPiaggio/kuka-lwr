@@ -19,10 +19,12 @@
   <include file="$(find lwr_moveit)/launch/planning_context.launch" >
     <arg name="load_robot_description" value="true" />
   </include>
-  
-  <include file="$(find lwr_controllers)/launch/load_controller.launch">
-	  <arg name="controller" value="joint_trajectory_controller" />
-  </include>
+
+	<!-- Load joint controller configurations from YAML file to parameter server -->
+	<rosparam file="$(find lwr_moveit)/config/lwr_controller.yaml" command="load"/>
+	
+	<node ns="lwr" name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+		output="screen"  args="joint_state_controller joint_trajectory_controller"/> 
   
   <remap from="/lwr/joint_states" to="/joint_states"/>  <!--TODO: why is this needed??-->
 
