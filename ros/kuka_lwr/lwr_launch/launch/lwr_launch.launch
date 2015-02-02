@@ -12,7 +12,7 @@
 	<!-- LAUNCH IMPLEMENTATION -->
 
 	<!-- the urdf/srdf parameter -->
-	<param name="robot_description" command="$(find xacro)/xacro.py $(find lwr_description)/robot/$(arg robot_name).urdf.xacro" />
+	<include file="$(find lwr_description)/launch/lwr_upload.launch" />
     <param name="robot_description_semantic" textfile="$(find lwr_moveit)/config/lwr.srdf" />
 	<param name="use_gui" value="$(arg gui)"/>
 
