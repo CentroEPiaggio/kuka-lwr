@@ -6,11 +6,11 @@
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
-	<!-- addresses /-->
-	<param name="port" value="$(arg port)"/>
-	<param name="ip" value="$(arg ip)"/>
 	<group ns="lwr">
 		<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
+		<!-- addresses /-->
+		<param name="port" value="$(arg port)"/>
+		<param name="ip" value="$(arg ip)"/>
 		<!-- the real hardware interface /-->
 		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
 	</group>

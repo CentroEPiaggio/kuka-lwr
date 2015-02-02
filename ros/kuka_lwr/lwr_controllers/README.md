@@ -1,28 +1,28 @@
-KUKA LWR
-========
+# KUKA LWR CONTROLLERS
 
-ROS/hydro metapackage that contains ROS related code to emulate the controllers included in the KUKA LWR 4+
+ROS/indigo package with various controllers implemented for the LWR 4+
 
-Overview
---------
+## Overview
+
+This package contains the implementation of different control strategies for the KUKA LWR 4+. 
 
 
-Build
------
+## Usage
 
-* 
+The desired controller can be ran with the aid of the launch files from the _lwr_launch_ package. 
+The following example loads the OneTaskInverseKinematics controller:  
+```roslaunch lwr_launch lwr_launch.launch controller:=OneTaskInverseKinematics```  
+Each of the controllers listed here can be loaded this way, either for use on a simulated robot or on a real one, depending on the value of the _use_lwr_sim_ parameter.  
 
-Launch the simulation environment in terminal 1:
+Also more than one controller can be loaded at once:  
+```roslaunch lwr_launch lwr_launch.launch controller:="joint_position_controller joint_trajectory_controller"```  
+(please note the quotes surrounding the list of controllers to be loaded).  
 
-`roslaunch lwr_gazebo lwr_on_box.launch`
+Sometimes it is desired to load multiple controllers, but start only one of them, with the aim of switch between them at runtime with controller_manager.  
+This can be achieved with the _stopped_controllers_ parameter:  
+```roslaunch lwr_launch lwr_launch.launch controller:="OneTaskInverseKinematics"  stopped_controllers:="ComputedTorqueControl"```  
 
-Launch the controllers in terminal 2:
-
-`roslaunch lwr_ros_control `
-
-You have to be sure that in lwr_control.launch is active the controller that you are looking for
-
-Send commands to any joint in terminal 3 (you need to load/start the position controllers in the lwr_control.launch file):
+Once the planning environment has loaded, commands can be sent to any joint in another terminal.
 
 - Impedance Controller:
 `rostopic pub -1  /lwr/JointImpedanceControl/command_configuration std_msgs/Float64MultiArray '{ data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}'`

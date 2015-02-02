@@ -1,0 +1,8 @@
+<launch>
+
+	<include file="$(find lwr_controllers)/launch/load_controller.launch"> 
+		<arg name="controller" value="OneTaskInverseDynamicsJL" />
+	</include>
+		
+</launch>
+		
