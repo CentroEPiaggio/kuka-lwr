@@ -13,7 +13,7 @@
   <!--  - if sim=false, a robot_ip argument is required -->
   <arg name="sim" default="true" doc="If true, the robot will be simulated in Gazebo" />
   <arg name="robot_ip" default="192.168.0.20" unless="$(arg sim)" doc="The IP address of the robot" />
-  <arg name="robot_port" default="49948" unless="$(arg sim)" doc="The listening port of the FRI interface" />
+  <arg name="robot_port" default="49939" unless="$(arg sim)" doc="The listening port of the FRI interface" />
  
   <!-- load the robot_description parameter before launching ROS-I nodes -->
   <include file="$(find lwr_moveit)/launch/planning_context.launch" >
