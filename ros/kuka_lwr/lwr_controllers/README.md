@@ -13,9 +13,14 @@ The desired controller can be ran with the aid of the launch files from the _lwr
 The following example loads the OneTaskInverseKinematics controller:  
 ```roslaunch lwr_launch lwr_launch.launch controller:=OneTaskInverseKinematics```  
 Each of the controllers listed here can be loaded this way, either for use on a simulated robot or on a real one, depending on the value of the _use_lwr_sim_ parameter.  
+
 Also more than one controller can be loaded at once:  
-```roslaunch lwr_launch lwr_launch.launch controller:="OneTaskInverseKinematics ComputedTorqueController"```  
-(please note the quotes surrounding the list of controllers to be loaded).
+```roslaunch lwr_launch lwr_launch.launch controller:="joint_position_controller joint_trajectory_controller"```  
+(please note the quotes surrounding the list of controllers to be loaded).  
+
+Sometimes it is desired to load multiple controllers, but start only one of them, with the aim of switch between them at runtime with controller_manager.  
+This can be achieved with the _stopped_controllers_ parameter:  
+```roslaunch lwr_launch lwr_launch.launch controller:="OneTaskInverseKinematics"  stopped_controllers:="ComputedTorqueControl"```  
 
 Once the planning environment has loaded, commands can be sent to any joint in another terminal.
 
