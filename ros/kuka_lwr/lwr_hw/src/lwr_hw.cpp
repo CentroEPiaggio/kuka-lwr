@@ -317,15 +317,6 @@ namespace lwr_ros_control
         //}
           if( this->device_->interface->getCurrentControlScheme() == FRI_CTRL_OTHER ) // Gravity compensation: just read status, but we have to keep FRI alive
           {
-//             for (int i = 0; i < LBR_MNJ; i++)
-//             {
-//                 newJntPosition[i] = this->device_->joint_position_command[i]; // zero for now
-// 		            //std::cout << "joint_effor_command " << i << " " << this->device_->joint_effort_command[i] << std::endl;
-//                 newJntAddTorque[i] = this->device_->joint_effort_command[i]; // comes from the controllers
-//                 newJntStiff[i] = this->device_->joint_stiffness_command[i]; // default values for now
-//                 newJntDamp[i] = this->device_->joint_damping_command[i]; // default values for now
-//             }
-
             this->device_->interface->doJntImpedanceControl(NULL, NULL, NULL, NULL, true);
           }
       }
