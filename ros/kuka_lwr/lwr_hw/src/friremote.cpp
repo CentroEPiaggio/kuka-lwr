@@ -80,15 +80,14 @@ int friRemote::doReceiveData()
 /** Data Exchanger -- normally update within access routine implicitely ... */
 int friRemote::doSendData()
 {
-  
-  // received at least something 
-   seqCount++;
-   cmd.head.sendSeqCount = seqCount;
-   cmd.head.reflSeqCount = msr.head.sendSeqCount;
-   cmd.head.datagramId = FRI_DATAGRAM_ID_CMD;
-   cmd.head.packetSize = sizeof(tFriCmdData);
-    int rc=remote.Send(&cmd);
-  return rc;
+	// received at least something 
+	seqCount++;
+	cmd.head.sendSeqCount = seqCount;
+	cmd.head.reflSeqCount = msr.head.sendSeqCount;
+	cmd.head.datagramId = FRI_DATAGRAM_ID_CMD;
+	cmd.head.packetSize = sizeof(tFriCmdData);
+	int rc=remote.Send(&cmd);
+	return rc;
 }
 
 	/** send commands based on last msr datagram and 
@@ -100,15 +99,13 @@ int friRemote::doDataExchange()
 	doSendData();
 	return doReceiveData();
 }
-  /** automatically do data exchange, if not otherwise specified */
-  int friRemote::doPositionControl(float newJntPosition[LBR_MNJ], bool flagDataExchange)
 
+  /** automatically do data exchange, if not otherwise specified */
+int friRemote::doPositionControl(float newJntPosition[LBR_MNJ], bool flagDataExchange)
 {
 	// Helper, if not properly initialized or the like...
 
 	cmd.cmd.cmdFlags=FRI_CMD_JNTPOS;
-	// Note:: If the interface is not in Command mode,
-	// The commands have to be "mirrored" to get in sync
 	// Note:: If the interface is not in Command mode,
 	// The commands have to be "mirrored" to get in sync
 	if ((getState() != FRI_STATE_CMD) || (!isPowerOn()))
