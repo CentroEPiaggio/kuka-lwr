@@ -15,6 +15,13 @@ For planning (_lwr_moveit_):
 
 ## Usage
 
+## Prerequisites
+- load the script _lwr_hw/krl/ros_control.src_ on the robot  
+- bring the robot in a position where the joints 1 and 3 are as bent as possible (at least 45 degrees) to avoid the "__FRI interpolation error__"  
+- put the robot in __Position__ control  
+- start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button  
+- the script should reach the loop where it wait for commands; now you can proceed by loading MoveIt!  
+
 ### MoveIt!
 __IMPORTANT__:  This is still an EXPERIMENTAL package! Try it out on real hardware at your own risk, and with the red button next to you.
 #### Demo
@@ -25,5 +32,4 @@ This launch configuration starts a Gazebo simulation that is controlled by MoveI
 `roslaunch lwr_moveit moveit_planning_execution.launch`
 #### Real Robot
 This is how MoveIt! can be connected to a real robot:
-- load the script _lwr_hw/krl/ros_control.src_  and execute it
-- `roslaunch lwr_moveit moveit_planning_execution.launch sim:=false robot_ip:=192.168.0.20 robot_port:=49948`
+- `roslaunch lwr_moveition.launch sim:=false robot_ip:=192.168.0.20 robot_port:=49948`
