@@ -46,13 +46,13 @@ lwr:
       - lwr_5_joint
       - lwr_6_joint
     gains:
-      lwr_0_joint: {p: 21000,  d: 0, i: 10, i_clamp: 30}
-      lwr_1_joint: {p: 50000,  d: 0, i: 10, i_clamp: 30}
-      lwr_2_joint: {p: 50000,  d: 0, i: 10, i_clamp: 30}
-      lwr_3_joint: {p: 50000,  d: 0, i: 10, i_clamp: 30}
-      lwr_4_joint: {p: 50000,  d: 0, i: 10, i_clamp: 30}
-      lwr_5_joint: {p: 50000,  d: 0, i: 10, i_clamp: 30}
-      lwr_6_joint: {p: 50000,  d: 0, i: 10, i_clamp: 30}
+      lwr_0_joint: {p: 550,  d: 20, i: 40, i_clamp: 30}
+      lwr_1_joint: {p: 400,  d: 10, i: 10, i_clamp: 30}
+      lwr_2_joint: {p: 200,  d: 10, i: 10, i_clamp: 30}
+      lwr_3_joint: {p: 100,  d: 5, i: 10, i_clamp: 30}
+      lwr_4_joint: {p: 80,  d: 3, i: 5, i_clamp: 10}
+      lwr_5_joint: {p: 10,  d: 1, i: 3, i_clamp: 10}
+      lwr_6_joint: {p: 10,  d: 1, i: 3, i_clamp: 10}
 
     constraints:
       goal_time: 0.5                   # Override default
