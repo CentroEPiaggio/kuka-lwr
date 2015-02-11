@@ -21,7 +21,6 @@ For planning (_lwr_moveit_):
 
 `sudo apt-get install ros-indigo-moveit-full`
 
-
 ## Usage
 
 ### Prerequisites
