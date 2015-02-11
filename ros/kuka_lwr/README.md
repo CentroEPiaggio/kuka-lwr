@@ -24,6 +24,17 @@ For planning (_lwr_moveit_):
 
 ## Usage
 
+
+### Gravity compensation
+In this mode the robot can be moved manually, while the position of each joint is available in TF (__IMPORTANT__: due to the robot's own 
+software policies, this mode is only available in T1). This mode can be very useful for calibration or tracking procedures.  
+- load the script _lwr_hw/krl/ros_monitor.src_ on the robot  
+- put the robot in __Position__ control (it will be changed to __Gravity Compensation__ inside the script)  
+- start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button (you can also use the script in automatic mode)  
+- the script should reach the loop where it waits for commands
+- start the publisher node with 'roslaunch lwr_launch state_publisher.launch'
+
+
 ### Custom Controllers
 #### Bringup
 Launch the desired controller and Gazebo to try it out:  

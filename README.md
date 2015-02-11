@@ -24,12 +24,12 @@ For planning (_lwr_moveit_):
 
 ## Usage
 
-## Prerequisites
-- load the script _lwr_hw/krl/ros_control.src_ on the robot  
+### Prerequisites
+- load the script _lwr_hw/krl/ros_control.src_ and the relative _.dat_ on the robot  
 - bring the robot in a position where the joints 1 and 3 are as bent as possible (at least 45 degrees) to avoid the "__FRI interpolation error__"  
 - put the robot in __Position__ control  
-- start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button  
-- the script should reach the loop where it wait for commands; now you can proceed by loading the custom controllers or MoveIt!  
+- start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button (you can also use the script in automatic mode)  
+- the script should reach the loop where it waits for commands; now you can proceed by loading the custom controllers or MoveIt!  
 
 ### Custom Controllers
 #### Bringup
@@ -38,6 +38,15 @@ Launch the desired controller and Gazebo to try it out:
 
 Use it with a real robot:  
 ```roslaunch lwr_launch lwr_launch.launch controller:=OneTaskInverseKinematics use_lwr_sim:=false ip:=192.168.0.20 port:=49939 ```  
+
+#### Gravity compensation
+In this mode the robot can be moved manually, while the position of each joint is available in TF (__IMPORTANT__: due to the robot's own 
+software policies, this mode is only available in T1). This mode can be very useful for calibration or tracking procedures.  
+- load the script _lwr_hw/krl/ros_monitor.src_ on the robot  
+- put the robot in __Position__ control (it will be changed to __Gravity Compensation__ inside the script)  
+- start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button (you can also use the script in automatic mode)  
+- the script should reach the loop where it waits for commands
+- start the publisher node with 'roslaunch lwr_launch state_publisher.launch'
 
 #### Motion commands
 Send commands to the controller in another terminal:
