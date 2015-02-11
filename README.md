@@ -46,6 +46,7 @@ software policies, this mode is only available in T1). This mode can be very use
 - put the robot in __Position__ control (it will be changed to __Gravity Compensation__ inside the script)  
 - start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button (you can also use the script in automatic mode)  
 - the script should reach the loop where it waits for commands
+- start the FRI interface with 'roslaunch lwr_hw lwr_hw.launch'
 - start the publisher node with 'roslaunch lwr_launch state_publisher.launch'
 
 #### Motion commands
