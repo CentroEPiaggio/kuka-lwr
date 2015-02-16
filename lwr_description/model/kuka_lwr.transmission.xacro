@@ -5,6 +5,7 @@
     <xacro:macro name="kuka_lwr_transmission" params="name">
 
 	    <transmission name="${name}_0_trans">
+	    	<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_0_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -16,6 +17,7 @@
 	    </transmission>
 
 		<transmission name="${name}_1_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_1_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -27,6 +29,7 @@
 		</transmission>
 
 		<transmission name="${name}_2_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_2_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -38,6 +41,7 @@
 		</transmission>
 
 		<transmission name="${name}_3_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_3_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -49,6 +53,7 @@
 		</transmission>
 
 		<transmission name="${name}_4_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_4_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -60,6 +65,7 @@
 		</transmission>
 
 		<transmission name="${name}_5_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_5_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -71,6 +77,7 @@
 		</transmission>
 
 		<transmission name="${name}_6_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_6_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
