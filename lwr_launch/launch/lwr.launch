@@ -23,7 +23,7 @@
 		</node>
 	</group>
 
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"  />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  />
 
 	<!-- load controller -->
 	<include file="$(find lwr_controllers)/launch/load_controller.launch">
