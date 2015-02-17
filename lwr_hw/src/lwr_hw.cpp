@@ -315,6 +315,10 @@ namespace lwr_ros_control
             this->device_->interface->doJntImpedanceControl(NULL, newJntStiff, newJntDamp, newJntAddTorque, true);
           }
         //}
+          if( this->device_->interface->getCurrentControlScheme() == FRI_CTRL_OTHER ) // Gravity compensation: just read status, but we have to keep FRI alive
+          {
+            this->device_->interface->doJntImpedanceControl(NULL, NULL, NULL, NULL, true);
+          }
       }
 
       // Stop request is issued from the other side
