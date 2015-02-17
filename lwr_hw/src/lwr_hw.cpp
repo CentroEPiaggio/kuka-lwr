@@ -108,7 +108,7 @@ namespace lwr_ros_control
           joint_effort_command[j] = 0.0;
 
           // set default values for these two for now
-          joint_stiffness_command[j] = 0.0;
+          joint_stiffness_command[j] = 300.0;
           joint_damping_command[j] = 0.0;
         }
       }
@@ -132,6 +132,7 @@ namespace lwr_ros_control
     // interfaces
     hardware_interface::JointStateInterface state_interface_;
     hardware_interface::EffortJointInterface effort_interface_;
+    hardware_interface::PositionJointInterface position_interface_;
 
     joint_limits_interface::EffortJointSaturationInterface   ej_sat_interface_;
     joint_limits_interface::EffortJointSoftLimitsInterface   ej_limits_interface_;
@@ -217,6 +218,13 @@ namespace lwr_ros_control
 
       effort_interface_.registerHandle(joint_handle);
 
+      // position command handle
+      joint_handle = hardware_interface::JointHandle(
+            state_interface_.getHandle(this->device_->joint_names[i]),
+            &this->device_->joint_position_command[i]);
+
+      position_interface_.registerHandle(joint_handle);
+
       registerJointLimits(this->device_->joint_names[i],
                           joint_handle,
                           &urdf_model_,
@@ -230,6 +238,7 @@ namespace lwr_ros_control
     // register ros-controls interfaces
     this->registerInterface(&state_interface_);
     this->registerInterface(&effort_interface_);
+    this->registerInterface(&position_interface_);
 
     std::cout << "Opening FRI Version " 
       << FRI_MAJOR_VERSION << "." << FRI_SUB_VERSION << "." <<FRI_DATAGRAM_ID_CMD << "." <<FRI_DATAGRAM_ID_MSR 
@@ -302,7 +311,6 @@ namespace lwr_ros_control
             for (int i = 0; i < LBR_MNJ; i++)
             {
                 newJntPosition[i] = this->device_->joint_position_command[i]; // zero for now
-		            //std::cout << "joint_effor_command " << i << " " << this->device_->joint_effort_command[i] << std::endl;
                 newJntAddTorque[i] = this->device_->joint_effort_command[i]; // comes from the controllers
                 newJntStiff[i] = this->device_->joint_stiffness_command[i]; // default values for now
                 newJntDamp[i] = this->device_->joint_damping_command[i]; // default values for now
@@ -312,7 +320,7 @@ namespace lwr_ros_control
             // note that stiffness and damping are 0, as well as the position, since only effort is allowed to be sent
             // the KRC adds the dynamic terms, such that if zero torque is sent, the robot apply torques necessary to mantain the robot in the current position
             // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
-            this->device_->interface->doJntImpedanceControl(NULL, newJntStiff, newJntDamp, newJntAddTorque, true);
+            this->device_->interface->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, true);
           }
         //}
       }
