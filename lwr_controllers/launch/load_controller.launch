@@ -1,6 +1,6 @@
 <launch>
 	
-	<arg name="controller" default="joint_trajectoy_controller" doc="Name of the controller to be loaded (e.g. joint_trajectoy_controller)" />
+	<arg name="controller" default="joint_position_trajectoy_controller" doc="Name of the controller to be loaded (e.g. joint_trajectoy_controller)" />
 	<arg name="stopped_controllers" default="OneTaskInverseKinematics" doc="Additional controllers to be loaded, but not started (can be started later with controller_manager)" />
 
 	<!-- Load joint controller configurations from YAML file to parameter server -->

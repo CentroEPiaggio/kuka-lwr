@@ -32,4 +32,5 @@ This launch configuration starts a Gazebo simulation that is controlled by MoveI
 `roslaunch lwr_moveit moveit_planning_execution.launch`
 #### Real Robot
 This is how MoveIt! can be connected to a real robot:
-- `roslaunch lwr_moveition.launch sim:=false robot_ip:=192.168.0.20 robot_port:=49948`
+- `roslaunch lwr_launch lwr.launch use_lwr_sim:=false use_rviz:=true` (set you ip and port address correctly)
+- `roslaunch lwr_moveit move_group.launch` (check the controller.yaml configuration if the controller you are using is the same as loaded in the previous step)
