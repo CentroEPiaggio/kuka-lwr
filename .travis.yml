@@ -5,8 +5,7 @@ compiler:
 
 env:
   global:
-    - ROS_DISTRO=hydro
-#    - ROS_DISTRO=indigo
+  - ROS_DISTRO=indigo
 
 
 before_install: 
