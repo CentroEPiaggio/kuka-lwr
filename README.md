@@ -66,3 +66,6 @@ This launch configuration starts a Gazebo simulation that is controlled by MoveI
 #### Real Robot
 This is how MoveIt! can be connected to a real robot:
 - `roslaunch lwr_moveit moveit_planning_execution.launch sim:=false robot_ip:=192.168.0.20 robot_port:=49939`
+
+### Build Status
+[![Build Status](https://travis-ci.org/ahoarau/kuka-lwr.svg)](https://travis-ci.org/ahoarau/kuka-lwr)
