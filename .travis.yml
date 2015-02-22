@@ -11,14 +11,14 @@ before_install:
   - export CI_SOURCE_PATH=$(pwd)
   - export REPOSITORY_NAME=${PWD##*/}
   #- codename=`cat /etc/lsb-release | grep -m 1 "DISTRIB_CODENAME=" | cut -d "=" -f2`
-  - sudo sh -c "echo 'deb http://packages.ros.org/ros/ubuntu trusty main main' > /etc/apt/sources.list.d/ros-latest.list"
+  - sudo sh -c "echo 'deb http://packages.ros.org/ros/ubuntu trusty main' > /etc/apt/sources.list.d/ros-latest.list"
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
-  - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list'
+  - sudo sh -c "echo 'deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main' > /etc/apt/sources.list.d/gazebo-latest.list"
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
   - sudo apt-get update
 
 install:
-  - sudo apt-get install ros-$ROS_DISTRO-desktop-full ros-$ROS_DISTRO-gazebo4-ros-control ros-$ROS_DISTRO-ros-control ros-$ROS_DISTRO-ros-controllers gazebo4  ros-$ROS_DISTRO-gazebo4-ros-pkg
+  - sudo apt-get install ros-$ROS_DISTRO-desktop-full ros-$ROS_DISTRO-ros-control ros-$ROS_DISTRO-ros-controllers gazebo4 ros-$ROS_DISTRO-gazebo4-ros-pkgss
 
 before_script:
   - source /opt/ros/$ROS_DISTRO/setup.bash
