@@ -1,0 +1,11 @@
+<launch>
+    <arg name="rviz" default="false" doc="Start an Rviz instance"/>
+    
+    <include file="$(find lwr_description)/launch/lwr_upload.launch" />
+
+	<include file="$(find lwr_controllers)/launch/controllers/joint_state_controller.launch"/>
+    
+    <node ns="lwr" name="lwr_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/> 
+		
+</launch>
+		
