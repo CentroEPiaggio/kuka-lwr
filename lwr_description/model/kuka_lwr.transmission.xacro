@@ -2,10 +2,10 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
-    <xacro:macro name="kuka_lwr_transmission" params="name">
+	<xacro:macro name="kuka_lwr_transmission" params="name">
 
-	    <transmission name="${name}_0_trans">
-	    	<robotNamespace>${name}</robotNamespace>
+		<transmission name="${name}_0_trans">
+			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_0_joint">
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
@@ -14,7 +14,7 @@
 				<hardwareInterface>EffortJointInterface</hardwareInterface>
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
-	    </transmission>
+		</transmission>
 
 		<transmission name="${name}_1_trans">
 			<robotNamespace>${name}</robotNamespace>
