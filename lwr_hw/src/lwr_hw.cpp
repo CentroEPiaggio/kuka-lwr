@@ -44,7 +44,9 @@ namespace lwr_ros_control
     void set_mode();
     void reset();
     void registerJointLimits(const std::string& joint_name,
-                           const hardware_interface::JointHandle& joint_handle,
+                           const hardware_interface::JointHandle& joint_handle_effort,
+                           const hardware_interface::JointHandle& joint_handle_position,
+                           const hardware_interface::JointHandle& joint_handle_velocity,
                            const urdf::Model *const urdf_model,
                            double *const lower_limit, double *const upper_limit, 
                            double *const effort_limit);
@@ -71,9 +73,18 @@ namespace lwr_ros_control
         joint_velocity,
         joint_effort,
         joint_position_command,
+        joint_velocity_command,
         joint_stiffness_command,
         joint_damping_command,
         joint_effort_command;
+
+      // NOTE:
+      // joint_velocity_command is not really to command the kuka arm in velocity,
+      // since it doesn't have an interface for that
+      // this is used to avoid speed limit error in the kuka controller by
+      // computing a fake velocity command using the received position command and
+      // the current position, without smoothing.
+
 
       // FRI values
       FRI_QUALITY lastQuality;
@@ -86,6 +97,7 @@ namespace lwr_ros_control
         joint_velocity.resize(LBR_MNJ);
         joint_effort.resize(LBR_MNJ);
         joint_position_command.resize(LBR_MNJ);
+        joint_velocity_command.resize(LBR_MNJ);
         joint_effort_command.resize(LBR_MNJ);
         joint_stiffness_command.resize(LBR_MNJ);
         joint_damping_command.resize(LBR_MNJ);
@@ -105,10 +117,11 @@ namespace lwr_ros_control
           joint_velocity[j] = 0.0;
           joint_effort[j] = 0.0;
           joint_position_command[j] = 0.0;
+          joint_velocity_command[j] = 0.0;
           joint_effort_command[j] = 0.0;
 
           // set default values for these two for now
-          joint_stiffness_command[j] = 300.0;
+          joint_stiffness_command[j] = 700.0;
           joint_damping_command[j] = 0.0;
         }
       }
@@ -134,8 +147,13 @@ namespace lwr_ros_control
     hardware_interface::EffortJointInterface effort_interface_;
     hardware_interface::PositionJointInterface position_interface_;
 
+    // recalls that commands sent to this interface from outside are overwritten by our fake velocity command, and do nothing to the robot
+    hardware_interface::VelocityJointInterface velocity_interface_;
+
     joint_limits_interface::EffortJointSaturationInterface   ej_sat_interface_;
     joint_limits_interface::EffortJointSoftLimitsInterface   ej_limits_interface_;
+    joint_limits_interface::VelocityJointSaturationInterface   vj_sat_interface_;
+    joint_limits_interface::VelocityJointSoftLimitsInterface   vj_limits_interface_;
     joint_limits_interface::PositionJointSaturationInterface pj_sat_interface_;
     joint_limits_interface::PositionJointSoftLimitsInterface pj_limits_interface_;
 
@@ -212,21 +230,28 @@ namespace lwr_ros_control
       state_interface_.registerHandle(state_handle);
 
       // effort command handle
-      hardware_interface::JointHandle joint_handle = hardware_interface::JointHandle(
+      hardware_interface::JointHandle joint_handle_effort = hardware_interface::JointHandle(
             state_interface_.getHandle(this->device_->joint_names[i]),
             &this->device_->joint_effort_command[i]);
 
-      effort_interface_.registerHandle(joint_handle);
+      effort_interface_.registerHandle(joint_handle_effort);
 
       // position command handle
-      joint_handle = hardware_interface::JointHandle(
+      hardware_interface::JointHandle joint_handle_position = hardware_interface::JointHandle(
             state_interface_.getHandle(this->device_->joint_names[i]),
             &this->device_->joint_position_command[i]);
 
-      position_interface_.registerHandle(joint_handle);
+      position_interface_.registerHandle(joint_handle_position);
+
+      // velocity command handle, recall it is fake, there is no actual velocity interface
+      hardware_interface::JointHandle joint_handle_velocity = hardware_interface::JointHandle(
+            state_interface_.getHandle(this->device_->joint_names[i]),
+            &this->device_->joint_velocity_command[i]);
 
       registerJointLimits(this->device_->joint_names[i],
-                          joint_handle,
+                          joint_handle_effort,
+                          joint_handle_position,
+                          joint_handle_velocity,
                           &urdf_model_,
                           &this->device_->joint_lower_limits[i],
                           &this->device_->joint_upper_limits[i],
@@ -239,6 +264,9 @@ namespace lwr_ros_control
     this->registerInterface(&state_interface_);
     this->registerInterface(&effort_interface_);
     this->registerInterface(&position_interface_);
+    this->registerInterface(&velocity_interface_);
+
+    // note that the velocity interface is not registrered, since the velocity command is computed within this implementation.
 
     std::cout << "Opening FRI Version " 
       << FRI_MAJOR_VERSION << "." << FRI_SUB_VERSION << "." <<FRI_DATAGRAM_ID_CMD << "." <<FRI_DATAGRAM_ID_MSR 
@@ -288,9 +316,18 @@ namespace lwr_ros_control
     {
       static int warning = 0;
 
+      for (int j = 0; j < LBR_MNJ; j++)
+      {
+        // fake velocity command computed as:
+        // (desired position - current position) / period, to avoid speed limit error
+        this->device_->joint_velocity_command[j] = (this->device_->joint_position_command[j]-this->device_->joint_position[j])/period.toSec();
+      }
+
       // enforce limits
       ej_sat_interface_.enforceLimits(period);
       ej_limits_interface_.enforceLimits(period);
+      vj_sat_interface_.enforceLimits(period);
+      vj_limits_interface_.enforceLimits(period);
       pj_sat_interface_.enforceLimits(period);
       pj_limits_interface_.enforceLimits(period);
 
@@ -364,7 +401,9 @@ namespace lwr_ros_control
   // retrieved from the urdf_model.
   // Return the joint's type, lower position limit, upper position limit, and effort limit.
   void LWRHW::registerJointLimits(const std::string& joint_name,
-                           const hardware_interface::JointHandle& joint_handle,
+                           const hardware_interface::JointHandle& joint_handle_effort,
+                           const hardware_interface::JointHandle& joint_handle_position,
+                           const hardware_interface::JointHandle& joint_handle_velocity,
                            const urdf::Model *const urdf_model,
                            double *const lower_limit, double *const upper_limit, 
                            double *const effort_limit)
@@ -404,13 +443,22 @@ namespace lwr_ros_control
 
     if (has_soft_limits)
     {
-      const joint_limits_interface::EffortJointSoftLimitsHandle limits_handle(joint_handle, limits, soft_limits);
-      ej_limits_interface_.registerHandle(limits_handle);
+      const joint_limits_interface::EffortJointSoftLimitsHandle limits_handle_effort(joint_handle_effort, limits, soft_limits);
+      ej_limits_interface_.registerHandle(limits_handle_effort);
+      const joint_limits_interface::PositionJointSoftLimitsHandle limits_handle_position(joint_handle_position, limits, soft_limits);
+      pj_limits_interface_.registerHandle(limits_handle_position);
+      const joint_limits_interface::VelocityJointSoftLimitsHandle limits_handle_velocity(joint_handle_velocity, limits, soft_limits);
+      vj_limits_interface_.registerHandle(limits_handle_velocity);
+
     }
     else
     {
-      const joint_limits_interface::EffortJointSaturationHandle sat_handle(joint_handle, limits);
-      ej_sat_interface_.registerHandle(sat_handle);
+      const joint_limits_interface::EffortJointSaturationHandle sat_handle_effort(joint_handle_effort, limits);
+      ej_sat_interface_.registerHandle(sat_handle_effort);
+      const joint_limits_interface::PositionJointSaturationHandle sat_handle_position(joint_handle_position, limits);
+      pj_sat_interface_.registerHandle(sat_handle_position);
+      const joint_limits_interface::VelocityJointSaturationHandle sat_handle_velocity(joint_handle_velocity, limits);
+      vj_sat_interface_.registerHandle(sat_handle_velocity);
     }
   }
 }
