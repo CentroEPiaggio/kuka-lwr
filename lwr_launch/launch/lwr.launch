@@ -1,6 +1,6 @@
 <launch>
 	<!-- LAUNCH INTERFACE -->
-	<arg name="controller" default="joint_trajectory_controller" />
+	<arg name="controller" default="joint_position_trajectory_controller " />
 	<arg name="stopped_controllers" default="OneTaskInverseKinematics" />
 	<arg name="use_lwr_sim" default="true"/>
 	<arg name="gui" default="false" />

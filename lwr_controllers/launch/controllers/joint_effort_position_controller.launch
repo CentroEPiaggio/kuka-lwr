@@ -1,0 +1,8 @@
+<launch>
+
+	<include file="$(find lwr_controllers)/launch/load_controller.launch"> 
+		<arg name="controller" value="joint0_effort_position_controller joint1_effort_position_controller joint2_effort_position_controller joint3_effort_position_controller joint4_effort_position_controller joint5_effort_position_controller joint6_effort_position_controller" />
+	</include>
+		
+</launch>
+		
