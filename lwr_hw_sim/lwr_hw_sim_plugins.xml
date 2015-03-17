@@ -1,0 +1,11 @@
+<library path="lib/libdefault_lwr_hw_sim">
+
+  <class
+    name="gazebo_ros_control/DefaultLWRHWSim"
+    type="gazebo_ros_control::DefaultLWRHWSim"
+    base_class_type="gazebo_ros_control::RobotHWSim">
+    <description>
+      A default KUKA LWR 4+ simulation interface that emulates the joint impedance control strategy.
+    </description>
+  </class>
+</library>
