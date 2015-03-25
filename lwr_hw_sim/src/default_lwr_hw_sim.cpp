@@ -167,7 +167,7 @@ public:
       joint_effort_[j] = 1.0;  // N/m for revolute joints
       joint_effort_command_[j] = 0.0;
       joint_position_command_[j] = 0.0;
-      joint_stiffness_command_[j] = 0.0;
+      joint_stiffness_command_[j] = 3000.0;
       joint_damping_command_[j] = 0.0;
 
       const std::string& hardware_interface = joint_interfaces.front();
