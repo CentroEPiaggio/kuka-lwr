@@ -269,7 +269,8 @@ public:
     ROS_INFO("LWR kinematic successfully parsed with %d joints, and %d segments.",kdl_tree.getNrOfJoints(),kdl_tree.getNrOfJoints());
 
     // this is indepenedent of robot mounting, typically with positive z pointing up.-
-    std::string root_name = std::string("world"); 
+    std::string root_name = kdl_tree.getRootSegment()->first; //std::string("world");
+
     // this could be parametrized to allow for different end-effectors as in the real robot.-
     std::string tip_name = robot_namespace + std::string("_7_link"); 
 
