@@ -121,12 +121,10 @@ namespace lwr_ros_control
           joint_effort_command[j] = 0.0;
 
           // set default values for these two for now
-          joint_stiffness_command[j] = 700.0;
+          joint_stiffness_command[j] = 3000.0;
           joint_damping_command[j] = 0.0;
         }
       }
-
-
 
     };
 
