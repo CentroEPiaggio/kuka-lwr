@@ -7,6 +7,7 @@ ROS indigo metapackage that contains ROS related code to work with the KUKA LWR 
 ## Overview
 This repository contains:
 - __lwr_hw__: a package that allows communication with an LWR 4+ through FRI
+- __lwr_hw_sim__: a package that implements the default interface with the simulated LWR 4+ as if you were using the joint impedance control strategy (it adds the gravity term computed from the URDF model)
 - __lwr_controllers__: implementation of a series of advanced controlling strategies
 - __lwr_launch__: launch files for these advanced controllers (to control either a Gazebo simulation or the real hardware)
 - __lwr_moveit__: a MoveIt! configuration for controlling the robot (either a Gazebo simulation or the real hardware)
@@ -34,11 +35,13 @@ For planning (_lwr_moveit_):
 
 ### Custom Controllers
 #### Bringup
-Launch the desired controller and Gazebo to try it out:  
-``` roslaunch lwr_launch lwr_launch.launch controller:=OneTaskInverseKinematics ```
+Launch the desired controller from the available described [here](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_controllers) and Gazebo to try it out:  
+``` roslaunch lwr_launch lwr.launch controller:=YOURCONTROLLER ```
 
 Use it with a real robot:  
-```roslaunch lwr_launch lwr_launch.launch controller:=OneTaskInverseKinematics use_lwr_sim:=false ip:=192.168.0.20 port:=49939 ```  
+```roslaunch lwr_launch lwr.launch controller:=YOURCONTROLLER use_lwr_sim:=false ip:=192.168.0.20 port:=49939 ```  
+
+NOTE: in the `lwr.launch` file, there are start controllers (only one allowed), and stopped controllers (as many as you want). This way you load all controllers you want for an experiment, and you can switch between them as long as they act on the same interface (Effort, Position, Velocity, Stiffness) for the same joints (names from the URDF).
 
 #### Gravity compensation
 In this mode the robot can be moved manually, while the position of each joint is available in TF (__IMPORTANT__: due to the robot's own 
@@ -67,4 +70,7 @@ This launch configuration starts a Gazebo simulation that is controlled by MoveI
 `roslaunch lwr_moveit moveit_planning_execution.launch`
 #### Real Robot
 This is how MoveIt! can be connected to a real robot:
-- `roslaunch lwr_moveit moveit_planning_execution.launch sim:=false robot_ip:=192.168.0.20 robot_port:=49939`
+- `roslaunch lwr_launch lwr.launch controller:=YOURCONTROLLER use_lwr_sim:=false ip:=192.168.0.20 port:=49939`
+- Ensure that the [controller you configure in moveit](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/lwr_moveit/config/controllers.yaml) has been loaded&started.
+- `roslaunch lwr_moveit move_group.launch`
+- Open the moveit GUI with `roslaunch lwr_moveit moveit_rviz.launch`
