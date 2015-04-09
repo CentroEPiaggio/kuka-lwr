@@ -303,6 +303,7 @@ public:
       // derivate velocity as in the real hardware instead of reading it from simulation
       joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j] - joint_position_prev_[j])/period.toSec(), joint_velocity_[j], 0.2);
       joint_effort_[j] = sim_joints_[j]->GetForce((unsigned int)(0));
+      joint_stiffness_[j] = joint_stiffness_command_[j];
     }
   }
 
