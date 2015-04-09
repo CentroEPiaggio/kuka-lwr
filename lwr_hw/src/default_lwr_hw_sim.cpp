@@ -32,8 +32,8 @@ For more information, please refer to <http://unlicense.org>
    gazebo_ros_control package.
 */
 
-#ifndef _GAZEBO_ROS_CONTROL___DEFAULT_LWR_HW_SIM_H_
-#define _GAZEBO_ROS_CONTROL___DEFAULT_LWR_HW_SIM_H_
+#ifndef LWR_HW___DEFAULT_LWR_HW_SIM_H_
+#define LWR_HW___DEFAULT_LWR_HW_SIM_H_
 
 // ROS
 #include <ros/ros.h>
@@ -55,9 +55,6 @@ For more information, please refer to <http://unlicense.org>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/gazebo.hh>
 
-// gazebo_ros_control
-#include <gazebo_ros_control/robot_hw_sim.h>
-
 // URDF
 #include <urdf/model.h>
 
@@ -67,6 +64,9 @@ For more information, please refer to <http://unlicense.org>
 #include <kdl/chain.hpp>
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl_parser/kdl_parser.hpp>
+
+// lwr_hw_sim
+#include "lwr_hw/lwr_hw_sim.h"
 
 namespace
 {
@@ -78,10 +78,10 @@ double clamp(const double val, const double min_val, const double max_val)
 
 }
 
-namespace gazebo_ros_control
+namespace lwr_hw
 {
 
-class DefaultLWRHWSim : public gazebo_ros_control::RobotHWSim
+class DefaultLWRHWsim : public lwr_hw::LWRHWsim
 {
 public:
 
@@ -96,24 +96,13 @@ public:
     // parameter's name is "joint_limits/<joint name>". An example is "joint_limits/axle_joint".
     const ros::NodeHandle joint_limit_nh(model_nh, robot_namespace);
 
-    // Resize vectors to our DOF
-    n_dof_ = transmissions.size();
-    joint_names_.resize(n_dof_);
-    joint_types_.resize(n_dof_);
-    joint_lower_limits_.resize(n_dof_);
-    joint_upper_limits_.resize(n_dof_);
-    joint_effort_limits_.resize(n_dof_);
-    joint_position_.resize(n_dof_);
-    joint_position_prev_.resize(n_dof_);
-    joint_velocity_.resize(n_dof_);
-    joint_effort_.resize(n_dof_);
-    joint_effort_command_.resize(n_dof_);
-    joint_position_command_.resize(n_dof_);
-    joint_stiffness_command_.resize(n_dof_);
-    joint_damping_command_.resize(n_dof_);
+    // Resize vectors to our DOF, resize vectors, and reset to zero
+    n_joints_ = transmissions.size();
+    init(n_joints_);
+    reset();
 
     // Initialize values
-    for(unsigned int j=0; j < n_dof_; j++)
+    for(unsigned int j=0; j < n_joints_; j++)
     {
       // Check that this transmission has one joint
       if(transmissions[j].joints_.size() == 0)
@@ -160,15 +149,7 @@ public:
       */
 
       // Add data from transmission
-      joint_names_[j] = transmissions[j].joints_[0].name_;
-      joint_position_[j] = 0.0;
-      joint_position_prev_[j] = 0.0;
-      joint_velocity_[j] = 0.0;
-      joint_effort_[j] = 1.0;  // N/m for revolute joints
-      joint_effort_command_[j] = 0.0;
-      joint_position_command_[j] = 0.0;
-      joint_stiffness_command_[j] = 3000.0;
-      joint_damping_command_[j] = 0.0;
+      joint_names_.at(j) = transmissions.at(j).joints_.at(0).name_;
 
       const std::string& hardware_interface = joint_interfaces.front();
 
@@ -177,34 +158,32 @@ public:
         << "' of type '" << hardware_interface << "'");
 
       // Create joint state interface for all joints
-      js_interface_.registerHandle(hardware_interface::JointStateHandle(
+      state_interface_.registerHandle(hardware_interface::JointStateHandle(
           joint_names_[j], &joint_position_[j], &joint_velocity_[j], &joint_effort_[j]));
 
       // Decide what kind of command interface this actuator/joint has
       hardware_interface::JointHandle joint_handle_effort;
-      //if(hardware_interface == "EffortJointInterface")
-      //{
-        // Create effort joint interface
-        //joint_control_methods_[j] = EFFORT;
-      joint_handle_effort = hardware_interface::JointHandle(js_interface_.getHandle(joint_names_[j]),
+      joint_handle_effort = hardware_interface::JointHandle(state_interface_.getHandle(joint_names_[j]),
                                                        &joint_effort_command_[j]);
-      ej_interface_.registerHandle(joint_handle_effort);
-      //}
-      //else if(hardware_interface == "PositionJointInterface")
-      //{
-        // Create position joint interface
-        //joint_control_methods_[j] = POSITION;
+      effort_interface_.registerHandle(joint_handle_effort);
+
       hardware_interface::JointHandle joint_handle_position;
-      joint_handle_position = hardware_interface::JointHandle(js_interface_.getHandle(joint_names_[j]),
+      joint_handle_position = hardware_interface::JointHandle(state_interface_.getHandle(joint_names_[j]),
                                                        &joint_position_command_[j]);
-      pj_interface_.registerHandle(joint_handle_position);
-      //}
-      /*else
-      {
-        ROS_FATAL_STREAM_NAMED("default_robot_hw_sim","No matching hardware interface found for '"
-          << hardware_interface );
-        return false;
-      }*/
+      position_interface_.registerHandle(joint_handle_position);
+
+      // the stiffness is not actually a different joint, so the state handle is only used for handle
+      hardware_interface::JointHandle joint_handle_stiffness;
+      joint_handle_stiffness = hardware_interface::JointHandle(hardware_interface::JointStateHandle(
+                                                                   joint_names_[j]+std::string("_stiffness"),
+                                                                   &joint_stiffness_[j], &joint_stiffness_[j], &joint_stiffness_[j]),
+                                                       &joint_stiffness_command_[j]);
+      position_interface_.registerHandle(joint_handle_stiffness);
+   
+     // velocity command handle, recall it is fake, there is no actual velocity interface
+      hardware_interface::JointHandle joint_handle_velocity;
+      joint_handle_velocity = hardware_interface::JointHandle(state_interface_.getHandle(joint_names_[j]),
+          &joint_velocity_command_[j]);
 
       // Get the gazebo joint that corresponds to the robot joint.
       //ROS_DEBUG_STREAM_NAMED("default_robot_hw_sim", "Getting pointer to gazebo joint: "
@@ -221,8 +200,12 @@ public:
       registerJointLimits(joint_names_[j], 
                           joint_handle_effort, 
                           joint_handle_position,
-                          joint_limit_nh, urdf_model,
-                          &joint_types_[j], &joint_lower_limits_[j], &joint_upper_limits_[j],
+                          joint_handle_velocity,
+                          joint_handle_stiffness,
+                          urdf_model, 
+                          &joint_lower_limits_[j], &joint_upper_limits_[j],
+                          &joint_lower_limits_stiffness_[j],
+                          &joint_upper_limits_stiffness_[j],
                           &joint_effort_limits_[j]);
 
       /*if (joint_control_methods_[j] != EFFORT)
@@ -254,9 +237,9 @@ public:
     }
 
     // Register interfaces
-    registerInterface(&js_interface_);
-    registerInterface(&ej_interface_);
-    registerInterface(&pj_interface_);
+    registerInterface(&state_interface_);
+    registerInterface(&effort_interface_);
+    registerInterface(&position_interface_);
 
     // KDL code to compute f_dyn(q)
     KDL::Tree kdl_tree;
@@ -309,7 +292,7 @@ public:
 
   void readSim(ros::Time time, ros::Duration period)
   {
-    for(unsigned int j=0; j < n_dof_; j++)
+    for(unsigned int j=0; j < n_joints_; j++)
     {
 
       joint_position_prev_[j] = joint_position_[j];
@@ -329,11 +312,13 @@ public:
     ej_limits_interface_.enforceLimits(period);
     pj_sat_interface_.enforceLimits(period);
     pj_limits_interface_.enforceLimits(period);
+    sj_sat_interface_.enforceLimits(period);
+    sj_limits_interface_.enforceLimits(period);
 
     // compute the gracity term
     f_dyn_solver_->JntToGravity(joint_position_kdl_, gravity_effort_);
 
-    for(unsigned int j=0; j < n_dof_; j++)
+    for(unsigned int j=0; j < n_joints_; j++)
     {
       // replicate the joint impedance control strategy
       // tau = k (q_FRI - q_msr) + tau_FRI + D(q_msr) + f_dyn(q_msr)
@@ -345,107 +330,7 @@ public:
     }
   }
 
-private:
-  // Methods used to control a joint.
-  //enum ControlMethod {EFFORT, POSITION, POSITION_PID, VELOCITY, VELOCITY_PID};
-
-  // Register the limits of the joint specified by joint_name and joint_handle. The limits are
-  // retrieved from joint_limit_nh. If urdf_model is not NULL, limits are retrieved from it also.
-  // Return the joint's type, lower position limit, upper position limit, and effort limit.
-  void registerJointLimits(const std::string& joint_name,
-                           const hardware_interface::JointHandle& joint_handle_effort,
-                           const hardware_interface::JointHandle& joint_handle_position,
-                           const ros::NodeHandle& joint_limit_nh,
-                           const urdf::Model *const urdf_model,
-                           int *const joint_type, double *const lower_limit,
-                           double *const upper_limit, double *const effort_limit)
-  {
-    *joint_type = urdf::Joint::REVOLUTE;
-    *lower_limit = -std::numeric_limits<double>::max();
-    *upper_limit = std::numeric_limits<double>::max();
-    *effort_limit = std::numeric_limits<double>::max();
-
-    joint_limits_interface::JointLimits limits;
-    bool has_limits = false;
-    joint_limits_interface::SoftJointLimits soft_limits;
-    bool has_soft_limits = false;
-
-    if (urdf_model != NULL)
-    {
-      const boost::shared_ptr<const urdf::Joint> urdf_joint = urdf_model->getJoint(joint_name);
-      if (urdf_joint != NULL)
-      {
-        *joint_type = urdf_joint->type;
-        // Get limits from the URDF file.
-        if (joint_limits_interface::getJointLimits(urdf_joint, limits))
-          has_limits = true;
-        if (joint_limits_interface::getSoftJointLimits(urdf_joint, soft_limits))
-          has_soft_limits = true;
-      }
-    }
-    // Get limits from the parameter server.
-    if (joint_limits_interface::getJointLimits(joint_name, joint_limit_nh, limits))
-      has_limits = true;
-
-    if (!has_limits)
-      return;
-
-    if (limits.has_position_limits)
-    {
-      *lower_limit = limits.min_position;
-      *upper_limit = limits.max_position;
-    }
-    if (limits.has_effort_limits)
-      *effort_limit = limits.max_effort;
-
-    if (has_soft_limits)
-    {
-      const joint_limits_interface::EffortJointSoftLimitsHandle
-        limits_handle_effort(joint_handle_effort, limits, soft_limits);
-      ej_limits_interface_.registerHandle(limits_handle_effort);
-
-      const joint_limits_interface::PositionJointSoftLimitsHandle
-        limits_handle_position(joint_handle_position, limits, soft_limits);
-      pj_limits_interface_.registerHandle(limits_handle_position);
-    }
-    else
-    {
-      const joint_limits_interface::EffortJointSaturationHandle
-        sat_handle_effort(joint_handle_effort, limits);
-      ej_sat_interface_.registerHandle(sat_handle_effort);
-
-      const joint_limits_interface::PositionJointSaturationHandle
-        sat_handle_position(joint_handle_position, limits);
-      pj_sat_interface_.registerHandle(sat_handle_position);
-    }
-  }
-
-  unsigned int n_dof_;
-
-  hardware_interface::JointStateInterface    js_interface_;
-  hardware_interface::EffortJointInterface   ej_interface_;
-  hardware_interface::PositionJointInterface pj_interface_;
-
-  joint_limits_interface::EffortJointSaturationInterface   ej_sat_interface_;
-  joint_limits_interface::EffortJointSoftLimitsInterface   ej_limits_interface_;
-  joint_limits_interface::PositionJointSaturationInterface pj_sat_interface_;
-  joint_limits_interface::PositionJointSoftLimitsInterface pj_limits_interface_;
-
-  std::vector<std::string> joint_names_;
-  std::vector<int> joint_types_;
-  std::vector<double> joint_lower_limits_;
-  std::vector<double> joint_upper_limits_;
-  std::vector<double> joint_effort_limits_;
-  std::vector<double> joint_position_;
-  std::vector<double> joint_position_prev_; // to derivate joint velocity
-  std::vector<double> joint_velocity_;
-  std::vector<double> joint_effort_;
-  std::vector<double> joint_effort_command_;
-  std::vector<double> joint_position_command_;
-  std::vector<double> joint_stiffness_command_;
-  std::vector<double> joint_damping_command_;
-
-  // KDL stuff to compute f_dyn
+  // KDL stuff to compute f_dyn in simulation
   KDL::Chain lwr_chain_;
   boost::scoped_ptr<KDL::ChainDynParam> f_dyn_solver_;
   KDL::JntArray joint_position_kdl_, gravity_effort_;
@@ -454,10 +339,10 @@ private:
   std::vector<gazebo::physics::JointPtr> sim_joints_;
 };
 
-typedef boost::shared_ptr<DefaultLWRHWSim> DefaultLWRHWSimPtr;
+typedef boost::shared_ptr<DefaultLWRHWsim> DefaultLWRHWsimPtr;
 
 }
 
-PLUGINLIB_EXPORT_CLASS(gazebo_ros_control::DefaultLWRHWSim, gazebo_ros_control::RobotHWSim)
+PLUGINLIB_EXPORT_CLASS(lwr_hw::DefaultLWRHWsim, lwr_hw::LWRHWsim)
 
-#endif // #ifndef __GAZEBO_ROS_CONTROL_PLUGIN_LWR_HW_SIM_H_
+#endif
