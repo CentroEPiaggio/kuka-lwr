@@ -4,10 +4,10 @@
 	<xacro:macro name="kuka_lwr_gazebo" params="name">
 
 		<gazebo>
-			<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+			<plugin name="lwr_hw" filename="liblwr_hw_sim_plugin.so">
 				<robotNamespace>${name}</robotNamespace>
 				<!-- A default KUKA LWR 4+ simulation interface that emulates the joint impedance control strategy --> 
-				<robotSimType>gazebo_ros_control/DefaultLWRHWSim</robotSimType>
+				<robotSimType>lwr_hw/DefaultLWRHWsim</robotSimType>
 			</plugin>
 		</gazebo>
 
