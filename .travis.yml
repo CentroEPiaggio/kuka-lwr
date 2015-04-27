@@ -8,7 +8,8 @@ env:
   global:
   - ROS_DISTRO=indigo
 
-before_install: 
+before_install:
+  - vagrant status
   - export CI_SOURCE_PATH=$(pwd)
   - export REPOSITORY_NAME=${PWD##*/}
   #- codename=`cat /etc/lsb-release | grep -m 1 "DISTRIB_CODENAME=" | cut -d "=" -f2`
