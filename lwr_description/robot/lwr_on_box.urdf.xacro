@@ -4,11 +4,6 @@
 	<xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
 
 	<link name="world">
-		<inertial>
-			<mass value="50.0"/>
-			<com xyz="0 0 0"/>
-			<inertia  ixx="0.01" ixy="0.00"  ixz="0.00" iyy="0.01" iyz="0.00" izz="0.01" />
-		</inertial>
 		<visual>
 			<origin xyz="0 0 0.50" rpy="0 0 0"/>
 			<geometry>

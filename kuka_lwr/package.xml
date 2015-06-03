@@ -19,6 +19,9 @@
 
   <!-- Real hardware interface -->
   <run_depend> lwr_hw </run_depend>
+
+  <!-- Simulated hardware interface -->
+  <run_depend> lwr_hw_sim </run_depend>
   
   <!-- Launch files -->
   <run_depend> lwr_launch </run_depend>

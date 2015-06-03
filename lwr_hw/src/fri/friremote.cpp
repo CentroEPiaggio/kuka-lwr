@@ -40,7 +40,7 @@
 \brief  FRI Remote class encapsulating UDP package handshakes
  *                                                                         *
  ***************************************************************************/
-#include "friremote.h"
+#include "fri/friremote.h"
 
 #include <iostream>
 #include <stdlib.h>

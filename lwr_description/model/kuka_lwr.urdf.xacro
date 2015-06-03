@@ -16,6 +16,10 @@
 	<xacro:property name="velocity_scale" value="1"/>
 	<xacro:property name="effort_scale" value="1"/>
 
+	<xacro:property name="max_stiffness" value="5000"/>
+	<xacro:property name="min_stiffness" value="0"/>
+	<xacro:property name="rate_stiffness" value="20000"/> <!-- reflex to stiffness -->
+
 	<!-- URDF model /-->
 	<xacro:macro name="kuka_lwr" params="parent name *origin">
 
@@ -59,6 +63,15 @@
 		<parent link="${name}_base_link"/>
 		<child link="${name}_1_link"/>
 	</joint>
+
+	<joint name="${name}_0_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_base_link"/>
+		<child link="${name}_1_link_dummy"/>
+	</joint>
+	<link name="${name}_1_link_dummy"/>
 
 	<link name="${name}_1_link">
 		<inertial>
@@ -104,6 +117,15 @@
 		<parent link="${name}_1_link"/>
 		<child link="${name}_2_link"/>
 	</joint>
+
+	<joint name="${name}_1_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_1_link"/>
+		<child link="${name}_2_link_dummy"/>
+	</joint>
+	<link name="${name}_2_link_dummy"/>
 
 	<link name="${name}_2_link">
 		<inertial>
@@ -151,6 +173,15 @@
 		<child link="${name}_3_link"/>
 	</joint>
 
+	<joint name="${name}_2_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_2_link"/>
+		<child link="${name}_3_link_dummy"/>
+	</joint>
+	<link name="${name}_3_link_dummy"/>
+
 	<link name="${name}_3_link">
 		<inertial>
 			<mass value="${link_mass}"/>
@@ -197,6 +228,15 @@
 		<child link="${name}_4_link"/>
 	</joint>
 
+	<joint name="${name}_3_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_3_link"/>
+		<child link="${name}_4_link_dummy"/>
+	</joint>
+	<link name="${name}_4_link_dummy"/>
+
 	<link name="${name}_4_link">
 		<inertial>
 			<mass value="${link_mass}"/>
@@ -242,6 +282,15 @@
 		<parent link="${name}_4_link"/>
 		<child link="${name}_5_link"/>
 	</joint>
+
+	<joint name="${name}_4_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_4_link"/>
+		<child link="${name}_5_link_dummy"/>
+	</joint>
+	<link name="${name}_5_link_dummy"/>
 
 	<link name="${name}_5_link">
 		<inertial>
@@ -290,6 +339,15 @@
 		<child link="${name}_6_link"/>
 	</joint>
 
+	<joint name="${name}_5_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_5_link"/>
+		<child link="${name}_6_link_dummy"/>
+	</joint>
+	<link name="${name}_6_link_dummy"/>
+
 	<link name="${name}_6_link">
 		<inertial>
 			<mass value="0.2"/>
@@ -322,6 +380,15 @@
 		<parent link="${name}_6_link"/>
 		<child link="${name}_7_link"/>
 	</joint>
+
+	<joint name="${name}_6_joint_stiffness" type="revolute">
+		<axis xyz="0 0 1"/>
+		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+		<parent link="${name}_6_link"/>
+		<child link="${name}_7_link_dummy"/>
+	</joint>
+	<link name="${name}_7_link_dummy"/>
 
 	<link name="${name}_7_link">
 		<inertial>

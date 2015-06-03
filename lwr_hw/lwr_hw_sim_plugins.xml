@@ -1,0 +1,11 @@
+<library path="lib/libdefault_lwr_hw_sim">
+
+  <class
+    name="lwr_hw/DefaultLWRHWsim"
+    type="lwr_hw::DefaultLWRHWsim"
+    base_class_type="lwr_hw::LWRHWsim">
+    <description>
+      A default KUKA LWR 4+ simulation interface that emulates the joint impedance control strategy.
+    </description>
+  </class>
+</library>

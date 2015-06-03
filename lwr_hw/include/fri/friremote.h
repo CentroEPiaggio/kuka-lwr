@@ -45,7 +45,7 @@
 #define FRIFRIREMOTE_H
 
 
-#include "friudp.h"
+#include "fri/friudp.h"
 
 
 

@@ -28,7 +28,11 @@
       
 [FH]}}
 */ 
-/**	\addtogroup friRemoteLib	\brief Library for FRI (FastResearchInterface) *//* @{ */
+/**
+	\addtogroup friRemoteLib
+	\brief Library for FRI (FastResearchInterface) 
+*/
+/* @{ */
 /** *************************************************************************
  \author (Guenter Schreiber)
 \file
@@ -60,7 +64,7 @@
 #endif
 #include <time.h>
 #endif
-#include "friComm.h"
+#include "fri/friComm.h"
 
 #include <iostream>
 

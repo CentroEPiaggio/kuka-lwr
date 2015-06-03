@@ -16,7 +16,7 @@
 		<param name="port" value="$(arg port)"/>
 		<param name="ip" value="$(arg ip)"/>
 		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
+		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
 	</group>
 	<group unless="$(arg use_default_joint_names)">
 		<group if="$(arg use_default_joint_names)">
@@ -26,7 +26,7 @@
 		<param name="port" value="$(arg port)"/>
 		<param name="ip" value="$(arg ip)"/>
 		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw" respawn="false" output="screen"/>
+		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
 	</group>
 
 </launch>
