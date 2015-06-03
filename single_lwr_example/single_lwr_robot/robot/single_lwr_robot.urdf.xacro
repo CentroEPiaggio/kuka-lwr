@@ -1,9 +1,19 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lwr">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="single_lwr_robot">
 
+	<!-- Include all models -->
 	<xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
 
+	<!-- and assemble your robot -->
 	<link name="world">
+		<inertial>
+			<mass value="5.0"/>
+			<origin rpy="0 0 0" xyz="0 0 0"/>
+			<inertia ixx="0.01"
+             iyy="0.01"
+             izz="0.01"
+             ixy="0" iyz="0" ixz="0"/>
+		</inertial>
 		<visual>
 			<origin xyz="0 0 0.50" rpy="0 0 0"/>
 			<geometry>
@@ -22,8 +32,9 @@
 		<static>true</static>>
 	</gazebo>
 
+	<!-- using the models -->
 	<xacro:kuka_lwr parent="world" name="lwr">
 		<origin xyz="0 0 1" rpy="0 0 0"/>
 	</xacro:kuka_lwr>
-	
+
 </robot>

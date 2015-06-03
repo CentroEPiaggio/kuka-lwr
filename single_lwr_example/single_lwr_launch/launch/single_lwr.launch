@@ -1,0 +1,96 @@
+<launch>
+	<!-- LAUNCH INTERFACE -->
+	
+	<!-- in case you have different robot configurations -->
+	<arg name="robot_name" default="single_lwr_robot"/>
+
+	<!-- the default is the simulator -->
+	<arg name="use_lwr_sim" default="true"/>
+	
+	<!-- set the parameters for the real interface -->
+	<arg name="lwr_powered" default="false"/>
+	<arg name="port" default="49939"/>
+	<arg name="ip" default="192.168.0.20"/>
+
+	<!-- in case you want to load moveit from here, it might be hard with the real HW though -->
+	<arg name="load_moveit" default="false"/>
+
+	<!-- this must be in accordance to the hardware interface in the model, there should be a xacro parameter to facilitate that to users -->
+	<!-- arg name="controller" default="joint_position_trajectory_controller"/-->
+
+	<!-- set some ros tools -->
+	<arg name="use_rviz" default="false"/>
+	<arg name="gui" default="false" />
+	<arg name="use_joint_state_publisher" default="true"/>
+
+	<!-- LAUNCH IMPLEMENTATION -->
+
+	<!-- the urdf/srdf parameter -->
+	<!-- include file="$(find single_lwr_robot)/launch/robot_upload.launch" /-->
+	<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
+	<param name="robot_description_semantic" textfile="$(find single_lwr_moveit)/config/lwr.srdf"/>
+	
+	<!-- joint and robot state publishers of the full robot description -->
+	<param name="use_gui" value="$(arg gui)"/>
+	<group if="$(arg use_joint_state_publisher)">
+		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+			<rosparam param="source_list">[/lwr/joint_states]</rosparam>
+		</node>
+	</group>
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+	
+	<group if="$(arg use_rviz)">
+		<node name="lwr_rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find single_lwr_launch)/launch/rviz_config.rviz" output="screen"/>
+	</group>
+
+	<!-- robot simulation uses the full robot description -->
+	<group if="$(arg use_lwr_sim)">
+		<!-- spawn the robot in gazebo -->
+		<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model $(arg robot_name)"  respawn="false" output="screen" />
+
+		<!-- enable/disable gui at will, the rviz listens to the simulation -->
+		<include file="$(find gazebo_ros)/launch/empty_world.launch">
+			<arg name="world_name" value="$(find single_lwr_robot)/worlds/simple_environment.world"/>
+			<arg name="paused" value="false"/>
+			<arg name="use_sim_time" value="true"/>
+			<arg name="gui" value="true"/>
+			<arg name="headless" value="false"/>
+			<arg name="debug" value="false"/>
+		</include>
+	</group>
+
+	<!-- load moveit configuration -->
+    <group if="$(arg load_moveit)">
+        <include file="$(find single_lwr_moveit)/launch/move_group.launch">
+            <arg name="allow_trajectory_execution" value="true"/>  
+            <arg name="fake_execution" value="false"/>
+            <arg name="info" value="true"/>
+            <arg name="debug" value="false"/>
+        </include>
+    </group>
+
+    <!-- load all controller configurations to rosparam server-->
+    <rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
+
+    <!-- real robot and controllers -->
+	<group ns="lwr">
+		<group if="$(arg lwr_powered)">
+			<!--add a copy of the robot description within the name space -->
+			<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
+
+			<rosparam command="load" file="$(find single_lwr_robot)/config/joint_names.yaml" />
+
+			<include file="$(find lwr_hw)/launch/lwr_hw.launch">
+				<arg name="port" value="$(port)"/>
+				<arg name="ip" value="192.168.0.20"/>
+				<arg name="use_default_joint_names" default="false"/>
+				<arg name="use_default_namespace" default="false"/>
+			</include>
+			<!-- perhaps it is worth remapping joint states -->
+		</group>
+
+		<!-- spawn only desired controllers in current namespace -->
+		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller stiffness_trajectory_controller"/>
+	</group>
+
+</launch>

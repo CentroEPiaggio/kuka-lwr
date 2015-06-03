@@ -1,12 +1,12 @@
 <package>
   <name>lwr_controllers</name>
-  <version>0.8.0</version>
+  <version>0.1.0</version>
   <description>lwr_controllers</description>
-  <maintainer email="josemanuelbonilla@gmail.com">MAnuel Bonilla</maintainer>
+  <maintainer email="josemanuelbonilla@gmail.com">Manuel Bonilla</maintainer>
 
   <license>BSD</license>
 
-    <author>Manuel Bonilla</author>
+  <author>Manuel Bonilla</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
@@ -36,7 +36,6 @@
   <run_depend>kdl</run_depend>
   <run_depend>kdl_parser</run_depend>
   <run_depend>message_runtime</run_depend>
-
 
   <export>
     <controller_interface plugin="${prefix}/lwr_controllers_plugins.xml"/>

@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package>
   <name>lwr_hw</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>The lwr_hw package implementes real and simulation interfaces to the LWR 4+</description>
 
   <maintainer email="cjrosales@gmail.com">Carlos J. Rosales</maintainer>
+  <maintainer email="marco.esposito@tum.de">Marco Esposito</maintainer>
 
-  <license>mixed</license>
+  <license>GPLv2</license>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>controller_interface</build_depend>

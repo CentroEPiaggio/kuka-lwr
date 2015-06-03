@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package>
+  <name>single_lwr_robot</name>
+  <version>0.1.0</version>
+  <description>The single_lwr_robot package</description>
+
+  <maintainer email="marco.esposito@tum.de">Marco Esposito</maintainer>
+  <maintainer email="cjrosales@gmail.com">Carlos J. Rosales</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- main meta package dependency -->
+  <run_depend>kuka_lwr</run_depend>
+
+  <export>
+  </export>
+</package>

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(lwr_controllers)
 
-# Load catkin and all dependencies required for this package
 find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
@@ -38,8 +37,6 @@ generate_messages(
   geometry_msgs
 )
 
-
-# Declare catkin package
 catkin_package(
   DEPENDS orocos_kdl
   CATKIN_DEPENDS
@@ -73,7 +70,7 @@ add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
 
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})
 
-# Install
+
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 

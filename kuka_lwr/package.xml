@@ -1,6 +1,6 @@
 <package>
   <name>kuka_lwr</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>
     ROS meta-package containing kuka lwr packages.
   </description>
@@ -11,23 +11,15 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <!-- PACKAGES -->
+
   <!-- Model -->
   <run_depend> lwr_description </run_depend>
 
   <!-- ROSControl-based controllers -->
   <run_depend> lwr_controllers </run_depend>
 
-  <!-- Real hardware interface -->
+  <!--  Hardware interfaces real/sim -->
   <run_depend> lwr_hw </run_depend>
-
-  <!-- Simulated hardware interface -->
-  <run_depend> lwr_hw_sim </run_depend>
-  
-  <!-- Launch files -->
-  <run_depend> lwr_launch </run_depend>
-
-  <!-- The kinematics (ToDo) -->
-  <!-- run_depend> lwr_kinematics </run_depend -->
 
   <export>
     <metapackage/>

@@ -1,4 +1,3 @@
-
 #include "lwr_hw/lwr_hw_real.h"
 
 namespace lwr_hw
