@@ -9,12 +9,12 @@ The main packages are:
 - [__lwr_description__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_description): a package that defines the model of the robot (ToDo: name it __lwr_model__)
 - [__lwr_hw__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_hw): a package that allows communication with an LWR 4+ through FRI or through a gazebo simulation. If you are using the joint impedance control strategy, it adds the gravity term computed from the URDF model.
 - [__lwr_controllers__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_controllers): a package that implement a set of useful controllers (ToDo: perhaps moving this to a forked version of `ros_controllers` would be ok, but some controllers are specific for the a 7-dof arm).
-- __single_lwr_example__: a cofiguration-based meta-package that shows how to use the `kuka_lwr` packages.
-	- __single_lwr_robot__: the package where you define your robot using the LWR 4+ arm.
+- [__single_lwr_example__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example): a cofiguration-based meta-package that shows how to use the `kuka_lwr` packages.
+	- [__single_lwr_robot__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example/single_lwr_robot): the package where you define your robot using the LWR 4+ arm.
 	- __single_lwr_moveit__: the moveit configuration for your `single_lwr_robot` description.
-	- __single_lwr_launch__: a launch interface to load different components and configuration of your setup be it real, simulation, moveit, visualization, etc.
+	- [__single_lwr_launch__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example/single_lwr_launch): a launch interface to load different components and configuration of your setup be it real, simulation, moveit, visualization, etc.
 
-For an example using two LWR 4+ arms and two Pisa/IIT SoftHands, see our [Vito robot](https://github.com/CentroEPiaggio/vito-robot).
+For an example using two LWR 4+ arms and two Pisa/IIT SoftHands, see the [Vito robot](https://github.com/CentroEPiaggio/vito-robot).
 
 ## Install
 
