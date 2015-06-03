@@ -10,7 +10,7 @@ For instance, in the package [__single_lwr_robot__](./single_lwr_robot/), the [r
 
 [Controllers](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/single_lwr_example/single_lwr_moveit/config/controllers.yaml#L2) and [joint names](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/single_lwr_example/single_lwr_robot/config/joint_names.yaml) are in the [config](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example/single_lwr_robot/config) folder. Note that the name space of controllers and the joint names contain the word `lwr`, which is the name you gave to the arm when creating the robot [here](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/single_lwr_example/single_lwr_robot/robot/single_lwr_robot.urdf.xacro#L36).
 
-Custom controllers can be found in the [__lwr_controllers__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_controllers) package.
+__NOTE__: Other than standard ros-controllers, there are custom controllers that can be found in the [lwr_controllers](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_controllers) package.
 
 ## 2. Configure MoveIt!
 
