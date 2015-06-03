@@ -26,9 +26,7 @@
 	<!-- LAUNCH IMPLEMENTATION -->
 
 	<!-- the urdf/srdf parameter -->
-	<!-- include file="$(find single_lwr_robot)/launch/robot_upload.launch" /-->
 	<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
-	<param name="robot_description_semantic" textfile="$(find single_lwr_moveit)/config/lwr.srdf"/>
 	
 	<!-- joint and robot state publishers of the full robot description -->
 	<param name="use_gui" value="$(arg gui)"/>
@@ -67,6 +65,12 @@
             <arg name="info" value="true"/>
             <arg name="debug" value="false"/>
         </include>
+
+		<!-- run Rviz and load the default config to see the state of the move_group node -->
+		<include file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
+			<arg name="config" value="true"/>
+			<arg name="debug" value="false"/>
+		</include>
     </group>
 
     <!-- load all controller configurations to rosparam server-->
@@ -81,8 +85,8 @@
 			<rosparam command="load" file="$(find single_lwr_robot)/config/joint_names.yaml" />
 
 			<include file="$(find lwr_hw)/launch/lwr_hw.launch">
-				<arg name="port" value="$(port)"/>
-				<arg name="ip" value="192.168.0.20"/>
+				<arg name="port" value="$(arg port)"/>
+				<arg name="ip" value="$(arg ip)"/>
 				<arg name="use_default_joint_names" default="false"/>
 				<arg name="use_default_namespace" default="false"/>
 			</include>

@@ -1,0 +1,8 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: single_lwr_robot
+    relative_path: robot/single_lwr_robot.urdf.xacro
+  SRDF:
+    relative_path: config/single_lwr_robot.srdf
+  CONFIG:
+    generated_timestamp: 1433350719

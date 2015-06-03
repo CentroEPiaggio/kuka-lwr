@@ -1,90 +1,11 @@
 lwr:
-  # Publish all joint states -----------------------------------
+  # CONTROLLERS USED IN THE EXAMLE
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100  
 
-  # Position Controllers in effort ---------------------------------------
-  joint0_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_0_joint
-    pid: {p: 21000.0, i: 10.0, d: 0.0}
-  joint1_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_1_joint
-    pid: {p: 50000.0, i: 10.0, d: 0.0}
-  joint2_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_2_joint
-    pid: {p: 50000.0, i: 10.0, d: 0.0}
-  joint3_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_3_joint
-    pid: {p: 50000.0, i: 10.0, d: 0.0}
-  joint4_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_4_joint
-    pid: {p: 50000.0, i: 10.0, d: 0.0}
-  joint5_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_5_joint
-    pid: {p: 50000.0, i: 10.0, d: 0.0}
-  joint6_effort_position_controller:
-    type: effort_controllers/JointPositionController
-    joint: lwr_6_joint
-    pid: {p: 50000.0, i: 10.0, d: 0.0}
-
-  # Position Controllers in position ---------------------------------------
-  joint0_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_0_joint
-  joint1_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_1_joint
-  joint2_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_2_joint
-  joint3_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_3_joint
-  joint4_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_4_joint
-  joint5_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_5_joint
-  joint6_position_position_controller:
-    type: position_controllers/JointPositionController
-    joint: lwr_6_joint
-
-  # Trajectory Controllers ---------------------------------------
-  joint_effort_trajectory_controller:
-    type: effort_controllers/JointTrajectoryController
-    joints: 
-      - lwr_0_joint
-      - lwr_1_joint
-      - lwr_2_joint
-      - lwr_3_joint
-      - lwr_4_joint
-      - lwr_5_joint
-      - lwr_6_joint
-    gains:
-      lwr_0_joint: {p: 500.0,  d: 30.0, i: 15.0, i_clamp: 30}
-      lwr_1_joint: {p: 200.0,  d: 50.0, i: 10.0, i_clamp: 30}
-      lwr_2_joint: {p: 65.0,  d: 10.0, i: 15.0, i_clamp: 30}
-      lwr_3_joint: {p: 29.0,  d: 7.0, i: 12.0, i_clamp: 30}
-      lwr_4_joint: {p: 40.0,  d: 5.0, i: 5.0, i_clamp: 20}
-      lwr_5_joint: {p: 11.0,  d: 3.0, i: 3.0, i_clamp: 10}
-      lwr_6_joint: {p: 15.0,  d: 3.0, i: 3.0, i_clamp: 10}
-
-    constraints:
-      goal_time: 0.5                   # Override default
-
-    state_publish_rate:  25            # Override default
-    action_monitor_rate: 30            # Override default
-    stop_trajectory_duration: 0        # Override default
-
-  joint_position_trajectory_controller:
+  # THIS CONFIGURATION IS ACTUALLY SENDING TAU = K*Q
+  joint_trajectory_controller:
     type: position_controllers/JointTrajectoryController
     joints: 
       - lwr_0_joint
@@ -95,6 +16,18 @@ lwr:
       - lwr_5_joint
       - lwr_6_joint
 
+  stiffness_trajectory_controller:
+    type: position_controllers/JointTrajectoryController
+    joints:
+      - lwr_0_joint_stiffness
+      - lwr_1_joint_stiffness
+      - lwr_2_joint_stiffness
+      - lwr_3_joint_stiffness
+      - lwr_4_joint_stiffness
+      - lwr_5_joint_stiffness
+      - lwr_6_joint_stiffness
+
+## OTHER CUSTOM CONTROLLERS LEFT HERE AS EXAMPLES
   #   Joint Impedance Controllers
   JointImpedanceControl:
     type: lwr_controllers/JointImpedanceController
