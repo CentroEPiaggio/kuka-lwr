@@ -220,9 +220,9 @@ void LWRHWreal::write(ros::Time time, ros::Duration period)
         // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
         device_->doPositionControl(newJntPosition, true);
       } 
-      else if( this->device_->interface->getCurrentControlScheme() == FRI_CTRL_OTHER ) // Gravity compensation: just read status, but we have to keep FRI alive
+      else if( this->device_->getCurrentControlScheme() == FRI_CTRL_OTHER ) // Gravity compensation: just read status, but we have to keep FRI alive
       {
-        device_->interface->doDataExchange();
+        device_->doDataExchange();
       }
     //}
   }
