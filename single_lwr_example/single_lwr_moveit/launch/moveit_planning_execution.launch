@@ -18,12 +18,12 @@
   <!--<arg name="impedance" default="true" doc="Use impedance control" />-->
  
   <!-- load the robot_description parameter before launching ROS-I nodes -->
-  <include file="$(find lwr_moveit)/launch/planning_context.launch" >
+  <include file="$(find single_lwr_moveit)/launch/planning_context.launch" >
     <arg name="load_robot_description" value="true" />
   </include>
 
 	<!-- Load joint controller configurations from YAML file to parameter server -->
-	<rosparam file="$(find lwr_moveit)/config/lwr_controller.yaml" command="load"/>
+	<rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
 	
     <node ns="lwr" name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
         output="screen"  args="joint_state_controller joint_trajectory_controller"/> 
@@ -37,11 +37,11 @@
 	<!-- run the robot simulator and action interface nodes -->
 	<group if="$(arg sim)">
 		<!-- spawn the robot in gazebo -->
-		<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model lwr_on_a_box"  respawn="false" output="screen" />
+		<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model single_lwr_robot"  respawn="false" output="screen" />
 
 		<!-- enable/disable gui at will, the rviz listens to the simulation -->
 		<include file="$(find gazebo_ros)/launch/empty_world.launch">
-			<arg name="world_name" value="$(find lwr_description)/worlds/simple_environment.world"/>
+			<arg name="world_name" value="$(find single_lwr_robot)/worlds/simple_environment.world"/>
 			<arg name="paused" value="false"/>
 			<arg name="use_sim_time" value="true"/>
 			<arg name="gui" value="true"/>
@@ -64,15 +64,15 @@
   <!-- publish the robot state (tf transforms) -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-  <include file="$(find lwr_moveit)/launch/move_group.launch">
+  <include file="$(find single_lwr_moveit)/launch/move_group.launch">
     <arg name="publish_monitored_planning_scene" value="true" />
     <!--<arg name="impedance" value="$(arg impedance)" />-->
   </include>
 
-  <include if="$(arg rviz)" file="$(find lwr_moveit)/launch/moveit_rviz.launch">
+  <include if="$(arg rviz)" file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
   </include>
   
-  <include file="$(find lwr_moveit)/launch/default_warehouse_db.launch" />
+  <include file="$(find single_lwr_moveit)/launch/default_warehouse_db.launch" />
 
 </launch>
