@@ -206,6 +206,23 @@ void LWRHWreal::write(ros::Time time, ros::Duration period)
         // the KRC adds the dynamic terms, such that if zero torque is sent, the robot apply torques necessary to mantain the robot in the current position
         // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
         device_->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, true);
+      } 
+      else if( device_->getCurrentControlScheme() == FRI_CTRL_POSITION )
+      {
+        for (int i = 0; i < LBR_MNJ; i++)
+        {
+            newJntPosition[i] = joint_position_command_[i]; 
+        }
+
+        // only joint impedance control is performed, since it is the only one that provide access to the joint torque directly
+        // note that stiffness and damping are 0, as well as the position, since only effort is allowed to be sent
+        // the KRC adds the dynamic terms, such that if zero torque is sent, the robot apply torques necessary to mantain the robot in the current position
+        // the only interface is effort, thus any other action you want to do, you have to compute the added torque and send it through a controller
+        device_->doPositionControl(newJntPosition, true);
+      } 
+      else if( this->device_->interface->getCurrentControlScheme() == FRI_CTRL_OTHER ) // Gravity compensation: just read status, but we have to keep FRI alive
+      {
+        device_->interface->doDataExchange();
       }
     //}
   }
