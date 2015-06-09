@@ -86,7 +86,7 @@ namespace lwr_controllers
 		joint_limits_.center.resize(kdl_tree_.getNrOfJoints());
 		int index;
 
-    	for (int i = 0; i < kdl_tree_.getNrOfJoints() && link_; i++)
+    	for (int i = 0; i < kdl_tree_.getNrOfJoints()/2 && link_; i++)
     	{
     		joint_ = model.getJoint(link_->parent_joint->name);  
     		index = kdl_tree_.getNrOfJoints() - i - 1;
