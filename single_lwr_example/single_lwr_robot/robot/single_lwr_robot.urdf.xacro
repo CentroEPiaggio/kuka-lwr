@@ -5,6 +5,12 @@
 	<xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
 
 	<!-- and assemble your robot -->
+    <link name="world" />
+    <joint name="fixed" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <parent link="world"/>
+        <child link="box"/>
+    </joint>
 	<link name="box">
 		<inertial>
 			<mass value="5.0"/>
