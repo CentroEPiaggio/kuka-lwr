@@ -77,19 +77,37 @@ namespace lwr_controllers
 		    n.shutdown();
 		    return false;
 		}
+		
+		// Populate the KDL chain
+        if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
+        {
+            ROS_ERROR_STREAM("Failed to get KDL chain from tree: ");
+            ROS_ERROR_STREAM("  "<<root_name<<" --> "<<tip_name);
+            ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfJoints()<<" joints");
+            ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfSegments()<<" segments");
+            ROS_ERROR_STREAM("  The segments are:");
+
+            KDL::SegmentMap segment_map = kdl_tree_.getSegments();
+            KDL::SegmentMap::iterator it;
+
+            for( it=segment_map.begin(); it != segment_map.end(); it++ )
+              ROS_ERROR_STREAM( "    "<<(*it).first);
+
+            return false;
+        }
 
 		// Parsing joint limits from urdf model
 		boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
     	boost::shared_ptr<const urdf::Joint> joint_;
-    	joint_limits_.min.resize(kdl_tree_.getNrOfJoints());
-		joint_limits_.max.resize(kdl_tree_.getNrOfJoints());
-		joint_limits_.center.resize(kdl_tree_.getNrOfJoints());
+    	joint_limits_.min.resize(kdl_chain_.getNrOfJoints());
+		joint_limits_.max.resize(kdl_chain_.getNrOfJoints());
+		joint_limits_.center.resize(kdl_chain_.getNrOfJoints());
 		int index;
 
-    	for (int i = 0; i < kdl_tree_.getNrOfJoints()/2 && link_; i++)
+    	for (int i = 0; i < kdl_chain_.getNrOfJoints() && link_; i++)
     	{
     		joint_ = model.getJoint(link_->parent_joint->name);  
-    		index = kdl_tree_.getNrOfJoints() - i - 1;
+    		index = kdl_chain_.getNrOfJoints() - i - 1;
 
     		joint_limits_.min(index) = joint_->limits->lower;
     		joint_limits_.max(index) = joint_->limits->upper;
@@ -97,25 +115,6 @@ namespace lwr_controllers
 
     		link_ = model.getLink(link_->getParent()->name);
     	}
-
-
-		// Populate the KDL chain
-		if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
-		{
-		    ROS_ERROR_STREAM("Failed to get KDL chain from tree: ");
-		    ROS_ERROR_STREAM("  "<<root_name<<" --> "<<tip_name);
-		    ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfJoints()<<" joints");
-		    ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfSegments()<<" segments");
-		    ROS_ERROR_STREAM("  The segments are:");
-
-		    KDL::SegmentMap segment_map = kdl_tree_.getSegments();
-		    KDL::SegmentMap::iterator it;
-
-		    for( it=segment_map.begin(); it != segment_map.end(); it++ )
-		      ROS_ERROR_STREAM( "    "<<(*it).first);
-
-		  	return false;
-		}
 
 
 		ROS_DEBUG("Number of segments: %d", kdl_chain_.getNrOfSegments());
