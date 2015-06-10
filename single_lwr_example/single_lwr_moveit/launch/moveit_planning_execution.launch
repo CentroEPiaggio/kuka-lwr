@@ -15,7 +15,7 @@
   <arg name="robot_ip" default="192.168.0.20" unless="$(arg sim)" doc="The IP address of the robot" />
   <arg name="robot_port" default="49939" unless="$(arg sim)" doc="The listening port of the FRI interface" />
   <arg name="rviz" default="true" doc="Launch rviz in order to command the robot" />
-  <arg name="controllers" default="joint_state_controller joint_trajectory_controller" />
+  <arg name="controllers" default="joint_trajectory_controller" />
   <!--<arg name="impedance" default="true" doc="Use impedance control" />-->
  
   <!-- load the robot_description parameter before launching ROS-I nodes -->
@@ -27,7 +27,7 @@
 	<rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
 	
     <node ns="lwr" name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-        output="screen"  args="$(arg controllers)"/> 
+        output="screen"  args="joint_state_controller $(arg controllers)"/> 
 	<!--<node unless="$(arg impedance)" ns="lwr" name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 		output="screen"  args="joint_state_controller position_joint_trajectory_controller"/> 
     <node if="$(arg impedance)" ns="lwr" name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
