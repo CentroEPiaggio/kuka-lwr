@@ -31,7 +31,7 @@ lwr:
   #   Joint Impedance Controllers
   JointImpedanceControl:
     type: lwr_controllers/JointImpedanceController
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
     stiffness_gains: 300
     damping_gains: .7
@@ -39,19 +39,19 @@ lwr:
   # Inverse Dynamics Controllers
   InverseDynamicsControl:
     type: lwr_controllers/InverseDynamicsController
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # Computed Torque Controllers
   ComputedTorqueControl: 
     type: lwr_controllers/ComputedTorqueController
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # One Task Inverse Kinematics
   OneTaskInverseKinematics: 
     type: lwr_controllers/OneTaskInverseKinematics
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
     pid_lwr_0_joint: {p: 250,  i: 10, d: 30, i_clamp_min: -0.3, i_clamp_max: 0.3}
     pid_lwr_1_joint: {p: 220,  i: 10, d: 30, i_clamp_min: -0.3, i_clamp_max: 0.3}
@@ -64,7 +64,7 @@ lwr:
   # Multi Task Priority Inverse Kinematics
   MultiTaskPriorityInverseKinematics: 
     type: lwr_controllers/MultiTaskPriorityInverseKinematics
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
     pid_lwr_0_joint: {p: 250,  i: 10, d: 30, i_clamp_min: -0.3, i_clamp_max: 0.3}
     pid_lwr_1_joint: {p: 220,  i: 10, d: 30, i_clamp_min: -0.3, i_clamp_max: 0.3}
@@ -77,35 +77,35 @@ lwr:
   # One Task Inverse Dynamics JL
   OneTaskInverseDynamicsJL: 
     type: lwr_controllers/OneTaskInverseDynamicsJL
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # Multi Task Priority Inverse Dynamics
   MultiTaskPriorityInverseDynamics: 
     type: lwr_controllers/MultiTaskPriorityInverseDynamics
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # Minimum Effort Inverse Dynamics
   MinimumEffortInverseDynamics: 
     type: lwr_controllers/MinimumEffortInverseDynamics
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # Backstepping Controller
   BacksteppingController: 
     type: lwr_controllers/BacksteppingController
-    root_name: world
+    root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # Dynamic Sliding Mode Controller
   DynamicSlidingModeController: 
      type: lwr_controllers/DynamicSlidingModeController
-     root_name: world
+     root_name: lwr_base_link
      tip_name: lwr_7_link
 
   # Dynamic Sliding Mode Controller Task Space
   DynamicSlidingModeControllerTaskSpace: 
      type: lwr_controllers/DynamicSlidingModeControllerTaskSpace
-     root_name: world
+     root_name: lwr_base_link
      tip_name: lwr_7_link
