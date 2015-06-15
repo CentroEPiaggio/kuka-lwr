@@ -17,6 +17,7 @@
   <arg name="rviz" default="true" doc="Launch rviz in order to command the robot" />
   <arg name="controllers" default="joint_trajectory_controller" />
   <!--<arg name="impedance" default="true" doc="Use impedance control" />-->
+  <arg name="t1_limits" default="false" />
  
   <!-- load the robot_description parameter before launching ROS-I nodes -->
   <include file="$(find single_lwr_moveit)/launch/planning_context.launch" >
@@ -69,6 +70,7 @@
     <arg name="publish_monitored_planning_scene" value="true" />
     <!--<arg name="impedance" value="$(arg impedance)" />-->
   </include>
+  <rosparam if="t1_limits" command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
 
   <include if="$(arg rviz)" file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
