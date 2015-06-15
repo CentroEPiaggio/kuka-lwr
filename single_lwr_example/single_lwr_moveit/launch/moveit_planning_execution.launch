@@ -70,7 +70,10 @@
     <arg name="publish_monitored_planning_scene" value="true" />
     <!--<arg name="impedance" value="$(arg impedance)" />-->
   </include>
-  <rosparam if="t1_limits" command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
+  
+  <group if="$(arg t1_limits)" ns="robot_description_planning">
+        <rosparam command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
+  </group>
 
   <include if="$(arg rviz)" file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
     <arg name="config" value="true"/>
