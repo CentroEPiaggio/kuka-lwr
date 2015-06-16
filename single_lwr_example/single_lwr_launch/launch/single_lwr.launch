@@ -11,6 +11,8 @@
 	<arg name="lwr_powered" default="false"/>
 	<arg name="port" default="49939"/>
 	<arg name="ip" default="192.168.0.20"/>
+    <arg name="t1_limits" default="false"/>
+    <arg name="controllers" default="joint_trajectory_controller stiffness_trajectory_controller"/>
 
 	<!-- in case you want to load moveit from here, it might be hard with the real HW though -->
 	<arg name="load_moveit" default="false"/>
@@ -72,6 +74,11 @@
 			<arg name="debug" value="false"/>
 		</include>
     </group>
+    
+    <!-- Load updated joint limits (override information from single_lwr_moveit) to respect T1 mode limits -->
+    <group if="$(arg t1_limits)" ns="robot_description_planning">
+        <rosparam command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
+    </group>
 
     <!-- load all controller configurations to rosparam server-->
     <rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
@@ -94,7 +101,7 @@
 		</group>
 
 		<!-- spawn only desired controllers in current namespace -->
-		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller stiffness_trajectory_controller"/>
+		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller $(arg controllers)"/>
 	</group>
 
 </launch>
