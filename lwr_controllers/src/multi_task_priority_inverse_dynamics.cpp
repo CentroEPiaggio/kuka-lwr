@@ -26,13 +26,11 @@ namespace lwr_controllers
 		J_dot_.resize(kdl_chain_.getNrOfJoints());
 		Kp_.resize(kdl_chain_.getNrOfJoints());
 		Kd_.resize(kdl_chain_.getNrOfJoints());
-		PIDs_.resize(kdl_chain_.getNrOfJoints());
 		M_.resize(kdl_chain_.getNrOfJoints());
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
 
 		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseDynamics::command_configuration, this);
-		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiTaskPriorityInverseDynamics::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -52,14 +50,6 @@ namespace lwr_controllers
     		Kp_(i) = 100;
   			Kd_(i) = 20;
     	}
-
-    	// setting joint-space PIDs, useful only to stop the robot when starting the control (temporary solution)
-    	Kp = 200;
-    	Ki = 1; 
-    	Kd = 5;
-
-    	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
 
@@ -230,18 +220,6 @@ namespace lwr_controllers
 			return;
 		}
 		
-	}
-
-	void MultiTaskPriorityInverseDynamics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
-	{
-		if(msg->data.size() == 3)
-		{
-			for(int i = 0; i < PIDs_.size(); i++)
-				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
-		}
-		else
-			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
 	}
 
 	void MultiTaskPriorityInverseDynamics::set_marker(KDL::Frame x, int index, int id)

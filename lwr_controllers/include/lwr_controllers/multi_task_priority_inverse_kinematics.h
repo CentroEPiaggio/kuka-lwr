@@ -1,20 +1,18 @@
 #ifndef LWR_CONTROLLERS__MULTI_TASK_PRIORITY_INVERSE_KINEMATICS_H
 #define LWR_CONTROLLERS__MULTI_TASK_PRIORITY_INVERSE_KINEMATICS_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 #include <lwr_controllers/MultiPriorityTask.h>
 
 #include <std_msgs/Float64MultiArray.h>
 #include <visualization_msgs/MarkerArray.h>
-
-#include <control_toolbox/pid.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <sstream>
 
 namespace lwr_controllers
 {
-	class MultiTaskPriorityInverseKinematics: public controller_interface::KinematicChainControllerBase<hardware_interface::EffortJointInterface>
+	class MultiTaskPriorityInverseKinematics: public controller_interface::PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		MultiTaskPriorityInverseKinematics();
@@ -28,7 +26,6 @@ namespace lwr_controllers
 
 	private:
 		ros::Subscriber sub_command_;
-		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
 		ros::Publisher pub_marker_;
 
@@ -62,9 +59,6 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
-
-		std::vector<control_toolbox::Pid> PIDs_;
-		double Kp,Ki,Kd;
 	};
 
 }

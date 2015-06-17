@@ -1,18 +1,16 @@
 #ifndef LWR_CONTROLLERS__DYNAMIC_SLIDING_MODE_CONTROL_TASK_SPACE_H
 #define LWR_CONTROLLERS__DYNAMIC_SLIDING_MODE_CONTROL_TASK_SPACE_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 
 #include <visualization_msgs/Marker.h>
 #include <std_msgs/Float64MultiArray.h>
-
-#include <control_toolbox/pid.h>
 
 #include <boost/scoped_ptr.hpp>
  
 namespace lwr_controllers
 {
-	class DynamicSlidingModeControllerTaskSpace: public controller_interface::KinematicChainControllerBase<hardware_interface::EffortJointInterface>
+	class DynamicSlidingModeControllerTaskSpace: public controller_interface::PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		DynamicSlidingModeControllerTaskSpace();
@@ -22,12 +20,10 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const std_msgs::Float64MultiArray::ConstPtr &msg);
-		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 		void set_marker(KDL::Frame x, int id);
 
 	private:
 		ros::Subscriber sub_command_;
-		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
 		ros::Publisher pub_pose_;
 		ros::Publisher pub_traj_;
@@ -95,9 +91,6 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
-
-		std::vector<control_toolbox::Pid> PIDs_;
-		double Kp,Ki,Kd;
 	};
 
 }

@@ -16,19 +16,6 @@ namespace lwr_controllers
 	{
         KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
 
-		PIDs_.resize(kdl_chain_.getNrOfJoints());
-
-		// Parsing PID gains from YAML 
-	    std::string pid_ = ("pid_");
-	    for (int i = 0; i < joint_handles_.size(); ++i)
-		{
-		    if (!PIDs_[i].init(ros::NodeHandle(n, pid_ + joint_handles_[i].getName())))
-		    {
-		        ROS_ERROR("Error initializing the PID for joint %d",i);
-		        return false;
-		    }
-		}
-
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
 		fk_pos_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));

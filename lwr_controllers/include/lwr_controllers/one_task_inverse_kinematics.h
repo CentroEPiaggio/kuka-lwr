@@ -1,7 +1,7 @@
 #ifndef LWR_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
 #define LWR_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 #include <lwr_controllers/MultiPriorityTask.h>
 #include <lwr_controllers/PoseRPY.h>
 #include <lwr_controllers/PIDgains.h>
@@ -21,7 +21,7 @@
 
 namespace lwr_controllers
 {
-	class OneTaskInverseKinematics: public controller_interface::KinematicChainControllerBase<hardware_interface::EffortJointInterface>
+	class OneTaskInverseKinematics: public controller_interface::PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		OneTaskInverseKinematics();

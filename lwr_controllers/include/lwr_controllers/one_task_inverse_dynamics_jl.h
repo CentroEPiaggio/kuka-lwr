@@ -1,14 +1,12 @@
 #ifndef LWR_CONTROLLERS__ONE_TASK_INVERSE_DYNAMICS_JL_H
 #define LWR_CONTROLLERS__ONE_TASK_INVERSE_DYNAMICS_JL_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 #include <lwr_controllers/MultiPriorityTask.h>
 
 #include <lwr_controllers/PoseRPY.h>
 #include <visualization_msgs/Marker.h>
 #include <std_msgs/Float64MultiArray.h>
-
-#include <control_toolbox/pid.h>
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/condition.hpp>
@@ -16,7 +14,7 @@
 
 namespace lwr_controllers
 {
-	class OneTaskInverseDynamicsJL: public controller_interface::KinematicChainControllerBase<hardware_interface::EffortJointInterface>
+	class OneTaskInverseDynamicsJL: public controller_interface::PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		OneTaskInverseDynamicsJL();
@@ -26,13 +24,11 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
-		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 		void set_marker(KDL::Frame x, int id);
 		double task_objective_function(KDL::JntArray q);
 
 	private:
 		ros::Subscriber sub_command_;
-		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
 		ros::Publisher pub_pose_;
 		ros::Publisher pub_marker_;
@@ -93,9 +89,6 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverAcc_recursive> fk_acc_solver_;
-
-		std::vector<control_toolbox::Pid> PIDs_;
-		double Kp,Ki,Kd;
 	};
 
 }
