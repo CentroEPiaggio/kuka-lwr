@@ -21,8 +21,6 @@
 
 #include <vector>
 
-// TODO: PIDKinematicChainControllerBase with dynamic_reconfigurable gains?
-
 namespace controller_interface
 {
     template<typename JI>
@@ -32,7 +30,7 @@ namespace controller_interface
 		KinematicChainControllerBase();
 		~KinematicChainControllerBase();
 
-	bool init(JI *robot, ros::NodeHandle &n);
+        bool init(JI *robot, ros::NodeHandle &n);
 
 	protected:
 		ros::NodeHandle nh_;
@@ -175,8 +173,6 @@ namespace controller_interface
 
         return true;
     }
-
-
 
 }
 
