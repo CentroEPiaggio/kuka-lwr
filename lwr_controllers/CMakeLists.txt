@@ -36,7 +36,7 @@ generate_messages(
 )
 
 catkin_package(
-#  DEPENDS 
+  DEPENDS orocos_kdl
   CATKIN_DEPENDS
     controller_interface
     control_msgs
@@ -46,7 +46,6 @@ catkin_package(
     forward_command_controller
     kdl_parser
     message_runtime
-    orocos_kdl
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
