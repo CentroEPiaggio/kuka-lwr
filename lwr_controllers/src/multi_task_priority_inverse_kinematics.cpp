@@ -23,7 +23,7 @@ namespace lwr_controllers
 		J_.resize(kdl_chain_.getNrOfJoints());
 		J_star_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseKinematics::command_configuration, this);
+		sub_command_ = nh_.subscribe("command", 1, &MultiTaskPriorityInverseKinematics::command, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -132,7 +132,7 @@ namespace lwr_controllers
 
 	}
 
-	void MultiTaskPriorityInverseKinematics::command_configuration(const lwr_controllers::MultiPriorityTask::ConstPtr &msg)
+	void MultiTaskPriorityInverseKinematics::command(const lwr_controllers::MultiPriorityTask::ConstPtr &msg)
 	{
 		if (msg->links.size() == msg->tasks.size()/6)
 		{

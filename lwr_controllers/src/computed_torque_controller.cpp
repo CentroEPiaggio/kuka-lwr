@@ -23,7 +23,7 @@ namespace lwr_controllers
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_posture_ = nh_.subscribe("command_configuration", 1, &ComputedTorqueController::command_configuration, this);
+		sub_posture_ = nh_.subscribe("command", 1, &ComputedTorqueController::command, this);
 		sub_gains_ = nh_.subscribe("set_gains", 1, &ComputedTorqueController::set_gains, this);
 
 		return true;		
@@ -95,7 +95,7 @@ namespace lwr_controllers
 
     }
 
-    void ComputedTorqueController::command_configuration(const std_msgs::Float64MultiArray::ConstPtr &msg)
+    void ComputedTorqueController::command(const std_msgs::Float64MultiArray::ConstPtr &msg)
     {
     	if(msg->data.size() == 0)
     		ROS_INFO("Desired configuration must be of dimension %lu", joint_handles_.size());

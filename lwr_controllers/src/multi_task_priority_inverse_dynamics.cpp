@@ -30,7 +30,7 @@ namespace lwr_controllers
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseDynamics::command_configuration, this);
+		sub_command_ = nh_.subscribe("command", 1, &MultiTaskPriorityInverseDynamics::command, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -171,7 +171,7 @@ namespace lwr_controllers
 
 	}
 
-	void MultiTaskPriorityInverseDynamics::command_configuration(const lwr_controllers::MultiPriorityTask::ConstPtr &msg)
+	void MultiTaskPriorityInverseDynamics::command(const lwr_controllers::MultiPriorityTask::ConstPtr &msg)
 	{
 		if (msg->links.size() == msg->tasks.size()/6)
 		{

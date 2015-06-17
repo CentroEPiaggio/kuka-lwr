@@ -27,7 +27,7 @@ namespace lwr_controllers
 		tau_cmd_.resize(kdl_chain_.getNrOfJoints());
 		J_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &OneTaskInverseKinematics::command_configuration, this);
+		sub_command_ = nh_.subscribe("command", 1, &OneTaskInverseKinematics::command, this);
 
 		return true;
 	}
@@ -127,7 +127,7 @@ namespace lwr_controllers
     	}
 	}
 
-	void OneTaskInverseKinematics::command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg)
+	void OneTaskInverseKinematics::command(const lwr_controllers::PoseRPY::ConstPtr &msg)
 	{	
 		KDL::Frame frame_des_;
 
