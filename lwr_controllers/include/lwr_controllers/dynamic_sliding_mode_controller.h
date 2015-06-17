@@ -1,33 +1,18 @@
 #ifndef LWR_CONTROLLERS__DYNAMIC_SLIDING_MODE_CONTROL_H
 #define LWR_CONTROLLERS__DYNAMIC_SLIDING_MODE_CONTROL_H
 
-#include <ros/node_handle.h>
-#include <urdf/model.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/condition.hpp>
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
-#include <control_msgs/JointControllerState.h>
-#include <ros/ros.h>
-#include <std_msgs/Float64MultiArray.h>
-#include <visualization_msgs/Marker.h>
-#include <sstream>
+#include "KinematicChainControllerBase.h"
 
-#include <kdl/tree.hpp>
-#include <kdl/kdl.hpp>
-#include <kdl/chain.hpp>
-#include <kdl/chainfksolver.hpp>
-#include <kdl/frames.hpp>
-#include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
-#include <kdl/chainjnttojacsolver.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
+#include <visualization_msgs/Marker.h>
+#include <std_msgs/Float64MultiArray.h>
+
 #include <control_toolbox/pid.h>
-#include <lwr_controllers/MultiPriorityTask.h>
-#include <vector>
+
+#include <boost/scoped_ptr.hpp>
 
 namespace lwr_controllers
 {
-	class DynamicSlidingModeController: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+	class DynamicSlidingModeController: public controller_interface::KinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		DynamicSlidingModeController();
@@ -41,7 +26,6 @@ namespace lwr_controllers
 		void set_marker(KDL::Frame x, int id);
 
 	private:
-		ros::NodeHandle nh_;
 		ros::Subscriber sub_command_;
 		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
@@ -53,10 +37,7 @@ namespace lwr_controllers
 		std_msgs::Float64MultiArray msg_pose_;
 		std_msgs::Float64MultiArray msg_traj_;
 		visualization_msgs::Marker msg_marker_;
-
-		KDL::Chain kdl_chain_;
-
-		KDL::JntArrayAcc joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
+        
 		KDL::JntArrayAcc joint_ref_;
 
 		KDL::Frame x_,x0_;	//current e-e pose
@@ -85,13 +66,6 @@ namespace lwr_controllers
 		KDL::JntArray lambda_;
 		KDL::JntArray k_;
 
-		struct limits_
-		{
-			KDL::JntArray min;
-			KDL::JntArray max;
-			KDL::JntArray center;
-		} joint_limits_;
-
 		KDL::Twist x_err_;
 
 		KDL::JntArray tau_;
@@ -112,7 +86,6 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 
-		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;
 		double Kp,Ki,Kd;
 	};

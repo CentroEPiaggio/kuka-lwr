@@ -1,37 +1,27 @@
 #ifndef LWR_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
 #define LWR_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
 
-#include <ros/node_handle.h>
-#include <urdf/model.h>
-#include <boost/scoped_ptr.hpp>
-#include <boost/thread/condition.hpp>
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
-#include <control_msgs/JointControllerState.h>
-#include <ros/ros.h>
-#include <std_msgs/Float64MultiArray.h>
-
-#include <kdl/tree.hpp>
-#include <kdl/kdl.hpp>
-#include <kdl/chain.hpp>
-#include <kdl/chainfksolver.hpp>
-#include <kdl/frames.hpp>
-#include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
-#include <kdl/chainjnttojacsolver.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
-#include <kdl/chainiksolverpos_nr_jl.hpp>
-#include <kdl/chainiksolvervel_pinv.hpp>
-#include <control_toolbox/pid.h>
-#include <geometry_msgs/PoseStamped.h>
-
-#include <vector>
-
+#include "KinematicChainControllerBase.h"
+#include <lwr_controllers/MultiPriorityTask.h>
 #include <lwr_controllers/PoseRPY.h>
 #include <lwr_controllers/PIDgains.h>
 
+#include <std_msgs/Float64MultiArray.h>
+#include <visualization_msgs/Marker.h>
+
+#include <control_toolbox/pid.h>
+
+#include <kdl/chainfksolverpos_recursive.hpp>
+#include <kdl/chainiksolvervel_pinv.hpp>
+#include <kdl/chainiksolverpos_nr_jl.hpp>
+
+#include <boost/scoped_ptr.hpp>
+#include <boost/thread/condition.hpp>
+#include <sstream>
+
 namespace lwr_controllers
 {
-	class OneTaskInverseKinematics: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+	class OneTaskInverseKinematics: public controller_interface::KinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		OneTaskInverseKinematics();
