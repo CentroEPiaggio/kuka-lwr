@@ -59,19 +59,19 @@ namespace controller_interface
 
         if (!ros::param::search(n.getNamespace(),"robot_description", robot_description))
         {
-            ROS_ERROR_STREAM("BacksteppingController: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
+            ROS_ERROR_STREAM("KinematicChainControllerBase: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
             return false;
         }
 
         if (!nh_.getParam("root_name", root_name))
         {
-            ROS_ERROR_STREAM("BacksteppingController: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
+            ROS_ERROR_STREAM("KinematicChainControllerBase: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
             return false;
         }
 
         if (!nh_.getParam("tip_name", tip_name))
         {
-            ROS_ERROR_STREAM("BacksteppingController: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
+            ROS_ERROR_STREAM("KinematicChainControllerBase: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
             return false;
         }
      
@@ -166,7 +166,7 @@ namespace controller_interface
             ROS_DEBUG("%s", it->getJoint().getName().c_str() );
         }
 
-        ROS_DEBUG(" Number of joints in handle = %lu", joint_handles_.size() );
+        ROS_DEBUG("Number of joints in handle = %lu", joint_handles_.size() );
         
         joint_msr_states_.resize(kdl_chain_.getNrOfJoints());
         joint_des_states_.resize(kdl_chain_.getNrOfJoints());
