@@ -1,35 +1,20 @@
 #ifndef LWR_CONTROLLERS__ONE_TASK_INVERSE_DYNAMICS_JL_H
 #define LWR_CONTROLLERS__ONE_TASK_INVERSE_DYNAMICS_JL_H
 
-#include <ros/node_handle.h>
-#include <urdf/model.h>
+#include "PIDKinematicChainControllerBase.h"
+#include <lwr_controllers/MultiPriorityTask.h>
+
+#include <lwr_controllers/PoseRPY.h>
+#include <visualization_msgs/Marker.h>
+#include <std_msgs/Float64MultiArray.h>
+
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread/condition.hpp>
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
-#include <control_msgs/JointControllerState.h>
-#include <ros/ros.h>
-#include <std_msgs/Float64MultiArray.h>
-#include <visualization_msgs/MarkerArray.h>
-#include <sstream> 
- 
-#include <kdl/tree.hpp>
-#include <kdl/kdl.hpp>
-#include <kdl/chain.hpp>
-#include <kdl/chainfksolver.hpp>
-#include <kdl/frames.hpp>
-#include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
-#include <kdl/chainjnttojacsolver.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
-//#include <kdl/chainfksolvervel_recursive.hpp>
-//#include <kdl/chainfksolveracc_recursive.hpp>
-#include <control_toolbox/pid.h>
-#include <lwr_controllers/PoseRPY.h>
-#include <vector>
+#include <sstream>
 
 namespace lwr_controllers
 {
-	class OneTaskInverseDynamicsJL: public controller_interface::Controller<hardware_interface::EffortJointInterface>
+	class OneTaskInverseDynamicsJL: public controller_interface::PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>
 	{
 	public:
 		OneTaskInverseDynamicsJL();
@@ -39,14 +24,11 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
-		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 		void set_marker(KDL::Frame x, int id);
 		double task_objective_function(KDL::JntArray q);
 
 	private:
-		ros::NodeHandle nh_;
 		ros::Subscriber sub_command_;
-		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
 		ros::Publisher pub_pose_;
 		ros::Publisher pub_marker_;
@@ -55,10 +37,7 @@ namespace lwr_controllers
 		std_msgs::Float64MultiArray msg_pose_;
 		visualization_msgs::Marker msg_marker_;
 		std::stringstream sstr_;
-
-		KDL::Chain kdl_chain_;
-
-		KDL::JntArrayVel joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
+        
 		KDL::JntArray qdot_last_;
 
 		KDL::Frame x_,x0_;	//current e-e pose
@@ -67,13 +46,6 @@ namespace lwr_controllers
 		KDL::Frame x_des_;	//desired pose
 		KDL::Twist x_des_dot_;
 		KDL::Twist x_des_dotdot_;
-
-		struct limits_
-		{
-			KDL::JntArray min;
-			KDL::JntArray max;
-			KDL::JntArray center;
-		} joint_limits_;
 
 		KDL::Twist x_err_;
 
@@ -117,10 +89,6 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverAcc_recursive> fk_acc_solver_;
-
-		std::vector<hardware_interface::JointHandle> joint_handles_;
-		std::vector<control_toolbox::Pid> PIDs_;
-		double Kp,Ki,Kd;
 	};
 
 }
