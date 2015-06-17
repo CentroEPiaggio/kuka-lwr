@@ -33,12 +33,8 @@ namespace lwr_controllers
 		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
 
 	private:
-		ros::NodeHandle nh_;
 		ros::Subscriber sub_command_;
 		ros::Subscriber sub_gains_;
-
-		KDL::Chain kdl_chain_;
-		KDL::JntArrayAcc joint_msr_states_, joint_des_states_;	// joint states (measured and desired)
 
 		KDL::Frame x_;		//current pose
 		KDL::Frame x_des_;	//desired pose
@@ -51,13 +47,6 @@ namespace lwr_controllers
 
 		Eigen::MatrixXd J_pinv_;
 		Eigen::Matrix<double,3,3> skew_;
-
-		struct limits_
-		{
-			KDL::JntArray min;
-			KDL::JntArray max;
-			KDL::JntArray center;
-		} joint_limits_;
 
 		struct quaternion_
 		{
@@ -75,7 +64,6 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainIkSolverVel_pinv> ik_vel_solver_;
 		boost::scoped_ptr<KDL::ChainIkSolverPos_NR_JL> ik_pos_solver_;
 
-		std::vector<hardware_interface::JointHandle> joint_handles_;
 		std::vector<control_toolbox::Pid> PIDs_;
 	};
 
