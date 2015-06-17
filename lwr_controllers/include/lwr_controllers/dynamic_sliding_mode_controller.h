@@ -6,7 +6,7 @@
 #include <visualization_msgs/Marker.h>
 #include <std_msgs/Float64MultiArray.h>
 
-#include <control_toolbox/pid.h>
+// #include <control_toolbox/pid.h>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -22,12 +22,12 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command_configuration(const std_msgs::Float64MultiArray::ConstPtr &msg);
-		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
+// 		void set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 		void set_marker(KDL::Frame x, int id);
 
 	private:
 		ros::Subscriber sub_command_;
-		ros::Subscriber sub_gains_;
+// 		ros::Subscriber sub_gains_;
 		ros::Publisher pub_error_;
 		ros::Publisher pub_pose_;
 		ros::Publisher pub_traj_;
@@ -86,7 +86,7 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 
-		std::vector<control_toolbox::Pid> PIDs_;
+// 		std::vector<control_toolbox::Pid> PIDs_;
 		double Kp,Ki,Kd;
 	};
 

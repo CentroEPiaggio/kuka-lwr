@@ -20,7 +20,7 @@ namespace lwr_controllers
 		joint_ref_.resize(kdl_chain_.getNrOfJoints());
 		tau_.resize(kdl_chain_.getNrOfJoints());
 		J_.resize(kdl_chain_.getNrOfJoints());
-		PIDs_.resize(kdl_chain_.getNrOfJoints());
+// 		PIDs_.resize(kdl_chain_.getNrOfJoints());
 		M_.resize(kdl_chain_.getNrOfJoints());
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
@@ -40,7 +40,7 @@ namespace lwr_controllers
 		k_.resize(kdl_chain_.getNrOfJoints());
 
 		sub_command_ = nh_.subscribe("command_configuration", 1, &DynamicSlidingModeController::command_configuration, this);
-		sub_gains_ = nh_.subscribe("set_gains", 1, &DynamicSlidingModeController::set_gains, this);
+// 		sub_gains_ = nh_.subscribe("set_gains", 1, &DynamicSlidingModeController::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_pose_ = nh_.advertise<std_msgs::Float64MultiArray>("pose", 1000);
@@ -74,8 +74,8 @@ namespace lwr_controllers
     	Ki = 1; 
     	Kd = 5;
 
-    	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
+//     	for (int i = 0; i < PIDs_.size(); i++)
+//     		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
     	//ROS_INFO("PIDs gains are: Kp = %f, Ki = %f, Kd = %f",Kp,Ki,Kd);
 
     	cmd_flag_ = 0;
@@ -163,17 +163,17 @@ namespace lwr_controllers
 
 	}
 
-	void DynamicSlidingModeController::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
-	{
-		if(msg->data.size() == 3)
-		{
-			for(int i = 0; i < PIDs_.size(); i++)
-				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
-		}
-		else
-			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
-	}
+// 	void DynamicSlidingModeController::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
+// 	{
+// 		if(msg->data.size() == 3)
+// 		{
+// 			for(int i = 0; i < PIDs_.size(); i++)
+// 				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
+// 			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
+// 		}
+// 		else
+// 			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
+// 	}
 
 	void DynamicSlidingModeController::set_marker(KDL::Frame x, int id)
 	{			
