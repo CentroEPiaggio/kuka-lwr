@@ -30,11 +30,9 @@ namespace lwr_controllers
 
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command(const std_msgs::Float64MultiArray::ConstPtr &msg);
-		void setGains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 
 	private:
 
-		ros::Subscriber sub_gains_;
 		ros::Subscriber sub_posture_;
 
 		KDL::JntArrayVel dotq_msr_;

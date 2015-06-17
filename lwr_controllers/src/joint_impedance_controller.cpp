@@ -47,7 +47,6 @@ bool JointImpedanceController::init(hardware_interface::EffortJointInterface *ro
   // K_.resize(kdl_chain_.getNrOfJoints());
   // D_.resize(kdl_chain_.getNrOfJoints());
 
-  sub_gains_ = nh_.subscribe("gains", 1, &JointImpedanceController::setGains, this);
   sub_posture_ = nh_.subscribe("command", 1, &JointImpedanceController::command, this);
 
 
@@ -91,7 +90,7 @@ void JointImpedanceController::update(const ros::Time& time, const ros::Duration
 }
 
 
-void JointImpedanceController::commandConfiguration(const std_msgs::Float64MultiArray::ConstPtr &msg){
+void JointImpedanceController::command(const std_msgs::Float64MultiArray::ConstPtr &msg){
   if (msg->data.size() == 0) {
     ROS_INFO("Desired configuration must be: %lu dimension", joint_handles_.size());
     }
@@ -105,32 +104,8 @@ void JointImpedanceController::commandConfiguration(const std_msgs::Float64Multi
     q_des_(j) = msg->data[j];
   }
 
-  }
+}
 
-void JointImpedanceController::setGains(const std_msgs::Float64MultiArray::ConstPtr &msg){
-
-  if (msg->data.size() == 2*joint_handles_.size()){
-    for (unsigned int i = 0; i < joint_handles_.size(); ++i){
-      K_(i) = msg->data[i];
-      D_(i)= msg->data[i + joint_handles_.size()];
-      }
-    // for (unsigned int i = joint_handles_.size(); i < 2*joint_handles_.size(); ++i){
-      // 	D_(i)= msg->data[i];
-      // }
-    }
-  else
-  {
-    ROS_INFO("Num of Joint handles = %lu", joint_handles_.size());
-  }
-
-  ROS_INFO("Num of Joint handles = %lu, dimension of message = %lu", joint_handles_.size(), msg->data.size());
-
-  ROS_INFO("New gains K: %.1lf, %.1lf, %.1lf %.1lf, %.1lf, %.1lf, %.1lf",
-  K_(0), K_(1), K_(2), K_(3), K_(4), K_(5), K_(6));
-  ROS_INFO("New gains D: %.1lf, %.1lf, %.1lf %.1lf, %.1lf, %.1lf, %.1lf",
-  D_(0), D_(1), D_(2), D_(3), D_(4), D_(5), D_(6));
-
-  }
 
 
 }                                                           // namespace
