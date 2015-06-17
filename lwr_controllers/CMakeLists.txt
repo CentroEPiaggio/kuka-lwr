@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
-  orocos_kdl
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -36,7 +35,6 @@ generate_messages(
 )
 
 catkin_package(
-  DEPENDS orocos_kdl
   CATKIN_DEPENDS
     controller_interface
     control_msgs
@@ -62,6 +60,7 @@ add_library(${PROJECT_NAME}
   src/dynamic_sliding_mode_controller.cpp
   src/dynamic_sliding_mode_controller_task_space.cpp
   src/one_task_inverse_dynamics_jl.cpp
+  src/gravity_compensation.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
