@@ -16,6 +16,7 @@ JointImpedanceController::~JointImpedanceController() {}
 
 bool JointImpedanceController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 {
+  KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
 
   K_.resize(kdl_chain_.getNrOfJoints());
   D_.resize(kdl_chain_.getNrOfJoints());

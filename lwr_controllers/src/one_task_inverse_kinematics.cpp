@@ -16,6 +16,8 @@ namespace lwr_controllers
 
 	bool OneTaskInverseKinematics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
+        KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
+        
 		PIDs_.resize(kdl_chain_.getNrOfJoints()); 
 
 	    // Parsing PID gains from YAML 
