@@ -29,7 +29,7 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 
 		void update(const ros::Time& time, const ros::Duration& period);
-		void commandConfiguration(const std_msgs::Float64MultiArray::ConstPtr &msg);
+		void command(const std_msgs::Float64MultiArray::ConstPtr &msg);
 		void setGains(const std_msgs::Float64MultiArray::ConstPtr &msg);
 
 	private:
