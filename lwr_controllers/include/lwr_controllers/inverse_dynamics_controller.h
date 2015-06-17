@@ -3,14 +3,7 @@
 
 #include "KinematicChainControllerBase.h"
 
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
 #include <geometry_msgs/WrenchStamped.h>
-#include <ros/ros.h>
-
-#include <kdl/jntarrayacc.hpp>
-#include <kdl/tree.hpp>
-#include <kdl/chain.hpp>
 #include <kdl/chainidsolver_recursive_newton_euler.hpp>
 
 #include <boost/thread/condition.hpp>

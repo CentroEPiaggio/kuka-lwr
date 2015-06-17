@@ -2,31 +2,13 @@
 #define LWR_CONTROLLERS__DYNAMIC_SLIDING_MODE_CONTROL_TASK_SPACE_H
 
 #include "KinematicChainControllerBase.h"
-#include <lwr_controllers/MultiPriorityTask.h>
 
-#include <std_msgs/Float64MultiArray.h>
 #include <visualization_msgs/Marker.h>
-#include <urdf/model.h>
-#include <hardware_interface/joint_command_interface.h>
-#include <controller_interface/controller.h>
-#include <control_msgs/JointControllerState.h>
-#include <control_toolbox/pid.h>
-#include <ros/node_handle.h>
-#include <ros/ros.h>
+#include <std_msgs/Float64MultiArray.h>
 
-#include <kdl/tree.hpp>
-#include <kdl/kdl.hpp>
-#include <kdl/chain.hpp>
-#include <kdl/chainfksolver.hpp>
-#include <kdl/frames.hpp>
-#include <kdl/chaindynparam.hpp> //this to compute the gravity vector
-#include <kdl/chainjnttojacsolver.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
+#include <control_toolbox/pid.h>
 
 #include <boost/scoped_ptr.hpp>
-#include <boost/thread/condition.hpp>
-#include <sstream>
-#include <vector>
  
 namespace lwr_controllers
 {
