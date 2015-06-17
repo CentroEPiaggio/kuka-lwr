@@ -10,118 +10,12 @@
 
 namespace lwr_controllers {
 
-JointImpedanceController::JointImpedanceController()
-{}
+JointImpedanceController::JointImpedanceController() {}
 
-JointImpedanceController::~JointImpedanceController()
-{
-
-}
+JointImpedanceController::~JointImpedanceController() {}
 
 bool JointImpedanceController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 {
-
-  nh_ = n;
-
-  // get URDF and name of root and tip from the parameter server
-  std::string robot_description, root_name, tip_name;
-
-  if (!ros::param::search(n.getNamespace(),"robot_description", robot_description)){
-    ROS_ERROR_STREAM("JointImpedanceController: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
-    return false;
-    }
-  if (!nh_.getParam("root_name", root_name)){
-    ROS_ERROR_STREAM("JointImpedanceController: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
-    return false;
-    }
-  if (!nh_.getParam("tip_name", tip_name)){
-    ROS_ERROR_STREAM("JointImpedanceController: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
-    return false;
-    }
-
-  // Get the gravity vector (direction and magnitude)
-  KDL::Vector gravity_ = KDL::Vector::Zero();
-  gravity_(2) = 9.81;
-
-  // Construct an URDF model from the xml string
-
-
-  std::string xml_string;
-
-  if (n.hasParam(robot_description))
-  {
-    n.getParam(robot_description.c_str(), xml_string);
-  }
-
-  else
-  {
-    ROS_ERROR("Parameter %s not set, shutting down node...", robot_description.c_str());
-    n.shutdown();
-    return false;
-  }
-
-  if (xml_string.size() == 0)
-  {
-    ROS_ERROR("Unable to load robot model from parameter %s",robot_description.c_str());
-    n.shutdown();
-    return false;
-  }
-
-  ROS_DEBUG("%s content\n%s", robot_description.c_str(), xml_string.c_str());
-  /// Get urdf model out of robot_description
-  urdf::Model model;
-  if (!model.initString(xml_string))
-  {
-    ROS_ERROR("Failed to parse urdf file");
-    n.shutdown();
-    return false;
-  }
-  ROS_INFO("Successfully parsed urdf file");
-
-  KDL::Tree kdl_tree_;
-  if (!kdl_parser::treeFromUrdfModel(model, kdl_tree_)){
-    ROS_ERROR("Failed to construct kdl tree");
-    n.shutdown();
-    return false;
-    }
-
-
-  // Populate the KDL chain
-  if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
-  {
-    ROS_ERROR_STREAM("Failed to get KDL chain from tree: ");
-    ROS_ERROR_STREAM("  "<<root_name<<" --> "<<tip_name);
-    ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfJoints()<<" joints");
-    ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfSegments()<<" segments");
-    ROS_ERROR_STREAM("  The segments are:");
-
-    KDL::SegmentMap segment_map = kdl_tree_.getSegments();
-    KDL::SegmentMap::iterator it;
-
-    for( it=segment_map.begin();
-    it != segment_map.end();
-    it++ )
-    {
-      ROS_ERROR_STREAM( "    "<<(*it).first);
-    }
-
-    return false;
-  }
-
-
-  ROS_DEBUG("Number of segments: %d", kdl_chain_.getNrOfSegments());
-  ROS_DEBUG("Number of joints in chain: %d", kdl_chain_.getNrOfJoints());
-
-
-
-  // Get joint handles for all of the joints in the chain
-  for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1;
-  it != kdl_chain_.segments.end(); ++it)
-  {
-    joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
-    ROS_DEBUG("%s", it->getJoint().getName().c_str() );
-  }
-
 
   K_.resize(kdl_chain_.getNrOfJoints());
   D_.resize(kdl_chain_.getNrOfJoints());
@@ -130,12 +24,12 @@ bool JointImpedanceController::init(hardware_interface::EffortJointInterface *ro
 
   for (int i = 0; i < joint_handles_.size(); ++i){
     if ( !nh_.getParam("stiffness_gains", K_(i) ) ){
-      ROS_WARN("Stiffness gain not set in yalm file, Using %f", K_(i));
+      ROS_WARN("Stiffness gain not set in yaml file, Using %f", K_(i));
       }
     }
   for (int i = 0; i < joint_handles_.size(); ++i){
     if ( !nh_.getParam("damping_gains", D_(i)) ){
-      ROS_WARN("Damping gain not set in yalm file, Using %f", D_(i));
+      ROS_WARN("Damping gain not set in yaml file, Using %f", D_(i));
       }
     }
 
@@ -198,7 +92,7 @@ void JointImpedanceController::update(const ros::Time& time, const ros::Duration
 
 void JointImpedanceController::commandConfiguration(const std_msgs::Float64MultiArray::ConstPtr &msg){
   if (msg->data.size() == 0) {
-    ROS_INFO("Desired configuration must be: %lu imension dimension", joint_handles_.size());
+    ROS_INFO("Desired configuration must be: %lu dimension", joint_handles_.size());
     }
   else if ((int)msg->data.size() != joint_handles_.size()) {
     ROS_ERROR("Posture message had the wrong size: %d", (int)msg->data.size());
