@@ -12,8 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
-  orocos_kdl
 )
+
+find_package(orocos_kdl REQUIRED)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
@@ -36,7 +37,7 @@ generate_messages(
 )
 
 catkin_package(
-#  DEPENDS 
+  DEPENDS orocos_kdl
   CATKIN_DEPENDS
     controller_interface
     control_msgs
@@ -46,7 +47,6 @@ catkin_package(
     forward_command_controller
     kdl_parser
     message_runtime
-    orocos_kdl
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   )
