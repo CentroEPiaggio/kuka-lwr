@@ -12,14 +12,12 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
-  orocos_kdl
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
 link_directories(${catkin_LIBRARY_DIRS})
 
-include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 add_message_files(
    FILES
    PoseRPY.msg
@@ -36,7 +34,6 @@ generate_messages(
 )
 
 catkin_package(
-#  DEPENDS 
   CATKIN_DEPENDS
     controller_interface
     control_msgs
@@ -46,10 +43,9 @@ catkin_package(
     forward_command_controller
     kdl_parser
     message_runtime
-    orocos_kdl
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  )
+)
 
 add_library(${PROJECT_NAME}
   src/joint_impedance_controller.cpp	
