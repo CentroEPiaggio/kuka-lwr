@@ -4,16 +4,14 @@ namespace lwr_hw
 {
 
 LWRHWreal::LWRHWreal(ros::NodeHandle nh) :
-  nh_(nh),
-  enforce_limits_(true)
+  nh_(nh)
 {}
 
 bool LWRHWreal::start()
 {
   // get params or give default values
   nh_.param("port", port_, 49939);
-  nh_.param("ip", hintToRemoteHost_, std::string("192.168.0.10"));
-  nh_.param("enforce_limits", enforce_limits_, true);
+  nh_.param("ip", hintToRemoteHost_, std::string("192.168.0.10") );
 
   // TODO: use transmission configuration to get names directly from the URDF model
   if( ros::param::get("joints", joint_names_) )
@@ -173,15 +171,13 @@ void LWRHWreal::write(ros::Time time, ros::Duration period)
     joint_velocity_command_[j] = (joint_position_command_[j]-joint_position_[j])/period.toSec();
   }
 
-  if (enforce_limits_) {
   // enforce limits
-    ej_sat_interface_.enforceLimits(period);
-    ej_limits_interface_.enforceLimits(period);
-    vj_sat_interface_.enforceLimits(period);
-    vj_limits_interface_.enforceLimits(period);
-    pj_sat_interface_.enforceLimits(period);
-    pj_limits_interface_.enforceLimits(period);
-  }
+  ej_sat_interface_.enforceLimits(period);
+  ej_limits_interface_.enforceLimits(period);
+  vj_sat_interface_.enforceLimits(period);
+  vj_limits_interface_.enforceLimits(period);
+  pj_sat_interface_.enforceLimits(period);
+  pj_limits_interface_.enforceLimits(period);
 
   // write to real robot
   float newJntPosition[LBR_MNJ];
