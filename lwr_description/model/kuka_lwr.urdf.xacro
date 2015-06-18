@@ -58,7 +58,6 @@
 		<origin xyz="0 0 0.11" rpy="0 0 0"/>
 		<axis xyz="0 0 1"/>
 		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
-		<safety_controller soft_lower_limit="${-160 * M_PI / 180}" soft_upper_limit="${160 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_base_link"/>
 		<child link="${name}_1_link"/>
@@ -112,7 +111,6 @@
 		<origin xyz="0 0 0.2005" rpy="0 0 0"/>
 		<axis xyz="0 -1 0"/>
 		<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
-		<safety_controller soft_lower_limit="${-110 * M_PI / 180}" soft_upper_limit="${110 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_1_link"/>
 		<child link="${name}_2_link"/>
@@ -167,7 +165,6 @@
 		<origin xyz="0 0 0.20" rpy="0 0 0"/>
 		<axis xyz="0 0 1"/>
 		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
-		<safety_controller soft_lower_limit="${-160 * M_PI / 180}" soft_upper_limit="${160 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_2_link"/>
 		<child link="${name}_3_link"/>
@@ -222,7 +219,6 @@
 		<origin xyz="0 0 0.20" rpy="0 0 0"/>
 		<axis xyz="0 1 0"/>
 		<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
-			<safety_controller soft_lower_limit="${-110 * M_PI / 180}" soft_upper_limit="${110 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_3_link"/>
 		<child link="${name}_4_link"/>
@@ -277,7 +273,6 @@
 		<origin xyz="0 0 0.20" rpy="0 0 0"/>
 		<axis xyz="0 0 1"/>
 		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 204 * M_PI / 180}" />
-		<safety_controller soft_lower_limit="${-160 * M_PI / 180}" soft_upper_limit="${160 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_4_link"/>
 		<child link="${name}_5_link"/>
@@ -333,7 +328,6 @@
 		<origin xyz="0 0 0.19" rpy="0 0 0"/>
 		<axis xyz="0 -1 0"/>
 		<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
-		<safety_controller soft_lower_limit="${-110 * M_PI / 180}" soft_upper_limit="${110 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_5_link"/>
 		<child link="${name}_6_link"/>
@@ -375,7 +369,6 @@
 		<origin xyz="0 0 0.078" rpy="0 0 0"/>
 		<axis xyz="0 0 1"/>
 		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
-		<safety_controller soft_lower_limit="${-160 * M_PI / 180}" soft_upper_limit="${160 * M_PI / 180}" k_position="30" k_velocity="30"/>
 		<dynamics friction="10.0" damping="1.0"/>
 		<parent link="${name}_6_link"/>
 		<child link="${name}_7_link"/>
