@@ -13,28 +13,27 @@ namespace lwr_controllers
         KinematicChainControllerBase<hardware_interface::PositionJointInterface>::init(robot, n);
         
         // find stiffness (dummy) joints; this is necessary until proper position/stiffness/damping interface exists
-        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1; it != kdl_chain_.segments.end(); ++it)
+        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
         {
             joint_stiffness_handles_.push_back(robot->getHandle(it->getJoint().getName()+"_stiffness"));
-            ROS_DEBUG("%s", it->getJoint().getName().c_str() );
         }
         
-        ROS_INFO("found %lu stiffness handles", joint_stiffness_handles_.size());
+        ROS_DEBUG("found %lu stiffness handles", joint_stiffness_handles_.size());
         
         sub_command_ = nh_.subscribe("command", 1, &GravityCompensation::command, this);
         sub_stiffness_ = nh_.subscribe("set_stiffness", 1, &GravityCompensation::set_stiffness, this);
+        
+        previous_stiffness_.resize(joint_stiffness_handles_.size());
         
         return true;		
     }
     
     void GravityCompensation::starting(const ros::Time& time)
     {
-        // get current joint position
         for(size_t i=0; i<joint_handles_.size(); i++) 
         {
             previous_stiffness_[i] = joint_stiffness_handles_[i].getPosition();
         }
-        
     }
     
     void GravityCompensation::update(const ros::Time& time, const ros::Duration& period)

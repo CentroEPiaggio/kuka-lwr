@@ -150,7 +150,7 @@ namespace controller_interface
         for (int i = 0; i < kdl_chain_.getNrOfJoints() && link_; i++)
         {
             joint_ = model.getJoint(link_->parent_joint->name);  
-            ROS_DEBUG("Getting limits for joint: %s", joint_->name.c_str());
+            ROS_INFO("Getting limits for joint: %s", joint_->name.c_str());
             index = kdl_chain_.getNrOfJoints() - i - 1;
 
             joint_limits_.min(index) = joint_->limits->lower;
@@ -161,7 +161,7 @@ namespace controller_interface
         }
 
         // Get joint handles for all of the joints in the chain
-        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1; it != kdl_chain_.segments.end(); ++it)
+        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
         {
             joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
             ROS_DEBUG("%s", it->getJoint().getName().c_str() );
