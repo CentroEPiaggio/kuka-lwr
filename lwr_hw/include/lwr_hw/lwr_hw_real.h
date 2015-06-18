@@ -11,6 +11,7 @@
 #include <limits.h>
 #include "fri/friudp.h"
 #include "fri/friremote.h"
+#include <std_msgs/Bool.h>
 
 namespace lwr_hw
 { 
@@ -35,8 +36,10 @@ namespace lwr_hw
 
     // Node handle
     ros::NodeHandle nh_;
+    ros::Subscriber limits_sub_;
 
     // Parameters
+    bool enforce_limits_;
     int port_;
     std::string hintToRemoteHost_;
   };

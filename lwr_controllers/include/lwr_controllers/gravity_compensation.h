@@ -18,16 +18,10 @@ namespace lwr_controllers
         bool init(hardware_interface::PositionJointInterface *robot, ros::NodeHandle &n);
         void starting(const ros::Time& time);
         void update(const ros::Time& time, const ros::Duration& period);
-        void command(const std_msgs::Bool::ConstPtr &msg);
-        void set_stiffness(const std_msgs::Float32::ConstPtr &msg);
+        void stopping(const ros::Time& time);
         
     private:
         
-        ros::Subscriber sub_command_;
-        ros::Subscriber sub_stiffness_;
-        
-        bool enabled_;
-        float stiffness_;
         std::vector<float> previous_stiffness_; /// stiffness before activating controller
         
         // hack required as long as there is separate position handle for stiffness

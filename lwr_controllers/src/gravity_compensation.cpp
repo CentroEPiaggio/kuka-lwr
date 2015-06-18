@@ -20,12 +20,7 @@ namespace lwr_controllers
         
         ROS_DEBUG("found %lu stiffness handles", joint_stiffness_handles_.size());
         
-        sub_command_ = nh_.subscribe("command", 1, &GravityCompensation::command, this);
-        sub_stiffness_ = nh_.subscribe("set_stiffness", 1, &GravityCompensation::set_stiffness, this);
-        
         previous_stiffness_.resize(joint_stiffness_handles_.size());
-        stiffness_ = DEFAULT_STIFFNESS;
-        enabled_ = true;
         
         return true;		
     }
@@ -40,44 +35,25 @@ namespace lwr_controllers
     
     void GravityCompensation::update(const ros::Time& time, const ros::Duration& period)
     {
-        if(enabled_)
+        // update the commanded position to the actual, so that the robot doesn't 
+        // go back at full speed to the last commanded position when the stiffness 
+        // is raised again
+        for(size_t i=0; i<joint_handles_.size(); i++) 
         {
-            // update the commanded position to the actual, so that the robot doesn't 
-            // go back at full speed to the last commanded position when the stiffness 
-            // is raised again
-            for(size_t i=0; i<joint_handles_.size(); i++) 
-            {
-                // clamp the measured position to the soft limits, in order to avoid instability
-                float cmd_position = joint_handles_[i].getPosition();
-                if (cmd_position < joint_limits_.min(i)) {
-                    ROS_INFO("clamping joint %i from %f to %f", i, cmd_position, joint_limits_.min(i));
-                    cmd_position = joint_limits_.min(i);
-                }
-                if (cmd_position > joint_limits_.max(i)) {
-                    ROS_INFO("clamping joint %i from %f to %f", i, cmd_position, joint_limits_.max(i));
-                    cmd_position = joint_limits_.max(i);
-                }
-                joint_handles_[i].setCommand(cmd_position);
-                joint_stiffness_handles_[i].setCommand(stiffness_);
-            }
-        } else {
-            for(size_t i=0; i<joint_handles_.size(); i++) 
-            {
-                joint_stiffness_handles_[i].setCommand(previous_stiffness_[i]);
-            }
-        }        
+            joint_handles_[i].setCommand(joint_handles_[i].getPosition());
+            joint_stiffness_handles_[i].setCommand(DEFAULT_STIFFNESS);
+            
+        }      
     }
     
-    void GravityCompensation::command(const std_msgs::Bool::ConstPtr &msg)
+    void GravityCompensation::stopping(const ros::Time& time)
     {
-        // TODO: if enabling, save last stiffness?
-        enabled_ = msg->data;
+        for(size_t i=0; i<joint_handles_.size(); i++) 
+        {
+            joint_stiffness_handles_[i].setCommand(previous_stiffness_[i]);
+        }
     }
-    
-    void GravityCompensation::set_stiffness(const std_msgs::Float32::ConstPtr &msg)
-    {
-        stiffness_ = msg->data;
-    }
+
 }
 
 PLUGINLIB_EXPORT_CLASS(lwr_controllers::GravityCompensation, controller_interface::ControllerBase)
