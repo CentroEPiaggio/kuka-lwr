@@ -118,26 +118,6 @@ namespace controller_interface
             return false;
         }
 
-        // Parsing joint limits from urdf model
-        boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
-        boost::shared_ptr<const urdf::Joint> joint_;
-        joint_limits_.min.resize(kdl_tree_.getNrOfJoints());
-        joint_limits_.max.resize(kdl_tree_.getNrOfJoints());
-        joint_limits_.center.resize(kdl_tree_.getNrOfJoints());
-        int index;
-
-        for (int i = 0; i < kdl_tree_.getNrOfJoints() && link_; i++)
-        {
-            joint_ = model.getJoint(link_->parent_joint->name);  
-            index = kdl_tree_.getNrOfJoints() - i - 1;
-
-            joint_limits_.min(index) = joint_->limits->lower;
-            joint_limits_.max(index) = joint_->limits->upper;
-            joint_limits_.center(index) = (joint_limits_.min(index) + joint_limits_.max(index))/2;
-
-            link_ = model.getLink(link_->getParent()->name);
-        }
-
         // Populate the KDL chain
         if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
         {
@@ -158,6 +138,27 @@ namespace controller_interface
 
         ROS_DEBUG("Number of segments: %d", kdl_chain_.getNrOfSegments());
         ROS_DEBUG("Number of joints in chain: %d", kdl_chain_.getNrOfJoints());
+        
+        // Parsing joint limits from urdf model along kdl chain
+        boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
+        boost::shared_ptr<const urdf::Joint> joint_;
+        joint_limits_.min.resize(kdl_chain_.getNrOfJoints());
+        joint_limits_.max.resize(kdl_chain_.getNrOfJoints());
+        joint_limits_.center.resize(kdl_chain_.getNrOfJoints());
+        int index;
+        
+        for (int i = 0; i < kdl_chain_.getNrOfJoints() && link_; i++)
+        {
+            joint_ = model.getJoint(link_->parent_joint->name);  
+            ROS_DEBUG("Getting limits for joint: %s", joint_->name.c_str());
+            index = kdl_chain_.getNrOfJoints() - i - 1;
+
+            joint_limits_.min(index) = joint_->limits->lower;
+            joint_limits_.max(index) = joint_->limits->upper;
+            joint_limits_.center(index) = (joint_limits_.min(index) + joint_limits_.max(index))/2;
+
+            link_ = model.getLink(link_->getParent()->name);
+        }
 
         // Get joint handles for all of the joints in the chain
         for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1; it != kdl_chain_.segments.end(); ++it)
