@@ -34,7 +34,7 @@ namespace lwr_controllers
 
 		J_last_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &OneTaskInverseDynamicsJL::command_configuration, this);
+		sub_command_ = nh_.subscribe("command", 1, &OneTaskInverseDynamicsJL::command, this);
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_pose_ = nh_.advertise<std_msgs::Float64MultiArray>("pose", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::Marker>("marker",1000);
@@ -184,7 +184,7 @@ namespace lwr_controllers
 
 	}
 
-	void OneTaskInverseDynamicsJL::command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg)
+	void OneTaskInverseDynamicsJL::command(const lwr_controllers::PoseRPY::ConstPtr &msg)
 	{	
 		KDL::Frame frame_des_;
 

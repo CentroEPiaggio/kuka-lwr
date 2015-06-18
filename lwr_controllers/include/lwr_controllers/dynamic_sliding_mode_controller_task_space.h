@@ -19,7 +19,7 @@ namespace lwr_controllers
 		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
-		void command_configuration(const std_msgs::Float64MultiArray::ConstPtr &msg);
+		void command(const std_msgs::Float64MultiArray::ConstPtr &msg);
 		void set_marker(KDL::Frame x, int id);
 
 	private:

@@ -40,7 +40,7 @@ namespace lwr_controllers
 		lambda_.resize(kdl_chain_.getNrOfJoints());
 		k_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &DynamicSlidingModeController::command_configuration, this);
+		sub_command_ = nh_.subscribe("command", 1, &DynamicSlidingModeController::command, this);
 // 		sub_gains_ = nh_.subscribe("set_gains", 1, &DynamicSlidingModeController::set_gains, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
@@ -159,7 +159,7 @@ namespace lwr_controllers
 
 	}
 
-	void DynamicSlidingModeController::command_configuration(const std_msgs::Float64MultiArray::ConstPtr &msg)
+	void DynamicSlidingModeController::command(const std_msgs::Float64MultiArray::ConstPtr &msg)
 	{
 
 	}

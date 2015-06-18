@@ -30,7 +30,7 @@ namespace lwr_controllers
 		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
-		void command_configuration(const lwr_controllers::PoseRPY::ConstPtr &msg);
+		void command(const lwr_controllers::PoseRPY::ConstPtr &msg);
 
 	private:
 		ros::Subscriber sub_command_;
