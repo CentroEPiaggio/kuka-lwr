@@ -12,8 +12,8 @@ namespace controller_interface
 	{
         
 	public:
-		PIDKinematicChainControllerBase();
-		~PIDKinematicChainControllerBase();
+		PIDKinematicChainControllerBase() {}
+		~PIDKinematicChainControllerBase() {}
 
         bool init(JI *robot, ros::NodeHandle &n);
 
