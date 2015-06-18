@@ -47,7 +47,17 @@ namespace lwr_controllers
             // is raised again
             for(size_t i=0; i<joint_handles_.size(); i++) 
             {
-                joint_handles_[i].setCommand(joint_handles_[i].getPosition());
+                // clamp the measured position to the soft limits, in order to avoid instability
+                float cmd_position = joint_handles_[i].getPosition();
+                if (cmd_position < joint_limits_.min(i)) {
+                    ROS_INFO("clamping joint %i from %f to %f", i, cmd_position, joint_limits_.min(i));
+                    cmd_position = joint_limits_.min(i);
+                }
+                if (cmd_position > joint_limits_.max(i)) {
+                    ROS_INFO("clamping joint %i from %f to %f", i, cmd_position, joint_limits_.max(i));
+                    cmd_position = joint_limits_.max(i);
+                }
+                joint_handles_[i].setCommand(cmd_position);
                 joint_stiffness_handles_[i].setCommand(stiffness_);
             }
         } else {
