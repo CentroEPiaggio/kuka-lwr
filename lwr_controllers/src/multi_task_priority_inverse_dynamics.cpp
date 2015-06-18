@@ -14,121 +14,23 @@ namespace lwr_controllers
 
 	bool MultiTaskPriorityInverseDynamics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
-		nh_ = n;
-
-		// get URDF and name of root and tip from the parameter server
-		std::string robot_description, root_name, tip_name;
-
-		if (!ros::param::search(n.getNamespace(),"robot_description", robot_description))
-		{
-		    ROS_ERROR_STREAM("MultiTaskPriorityInverseDynamics: No robot description (URDF) found on parameter server ("<<n.getNamespace()<<"/robot_description)");
-		    return false;
-		}
-
-		if (!nh_.getParam("root_name", root_name))
-		{
-		    ROS_ERROR_STREAM("MultiTaskPriorityInverseDynamics: No root name found on parameter server ("<<n.getNamespace()<<"/root_name)");
-		    return false;
-		}
-
-		if (!nh_.getParam("tip_name", tip_name))
-		{
-		    ROS_ERROR_STREAM("MultiTaskPriorityInverseDynamics: No tip name found on parameter server ("<<n.getNamespace()<<"/tip_name)");
-		    return false;
-		}
-	 
-		// Get the gravity vector (direction and magnitude)
-		KDL::Vector gravity_ = KDL::Vector::Zero();
-		gravity_(2) = -9.81;
-
-		// Construct an URDF model from the xml string
-		std::string xml_string;
-
-		if (n.hasParam(robot_description))
-			n.getParam(robot_description.c_str(), xml_string);
-		else
-		{
-		    ROS_ERROR("Parameter %s not set, shutting down node...", robot_description.c_str());
-		    n.shutdown();
-		    return false;
-		}
-
-		if (xml_string.size() == 0)
-		{
-			ROS_ERROR("Unable to load robot model from parameter %s",robot_description.c_str());
-		    n.shutdown();
-		    return false;
-		}
-
-		ROS_DEBUG("%s content\n%s", robot_description.c_str(), xml_string.c_str());
-		
-		// Get urdf model out of robot_description
-		urdf::Model model;
-		if (!model.initString(xml_string))
-		{
-		    ROS_ERROR("Failed to parse urdf file");
-		    n.shutdown();
-		    return false;
-		}
-		ROS_INFO("Successfully parsed urdf file");
-		
-		KDL::Tree kdl_tree_;
-		if (!kdl_parser::treeFromUrdfModel(model, kdl_tree_))
-		{
-		    ROS_ERROR("Failed to construct kdl tree");
-		    n.shutdown();
-		    return false;
-		}
-
-		// Populate the KDL chain
-		if(!kdl_tree_.getChain(root_name, tip_name, kdl_chain_))
-		{
-		    ROS_ERROR_STREAM("Failed to get KDL chain from tree: ");
-		    ROS_ERROR_STREAM("  "<<root_name<<" --> "<<tip_name);
-		    ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfJoints()<<" joints");
-		    ROS_ERROR_STREAM("  Tree has "<<kdl_tree_.getNrOfSegments()<<" segments");
-		    ROS_ERROR_STREAM("  The segments are:");
-
-		    KDL::SegmentMap segment_map = kdl_tree_.getSegments();
-		    KDL::SegmentMap::iterator it;
-
-		    for( it=segment_map.begin(); it != segment_map.end(); it++ )
-		      ROS_ERROR_STREAM( "    "<<(*it).first);
-
-		  	return false;
-		}
-
-		ROS_DEBUG("Number of segments: %d", kdl_chain_.getNrOfSegments());
-		ROS_DEBUG("Number of joints in chain: %d", kdl_chain_.getNrOfJoints());
-
-		// Get joint handles for all of the joints in the chain
-		for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin()+1; it != kdl_chain_.segments.end(); ++it)
-		{
-		    joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
-		    ROS_DEBUG("%s", it->getJoint().getName().c_str() );
-		}
-
-		ROS_DEBUG(" Number of joints in handle = %lu", joint_handles_.size() );
+        KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
 
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
 		fk_pos_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));
 
-		joint_msr_states_.resize(kdl_chain_.getNrOfJoints());
-		joint_des_states_.resize(kdl_chain_.getNrOfJoints());
 		qdot_last_.resize(kdl_chain_.getNrOfJoints());
 		tau_.resize(kdl_chain_.getNrOfJoints());
 		J_.resize(kdl_chain_.getNrOfJoints());
 		J_dot_.resize(kdl_chain_.getNrOfJoints());
 		Kp_.resize(kdl_chain_.getNrOfJoints());
 		Kd_.resize(kdl_chain_.getNrOfJoints());
-		PIDs_.resize(kdl_chain_.getNrOfJoints());
 		M_.resize(kdl_chain_.getNrOfJoints());
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
 
-		sub_command_ = nh_.subscribe("command_configuration", 1, &MultiTaskPriorityInverseDynamics::command_configuration, this);
-		sub_gains_ = nh_.subscribe("set_gains", 1, &MultiTaskPriorityInverseDynamics::set_gains, this);
+		sub_command_ = nh_.subscribe("command", 1, &MultiTaskPriorityInverseDynamics::command, this);
 
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
 		pub_marker_ = nh_.advertise<visualization_msgs::MarkerArray>("marker",1000);
@@ -148,14 +50,6 @@ namespace lwr_controllers
     		Kp_(i) = 100;
   			Kd_(i) = 20;
     	}
-
-    	// setting joint-space PIDs, useful only to stop the robot when starting the control (temporary solution)
-    	Kp = 200;
-    	Ki = 1; 
-    	Kd = 5;
-
-    	for (int i = 0; i < PIDs_.size(); i++)
-    		PIDs_[i].initPid(Kp,Ki,Kd,0.1,-0.1);
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
 
@@ -277,7 +171,7 @@ namespace lwr_controllers
 
 	}
 
-	void MultiTaskPriorityInverseDynamics::command_configuration(const lwr_controllers::MultiPriorityTask::ConstPtr &msg)
+	void MultiTaskPriorityInverseDynamics::command(const lwr_controllers::MultiPriorityTask::ConstPtr &msg)
 	{
 		if (msg->links.size() == msg->tasks.size()/6)
 		{
@@ -326,18 +220,6 @@ namespace lwr_controllers
 			return;
 		}
 		
-	}
-
-	void MultiTaskPriorityInverseDynamics::set_gains(const std_msgs::Float64MultiArray::ConstPtr &msg)
-	{
-		if(msg->data.size() == 3)
-		{
-			for(int i = 0; i < PIDs_.size(); i++)
-				PIDs_[i].setGains(msg->data[0],msg->data[1],msg->data[2],0.3,-0.3);
-			ROS_INFO("New gains set: Kp = %f, Ki = %f, Kd = %f",msg->data[0],msg->data[1],msg->data[2]);
-		}
-		else
-			ROS_INFO("PIDs gains needed are 3 (Kp, Ki and Kd)");
 	}
 
 	void MultiTaskPriorityInverseDynamics::set_marker(KDL::Frame x, int index, int id)
