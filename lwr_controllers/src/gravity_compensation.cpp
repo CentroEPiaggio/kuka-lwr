@@ -24,6 +24,8 @@ namespace lwr_controllers
         sub_stiffness_ = nh_.subscribe("set_stiffness", 1, &GravityCompensation::set_stiffness, this);
         
         previous_stiffness_.resize(joint_stiffness_handles_.size());
+        stiffness_ = DEFAULT_STIFFNESS;
+        enabled_ = true;
         
         return true;		
     }
