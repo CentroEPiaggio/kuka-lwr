@@ -91,7 +91,7 @@ void JointImpedanceController::update(const ros::Time& time, const ros::Duration
 }
 
 
-void JointImpedanceController::commandConfiguration(const std_msgs::Float64MultiArray::ConstPtr &msg){
+void JointImpedanceController::command(const std_msgs::Float64MultiArray::ConstPtr &msg){
   if (msg->data.size() == 0) {
     ROS_INFO("Desired configuration must be: %lu dimension", joint_handles_.size());
     }
