@@ -1,4 +1,10 @@
 <library path="lib/liblwr_controllers">
+    
+  <class name="lwr_controllers/GravityCompensation" type="lwr_controllers::GravityCompensation" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Safe gravity compensation.
+    </description>
+  </class>
 
   <class name="lwr_controllers/JointImpedanceController" type="lwr_controllers::JointImpedanceController" base_class_type="controller_interface::ControllerBase">
     <description>
