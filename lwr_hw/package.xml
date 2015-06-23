@@ -32,7 +32,7 @@
   <run_depend>roscpp</run_depend>
   <run_depend>controller_manager</run_depend>
   <run_depend>kdl_parser</run_depend>
-  <brun_depend>joint_limits_interface</run_depend>
+  <run_depend>joint_limits_interface</run_depend>
 
   <export>
     <lwr_hw plugin="${prefix}/lwr_hw_sim_plugins.xml"/>
