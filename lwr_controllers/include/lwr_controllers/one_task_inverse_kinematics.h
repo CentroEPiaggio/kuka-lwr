@@ -4,7 +4,6 @@
 #include "PIDKinematicChainControllerBase.h"
 #include <lwr_controllers/MultiPriorityTask.h>
 #include <lwr_controllers/PoseRPY.h>
-#include <lwr_controllers/PIDgains.h>
 
 #include <std_msgs/Float64MultiArray.h>
 #include <visualization_msgs/Marker.h>
