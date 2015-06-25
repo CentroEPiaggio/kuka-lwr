@@ -3,8 +3,12 @@
 
 #include "KinematicChainControllerBase.h"
 
-#include <std_msgs/Bool.h>
+#include <lwr_controllers/ArmState.h>
 #include <std_msgs/Float32.h>
+#include <std_msgs/Bool.h>
+
+#include <realtime_tools/realtime_publisher.h>
+
 #include <boost/scoped_ptr.hpp>
 
 namespace arm_state_controller
@@ -23,7 +27,7 @@ namespace arm_state_controller
         
     private:
                 
-        boost::shared_ptr<realtime_tools::RealtimePublisher<sensor_msgs::JointState> > realtime_pub_;
+        boost::shared_ptr< realtime_tools::RealtimePublisher< lwr_controllers::ArmState > > realtime_pub_;
         
         boost::scoped_ptr<KDL::ChainIdSolver_RNE> id_solver_;
         boost::scoped_ptr<KDL::Vector> gravity_;
