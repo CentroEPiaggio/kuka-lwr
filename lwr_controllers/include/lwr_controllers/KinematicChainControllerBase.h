@@ -46,7 +46,7 @@ namespace controller_interface
 			KDL::JntArray center;
 		} joint_limits_;
 
-		std::vector<hardware_interface::JointHandle> joint_handles_;
+		std::vector<typename JI::ResourceHandleType> joint_handles_;
 	};
     
     template <typename JI>
