@@ -23,6 +23,7 @@ add_message_files(
    PoseRPY.msg
    RPY.msg
    MultiPriorityTask.msg
+   ArmState.msg
 )
 
 generate_messages(
