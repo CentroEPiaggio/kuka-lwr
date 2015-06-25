@@ -28,6 +28,12 @@ lwr:
       - lwr_6_joint_stiffness
 
 ## OTHER CUSTOM CONTROLLERS LEFT HERE AS EXAMPLES
+  ArmStateController: 
+    type: arm_state_controller/ArmStateController
+    root_name: lwr_base_link
+    tip_name: lwr_7_link
+    publish_rate: 30
+
   GravityCompensation: 
     type: lwr_controllers/GravityCompensation
     root_name: lwr_base_link
