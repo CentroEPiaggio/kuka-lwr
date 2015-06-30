@@ -30,6 +30,8 @@ namespace arm_state_controller
         boost::shared_ptr< realtime_tools::RealtimePublisher< lwr_controllers::ArmState > > realtime_pub_;
         
         boost::scoped_ptr<KDL::ChainIdSolver_RNE> id_solver_;
+        boost::scoped_ptr<KDL::ChainJntToJacSolver> jac_solver_;
+        boost::scoped_ptr<KDL::Jacobian> jacobian_;
         boost::scoped_ptr<KDL::Vector> gravity_;
         boost::scoped_ptr<KDL::JntArray> joint_position_;
         boost::scoped_ptr<KDL::JntArray> joint_velocity_;
@@ -39,7 +41,6 @@ namespace arm_state_controller
         
         ros::Time last_publish_time_;
         double publish_rate_;
-        
     };
 }
 

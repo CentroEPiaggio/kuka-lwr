@@ -2,6 +2,7 @@
 #include <math.h>
 
 #include <lwr_controllers/arm_state_controller.h>
+#include <kdl_conversions/kdl_msg.h>
 
 namespace arm_state_controller  
 {
@@ -13,7 +14,7 @@ namespace arm_state_controller
         KinematicChainControllerBase<hardware_interface::JointStateInterface>::init(robot, n);
         
         // get publishing period
-        if (!nh_.getParam("publish_rate", publish_rate_)){
+        if (!nh_.getParam("publish_rate", publish_rate_)) {
             ROS_ERROR("Parameter 'publish_rate' not set");
             return false;
         }
@@ -23,15 +24,13 @@ namespace arm_state_controller
         
         gravity_.reset(new KDL::Vector(0.0, 0.0, -9.81)); // TODO: compute from actual robot position (TF?)
         id_solver_.reset(new KDL::ChainIdSolver_RNE(kdl_chain_, *gravity_));
+        jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
+        jacobian_.reset(new KDL::Jacobian(kdl_chain_.getNrOfJoints()));
         joint_position_.reset(new KDL::JntArray(kdl_chain_.getNrOfJoints()));
         joint_velocity_.reset(new KDL::JntArray(kdl_chain_.getNrOfJoints()));
         joint_acceleration_.reset(new KDL::JntArray(kdl_chain_.getNrOfJoints()));
-        joint_wrenches_.reset(new KDL::Wrenches);
+        joint_wrenches_.reset(new KDL::Wrenches(kdl_chain_.getNrOfJoints()));
         joint_effort_est_.reset(new KDL::JntArray(kdl_chain_.getNrOfJoints()));
-        
-        for (unsigned i = 0; i < joint_handles_.size(); i++){
-            joint_wrenches_->push_back(KDL::Wrench());
-        }
         
         return true;		
     }
@@ -52,12 +51,11 @@ namespace arm_state_controller
         // limit rate of publishing
         if (publish_rate_ > 0.0 && last_publish_time_ + ros::Duration(1.0/publish_rate_) < time){
             
-            // try to publish
-            if (realtime_pub_->trylock()){
+            if (realtime_pub_->trylock()) {
                 // we're actually publishing, so increment time
                 last_publish_time_ = last_publish_time_ + ros::Duration(1.0/publish_rate_);
                 
-                for (unsigned i = 0; i < joint_handles_.size(); i++){
+                for (unsigned i = 0; i < joint_handles_.size(); i++) {
                     (*joint_position_)(i) = joint_handles_[i].getPosition();
                     (*joint_velocity_)(i) = joint_handles_[i].getVelocity();
                     (*joint_acceleration_)(i) = 0;  // TODO: compute from previous velocity?
@@ -75,11 +73,27 @@ namespace arm_state_controller
                     return;
                 }
                                 
-                // populate joint state message
                 realtime_pub_->msg_.header.stamp = time;
-                for (unsigned i=0; i<joint_handles_.size(); i++){
+                for (unsigned i=0; i<joint_handles_.size(); i++) {
                     realtime_pub_->msg_.est_ext_torques[i] = joint_handles_[i].getEffort() - (*joint_effort_est_)(i);
                 }
+                
+                // Compute cartesian wrench on end effector
+                ret = jac_solver_->JntToJac(*joint_position_, *jacobian_);
+                if (ret < 0) { 
+                    ROS_ERROR("KDL: jacobian computation ERROR");
+                    realtime_pub_->unlock();
+                    return;
+                }
+                
+                KDL::Wrench wrench;
+                
+                for (unsigned int i = 0; i < 6; i++) 
+                    for (unsigned int j = 0; j < kdl_chain_.getNrOfJoints(); j++)
+                        wrench[i] += (*jacobian_)(i,j) * realtime_pub_->msg_.est_ext_torques[j];
+                
+                tf::wrenchKDLToMsg(wrench, realtime_pub_->msg_.est_ee_wrench);                
+                
                 realtime_pub_->unlockAndPublish();
             }
         }   

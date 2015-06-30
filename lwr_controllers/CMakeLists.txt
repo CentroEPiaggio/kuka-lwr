@@ -4,6 +4,7 @@ project(lwr_controllers)
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
   control_msgs
+  geometry_msgs
   forward_command_controller
   control_toolbox
   realtime_tools
@@ -12,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
+  kdl_conversions
 )
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
@@ -36,6 +38,7 @@ catkin_package(
   CATKIN_DEPENDS
     controller_interface
     control_msgs
+    geometry_msgs
     control_toolbox
     realtime_tools
     urdf
