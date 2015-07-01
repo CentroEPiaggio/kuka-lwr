@@ -29,6 +29,7 @@
 
 	<!-- the urdf/srdf parameter -->
 	<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
+	<rosparam command="load" file="$(find single_lwr_robot)/config/lwr_hw.yaml"/>
 	
 	<!-- joint and robot state publishers of the full robot description -->
 	<param name="use_gui" value="$(arg gui)"/>
@@ -89,13 +90,9 @@
 			<!--add a copy of the robot description within the name space -->
 			<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
 
-			<rosparam command="load" file="$(find single_lwr_robot)/config/joint_names.yaml" />
-
 			<include file="$(find lwr_hw)/launch/lwr_hw.launch">
 				<arg name="port" value="$(arg port)"/>
 				<arg name="ip" value="$(arg ip)"/>
-				<arg name="use_default_joint_names" default="false"/>
-				<arg name="use_default_namespace" default="false"/>
 			</include>
 			<!-- perhaps it is worth remapping joint states -->
 		</group>

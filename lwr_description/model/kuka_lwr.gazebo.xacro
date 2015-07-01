@@ -6,8 +6,6 @@
 		<gazebo>
 			<plugin name="lwr_hw" filename="liblwr_hw_sim_plugin.so">
 				<robotNamespace>${name}</robotNamespace>
-				<!-- A default KUKA LWR 4+ simulation interface that emulates the joint impedance control strategy --> 
-				<robotSimType>lwr_hw/DefaultLWRHWsim</robotSimType>
 			</plugin>
 		</gazebo>
 

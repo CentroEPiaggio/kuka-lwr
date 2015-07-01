@@ -1,32 +1,16 @@
 <launch>
 
 	<!-- LAUNCH INTERFACE -->
+	
 	<arg name="port" default="49939"/>
 	<arg name="ip" default="192.168.0.20"/>
-	<arg name="use_default_joint_names" default="true"/>
-	<arg name="use_default_namespace" default="true"/>
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
-	<group ns="lwr" if="$(arg use_default_joint_names)">
-		<group if="$(arg use_default_joint_names)">
-			<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
-		</group>
-		<!-- addresses /-->
-		<param name="port" value="$(arg port)"/>
-		<param name="ip" value="$(arg ip)"/>
-		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
-	</group>
-	<group unless="$(arg use_default_joint_names)">
-		<group if="$(arg use_default_joint_names)">
-			<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
-		</group>
-		<!-- addresses /-->
-		<param name="port" value="$(arg port)"/>
-		<param name="ip" value="$(arg ip)"/>
-		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
-	</group>
+	<!-- addresses /-->
+	<param name="port" value="$(arg port)"/>
+	<param name="ip" value="$(arg ip)"/>
+	<!-- the real hardware interface /-->
+	<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
 
 </launch>
