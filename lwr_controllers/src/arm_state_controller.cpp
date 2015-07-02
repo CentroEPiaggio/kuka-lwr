@@ -25,6 +25,7 @@ namespace arm_state_controller
         gravity_.reset(new KDL::Vector(0.0, 0.0, -9.81)); // TODO: compute from actual robot position (TF?)
         id_solver_.reset(new KDL::ChainIdSolver_RNE(kdl_chain_, *gravity_));
         jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
+        fk_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));
         jacobian_.reset(new KDL::Jacobian(kdl_chain_.getNrOfJoints()));
         joint_position_.reset(new KDL::JntArray(kdl_chain_.getNrOfJoints()));
         joint_velocity_.reset(new KDL::JntArray(kdl_chain_.getNrOfJoints()));
@@ -91,8 +92,13 @@ namespace arm_state_controller
                 for (unsigned int i = 0; i < 6; i++) 
                     for (unsigned int j = 0; j < kdl_chain_.getNrOfJoints(); j++)
                         wrench[i] += (*jacobian_)(i,j) * realtime_pub_->msg_.est_ext_torques[j];
+                    
+                // Transform cartesian wrench into tool reference frame
+                KDL::Frame tool_frame;
+                fk_solver_->JntToCart(*joint_position_, tool_frame);
+                KDL::Wrench tool_wrench = tool_frame * wrench;
                 
-                tf::wrenchKDLToMsg(wrench, realtime_pub_->msg_.est_ee_wrench);                
+                tf::wrenchKDLToMsg(tool_wrench, realtime_pub_->msg_.est_ee_wrench);                
                 
                 realtime_pub_->unlockAndPublish();
             }
