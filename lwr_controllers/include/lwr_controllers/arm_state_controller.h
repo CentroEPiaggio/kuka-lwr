@@ -31,6 +31,7 @@ namespace arm_state_controller
         
         boost::scoped_ptr<KDL::ChainIdSolver_RNE> id_solver_;
         boost::scoped_ptr<KDL::ChainJntToJacSolver> jac_solver_;
+        boost::scoped_ptr<KDL::ChainFkSolverPos> fk_solver_;
         boost::scoped_ptr<KDL::Jacobian> jacobian_;
         boost::scoped_ptr<KDL::Vector> gravity_;
         boost::scoped_ptr<KDL::JntArray> joint_position_;
