@@ -273,7 +273,7 @@ int friRemote::doCartesianImpedanceControl(const float newCartPosition[FRI_CART_
 	}
 
 
-if (flagDataExchange)
+	if (flagDataExchange)
 	{
 		return doDataExchange();
 	}

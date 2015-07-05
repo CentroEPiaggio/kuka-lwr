@@ -381,7 +381,7 @@ namespace lwr_hw
       else
       {
         // Debug
-        // std::cout << "This controller does not use any command interface, so it is only sensing, no problem" << std::endl;
+        std::cout << "This controller does not use any command interface, so it is only sensing, no problem" << std::endl;
       }
     }
 
@@ -401,7 +401,7 @@ namespace lwr_hw
   void LWRHW::doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list)
   {
     // at this point, we now that there is only one controller that ones to command joints
-    ControlStrategy desired_strategy = JOINT_POSITION; // default
+    ControlStrategy desired_strategy;
 
     // If any of the controllers in the start list works on a velocity interface, the switch can't be done.
     for ( std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it )
@@ -436,18 +436,8 @@ namespace lwr_hw
       pj_sat_interface_.reset();
       pj_limits_interface_.reset();
     }
-
-    if(desired_strategy == getControlStrategy())
-    {
-      std::cout << "The ControlStrategy didn't changed, it is already: " << getControlStrategy() << std::endl;
-    }
-    else
-    {
-      setControlStrategy(desired_strategy);
-      std::cout << "The ControlStrategy changed to: " << getControlStrategy() << std::endl;
-    }
   }
 
   
-  
+  std::cout << "ControlStrategy: " << getControlStrategy() << std::endl;
 }

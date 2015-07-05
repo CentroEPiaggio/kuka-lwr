@@ -20,6 +20,38 @@ void quitRequested(int sig)
   g_quit = true;
 }
 
+// Get the URDF XML from the parameter server
+std::string getURDF(ros::NodeHandle &model_nh_, std::string param_name)
+{
+  std::string urdf_string;
+  std::string robot_description = "/robot_description";
+
+  // search and wait for robot_description on param server
+  while (urdf_string.empty())
+  {
+    std::string search_param_name;
+    if (model_nh_.searchParam(param_name, search_param_name))
+    {
+      ROS_INFO_ONCE_NAMED("LWRHWsim", "LWRHWsim plugin is waiting for model"
+        " URDF in parameter [%s] on the ROS param server.", search_param_name.c_str());
+
+      model_nh_.getParam(search_param_name, urdf_string);
+    }
+    else
+    {
+      ROS_INFO_ONCE_NAMED("LWRHWsim", "LWRHWsim plugin is waiting for model"
+        " URDF in parameter [%s] on the ROS param server.", robot_description.c_str());
+
+      model_nh_.getParam(param_name, urdf_string);
+    }
+
+    usleep(100000);
+  }
+  ROS_DEBUG_STREAM_NAMED("LWRHWsim", "Recieved urdf from param server, parsing...");
+
+  return urdf_string;
+}
+
 int main( int argc, char** argv )
 {
   // initialize ROS
@@ -35,7 +67,7 @@ int main( int argc, char** argv )
   signal(SIGHUP, quitRequested);
 
   // create a node
-  ros::NodeHandle lwr_nh("");
+  ros::NodeHandle lwr_nh;
 
   // get params or give default values
   int port;
@@ -43,9 +75,12 @@ int main( int argc, char** argv )
   lwr_nh.param("port", port, 49939);
   lwr_nh.param("ip", hintToRemoteHost, std::string("192.168.0.10") );
 
+  std::string urdf_string = getURDF(lwr_nh, "/robot_description");
+
   // construct and start the real lwr
   lwr_hw::LWRHWreal lwr_robot;
-  lwr_robot.create();
+  std::cout << "namespace: " << lwr_nh.getNamespace() << std::endl;
+  lwr_robot.create(std::string("lwr"), urdf_string);
   lwr_robot.setPort(port);
   lwr_robot.setIP(hintToRemoteHost);
   if(!lwr_robot.init())

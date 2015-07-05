@@ -34,38 +34,35 @@ class LWRHW : public hardware_interface::RobotHW
 {
 public:
 
+  LWRHW() {}
   virtual ~LWRHW() {}
 
-  void create();
-
-  // control strategies
-  // position strategy 10 -> triggered with PoitionJointInterface
-  // cartesian impedance -> strategy 20 (not implemented)
-  // impedance strategy 30 -> triggered with EffortJointInterface
-  // gravity compensation mode -> (not implemented, achieved with low stiffness)
-  enum ControlStrategy {JOINT_POSITION, CARTESIAN_IMPEDANCE, JOINT_IMPEDANCE, GRAVITY_COMPENSATION};
-
-  // This functions must be implemented depending on the outlet (Real FRI/FRIL, Gazebo, etc.)
-  virtual bool init();
-  virtual void read(ros::Time time, ros::Duration period);
-  virtual void write(ros::Time time, ros::Duration period);
-
-  // Before write, you can use this function to enforce limits for all values
-  void enforceLimits(ros::Duration period);
-
-  // Set all members to default values
-  void reset();
-
-  // get/set control method
-  bool setControlStrategy( ControlStrategy current_strategy){current_strategy_ = current_strategy;}; // CHECK CONFLICT
-  ControlStrategy getControlStrategy(){ return current_strategy_;};
+  void create(std::string name, std::string urdf_string);
 
   // Strings
   std::string robot_namespace_;
-  std::string robot_description_;
 
   // Model
+  std::string urdf_string_;
   urdf::Model urdf_model_;
+
+  // control strategies
+  // JOINT_POSITION -> strategy 10 -> triggered with PoitionJointInterface
+  // CARTESIAN_IMPEDANCE -> strategy 20 (not implemented)
+  // JOINT_IMPEDANCE -> strategy 30 -> triggered with EffortJointInterface
+  // GRAVITY_COMPENSATION -> (not implemented, achieved with low stiffness)
+  enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, GRAVITY_COMPENSATION = 40};
+  virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const;
+  virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list);
+
+  // This functions must be implemented depending on the outlet (Real FRI/FRIL, Gazebo, etc.)
+  virtual bool init() = 0;
+  virtual void read(ros::Time time, ros::Duration period) = 0;
+  virtual void write(ros::Time time, ros::Duration period) = 0;
+
+  // get/set control method
+  bool setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;}; // CHECK CONFLICT
+  ControlStrategy getControlStrategy(){ return current_strategy_;};
 
   // Hardware interfaces
   hardware_interface::JointStateInterface state_interface_;
@@ -86,8 +83,11 @@ public:
   joint_limits_interface::PositionJointSaturationInterface   dj_sat_interface_;
   joint_limits_interface::PositionJointSoftLimitsInterface   dj_limits_interface_;
 
+  // Before write, you can use this function to enforce limits for all values
+  void enforceLimits(ros::Duration period);
+
   // configuration
-  int n_joints_;
+  int n_joints_ = 7; // safe magic number, the kuka lwr 4+ has 7 joints
   std::vector<std::string> joint_names_;
 
   // limits
@@ -121,6 +121,9 @@ public:
   // computing a fake velocity command using the received position command and
   // the current position, without smoothing.
 
+  // Set all members to default values
+  void reset();
+
   // Transmissions in this plugin's scope
   std::vector<transmission_interface::TransmissionInfo> transmissions_;
 
@@ -130,8 +133,7 @@ public:
   KDL::JntArray joint_position_kdl_, gravity_effort_;
   KDL::Vector gravity_;
 
-  // Get the URDF XML from the parameter server
-  std::string getURDF(std::string param_name) const;
+private:
 
   // Get Transmissions from the URDF
   bool parseTransmissionsFromURDF(const std::string& urdf_string);

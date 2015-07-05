@@ -18,20 +18,21 @@
 namespace lwr_hw
 {
 
-class LWRHWSimPlugin : public gazebo::ModelPlugin
+class LWRHWsimPlugin : public gazebo::ModelPlugin
 {
 public:
 
-  ~LWRHWSimPlugin()
+  LWRHWsimPlugin() : gazebo::ModelPlugin() {}
+  virtual ~LWRHWsimPlugin()
   {
     // Disconnect from gazebo events
     gazebo::event::Events::DisconnectWorldUpdateBegin(update_connection_);
   }
 
   // Overloaded Gazebo entry point
-  void Load(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf)
+  virtual void Load(gazebo::physics::ModelPtr parent, sdf::ElementPtr sdf)
   {
-    ROS_INFO_STREAM_NAMED("lwr_hw","Loading lwr_hw plugin");
+    std::cout << "lwr_hw" << "Loading lwr_hw plugin" << std::endl;
 
     // Save pointers to the model
     parent_model_ = parent;
@@ -62,9 +63,15 @@ public:
       robot_namespace_ = parent_model_->GetName(); // default
     }
 
-    // Get the robot simulation interface type
-    robot_hw_sim_type_str_ = "lwr_hw/LWRHWsim";
-    ROS_DEBUG_STREAM_NAMED("loadThread","Using default plugin for LWRHWsim (none specified in URDF/SDF)\""<<robot_hw_sim_type_str_<<"\"");
+    // Get robot_description ROS param name
+    if (sdf_->HasElement("robotParam"))
+    {
+      robot_description_ = sdf_->GetElement("robotParam")->Get<std::string>();
+    }
+    else
+    {
+      robot_description_ = "robot_description"; // default
+    }
 
     // Get the Gazebo simulation period
     ros::Duration gazebo_period(parent_model_->GetWorld()->GetPhysicsEngine()->GetMaxStepSize());
@@ -97,35 +104,31 @@ public:
     model_nh_ = ros::NodeHandle(robot_namespace_);
     ROS_INFO_NAMED("lwr_hw", "Starting lwr_hw plugin in namespace: %s", robot_namespace_.c_str());
 
+
+    // Read urdf from ros parameter server then
+    // setup actuators and mechanism control node.
+    // This call will block if ROS is not properly initialized.
+    const std::string urdf_string = getURDF(robot_description_);
+
     // Load the LWRHWsim abstraction to interface the controllers with the gazebo model
-    try
+    robot_hw_sim_.reset( new lwr_hw::LWRHWsim() );
+    robot_hw_sim_->create(robot_namespace_, urdf_string);
+    robot_hw_sim_->setParentModel(parent_model_);
+    if(!robot_hw_sim_->init())
     {
-      robot_hw_sim_.reset( new lwr_hw::LWRHWsim() );
-      robot_hw_sim_->create();
-      robot_hw_sim_->setParentModel(parent_model_);
-      if(!robot_hw_sim_->init())
-      {
-        ROS_FATAL_NAMED("lwr_hw","Could not initialize robot simulation interface");
-        return;
-      }
-
-      std::cout << "CLAIMS IN PLUGIN: " << robot_hw_sim_->state_interface_.getClaims().size() << std::endl;
-
-      // Create the controller manager
-      ROS_INFO_STREAM_NAMED("ros_control_plugin","Loading controller_manager");
-      controller_manager_.reset
-        (new controller_manager::ControllerManager(robot_hw_sim_.get(), model_nh_));
-
-      // Listen to the update event. This event is broadcast every simulation iteration.
-      update_connection_ =
-        gazebo::event::Events::ConnectWorldUpdateBegin
-        (boost::bind(&LWRHWSimPlugin::Update, this));
-
+      ROS_FATAL_NAMED("lwr_hw","Could not initialize robot simulation interface");
+      return;
     }
-    catch(pluginlib::LibraryLoadException &ex)
-    {
-      ROS_FATAL_STREAM_NAMED("lwr_hw","Failed to create robot simulation interface loader: "<<ex.what());
-    }
+
+    // Create the controller manager
+    ROS_INFO_STREAM_NAMED("ros_control_plugin","Loading controller_manager");
+    controller_manager_.reset
+      (new controller_manager::ControllerManager(robot_hw_sim_.get(), model_nh_));
+
+    // Listen to the update event. This event is broadcast every simulation iteration.
+    update_connection_ =
+      gazebo::event::Events::ConnectWorldUpdateBegin
+      (boost::bind(&LWRHWsimPlugin::Update, this));
 
     ROS_INFO_NAMED("lwr_hw", "Loaded lwr_hw.");
   }
@@ -158,14 +161,45 @@ public:
   }
 
   // Called on world reset
-  void Reset()
+  virtual void Reset()
   {
     // Reset timing variables to not pass negative update periods to controllers on world reset
     last_update_sim_time_ros_ = ros::Time();
     last_write_sim_time_ros_ = ros::Time();
   }
 
-protected:
+private:
+
+  // Get the URDF XML from the parameter server
+  std::string getURDF(std::string param_name) const
+  {
+    std::string urdf_string;
+
+    // search and wait for robot_description on param server
+    while (urdf_string.empty())
+    {
+      std::string search_param_name;
+      if (model_nh_.searchParam(param_name, search_param_name))
+      {
+        ROS_INFO_ONCE_NAMED("LWRHWsim", "LWRHWsim plugin is waiting for model"
+          " URDF in parameter [%s] on the ROS param server.", search_param_name.c_str());
+
+        model_nh_.getParam(search_param_name, urdf_string);
+      }
+      else
+      {
+        ROS_INFO_ONCE_NAMED("LWRHWsim", "LWRHWsim plugin is waiting for model"
+          " URDF in parameter [%s] on the ROS param server.", robot_description_.c_str());
+
+        model_nh_.getParam(param_name, urdf_string);
+      }
+
+      usleep(100000);
+    }
+    ROS_DEBUG_STREAM_NAMED("LWRHWsim", "Recieved urdf from param server, parsing...");
+
+    return urdf_string;
+  }
 
   // Pointer to the model
   gazebo::physics::ModelPtr parent_model_;
@@ -174,14 +208,12 @@ protected:
   // Pointer to the update event connection
   gazebo::event::ConnectionPtr update_connection_;
 
-  // Interface loader
-  // boost::shared_ptr<pluginlib::ClassLoader<lwr_hw::LWRHWsim> > robot_hw_sim_loader_;
-
   // Node Handles
-  ros::NodeHandle model_nh_; // namespaces to robot name
+  ros::NodeHandle model_nh_;
 
   // Strings
   std::string robot_namespace_;
+  std::string robot_description_;
 
   // Robot simulator interface
   std::string robot_hw_sim_type_str_;
@@ -198,6 +230,6 @@ protected:
 };
 
 // Register this plugin with the simulator
-GZ_REGISTER_MODEL_PLUGIN(LWRHWSimPlugin);
+GZ_REGISTER_MODEL_PLUGIN(LWRHWsimPlugin);
 
 } // namespace

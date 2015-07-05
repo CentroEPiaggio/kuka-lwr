@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   kdl_parser
   transmission_interface
+  gazebo_ros
 )
 
 # Depend on system install of Gazebo 
@@ -27,11 +28,22 @@ add_definitions (-fpermissive -std=c++11)
 
 catkin_package(
   CATKIN_DEPENDS
-    roscpp
+    control_toolbox
+    controller_interface
     controller_manager
+    hardware_interface
+    realtime_tools
+    joint_limits_interface
+    roscpp
+    tf
+    urdf
+    cmake_modules
     pluginlib
     kdl_parser
+    transmission_interface
+    gazebo_ros
   INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME} lwr_hw_sim_plugin friremote
   DEPENDS gazebo
 )
 
@@ -48,6 +60,7 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 ## LWR HW BASE CLASS TO RULE'EM ALL
 add_library(${PROJECT_NAME}
+  include/${PROJECT_NAME}/lwr_hw.h
   src/lwr_hw.cpp
 )
 target_link_libraries(${PROJECT_NAME}
