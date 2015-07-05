@@ -18,4 +18,11 @@ ros/kuka-lwr/lwr_moveit/default_warehouse_mongo_db/local.*
 ros/kuka_lwr/lwr_moveit/default_warehouse_mongo_db/mongod.lock
 ros/kuka_lwr/lwr_moveit/default_warehouse_mongo_db/journal/prealloc.*
 
+# Kdev and QTcreator files
 *.kdev_include_paths
+*.user
+
+# Typical build folders
+build
+BUILD
+Build
