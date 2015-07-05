@@ -1,14 +1,11 @@
 #ifndef LWR_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
 #define LWR_CONTROLLERS__ONE_TASK_INVERSE_KINEMATICS_H
 
-#include "PIDKinematicChainControllerBase.h"
-#include <lwr_controllers/MultiPriorityTask.h>
-#include <lwr_controllers/PoseRPY.h>
+#include "KinematicChainControllerBase.h"
+#include "lwr_controllers/PoseRPY.h"
 
-#include <std_msgs/Float64MultiArray.h>
 #include <visualization_msgs/Marker.h>
-
-#include <control_toolbox/pid.h>
+#include <geometry_msgs/PoseStamped.h>
 
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <kdl/chainiksolvervel_pinv.hpp>
@@ -20,13 +17,13 @@
 
 namespace lwr_controllers
 {
-	class OneTaskInverseKinematics: public controller_interface::PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>
+	class OneTaskInverseKinematics: public controller_interface::KinematicChainControllerBase<hardware_interface::PositionJointInterface>
 	{
 	public:
 		OneTaskInverseKinematics();
 		~OneTaskInverseKinematics();
 
-		bool init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n);
+		bool init(hardware_interface::PositionJointInterface *robot, ros::NodeHandle &n);
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command(const lwr_controllers::PoseRPY::ConstPtr &msg);
@@ -40,7 +37,7 @@ namespace lwr_controllers
 
 		KDL::Twist x_err_;
 
-		KDL::JntArray tau_cmd_;
+		KDL::JntArray q_cmd_; // computed set points
 
 		KDL::Jacobian J_;	//Jacobian
 
@@ -58,12 +55,9 @@ namespace lwr_controllers
 		int cmd_flag_;
 		
 		boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
-		boost::scoped_ptr<KDL::ChainDynParam> id_solver_;
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 		boost::scoped_ptr<KDL::ChainIkSolverVel_pinv> ik_vel_solver_;
 		boost::scoped_ptr<KDL::ChainIkSolverPos_NR_JL> ik_pos_solver_;
-
-		std::vector<control_toolbox::Pid> PIDs_;
 	};
 
 }
