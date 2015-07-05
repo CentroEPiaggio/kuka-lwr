@@ -11,8 +11,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!-- main meta package dependency -->
-  <run_depend>kuka_lwr</run_depend>
+  <run_depend>lwr_hw</run_depend>
+  <run_depend>lwr_description</run_depend>
+  <run_depend>lwr_controllers</run_depend>
 
   <export>
   </export>
