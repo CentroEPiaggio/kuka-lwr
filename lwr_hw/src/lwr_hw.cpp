@@ -94,7 +94,7 @@ namespace lwr_hw
     }
 
     // Initialize values
-    for(unsigned int j=0; j < n_joints_; j++)
+    for(int j=0; j < n_joints_; j++)
     {
       // Check that this transmission has one joint
       if(transmissions[j].joints_.size() == 0)

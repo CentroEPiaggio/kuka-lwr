@@ -61,7 +61,7 @@ public:
   virtual void write(ros::Time time, ros::Duration period) = 0;
 
   // get/set control method
-  bool setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;}; // CHECK CONFLICT
+  void setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;}; // CHECK CONFLICT
   ControlStrategy getControlStrategy(){ return current_strategy_;};
 
   // Hardware interfaces

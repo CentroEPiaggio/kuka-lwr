@@ -48,14 +48,14 @@ DEF ros_control( )
   ; 1 -> friStart() was called
   ; 0 -> fiStop() was called
   ; ----------------------------------------------
-  ; $FRI_FROM_INT[1] (not used so far)
+  ; $FRI_FRM_INT[1] (not used so far)
   ; This value is used to call the remote that
   ; either friStart() or friStop() was called
   ; 
   ; 1 -> friStart() was called
   ; 0 -> fiStop() was called
   ; ----------------------------------------------
-  ; $FRI_FROM_INT[16] AND $FRI_TO_INT[16]
+  ; $FRI_FRM_INT[16] AND $FRI_TO_INT[16]
   ;
   ; This values are used for the handshake
   ; ----------------------------------------------
@@ -66,7 +66,7 @@ DEF ros_control( )
   retVal = friStop()
   retVal = friClose()
 
-  ;Reset FRI values, although not used
+  ;Reset FRI values
   FOR I = 1 TO 16
     $FRI_TO_INT[i] = 0
     $FRI_TO_REA[i] = 0.0
@@ -79,7 +79,7 @@ DEF ros_control( )
   ; Stay at the same position
   PTP $AXIS_ACT_MES
 
-  ;Setting limis for impedance mode to test that the model is Ok
+  ;Start with position control
   $stiffness.strategy = 10
   $stiffness.commit = true
 ;ENDFOLD (init)
@@ -100,10 +100,10 @@ retVal=friOpen(2)
 
 ;FOLD Handshake
   ;Wait for the ROS node to salute
-  WAIT FOR ($FRI_FROM_INT[16] == 1)
+  WAIT FOR ($FRI_FRM_INT[16] == 1)
 
   ;Be polite and salute back
-  $FRI_TO_INT[16] == $FRI_FROM_INT[16]
+  $FRI_TO_INT[16] = $FRI_FRM_INT[16]
   $MSG_T.KEY[] = "Done handshake!"
   $MSG_T.VALID=TRUE
   WAIT FOR ($MSG_T.VALID == FALSE)
