@@ -4,14 +4,13 @@
 #include <time.h>
 #include <signal.h>
 #include <stdexcept>
-#include <boost/shared_ptr.hpp>
 
 // ROS headers
 #include <ros/ros.h>
 #include <controller_manager/controller_manager.h>
 
 // the lwr hw real interface
-#include "lwr_hw/lwr_hw_real.hpp"
+#include "lwr_hw/lwr_hw_fri.hpp"
 
 bool g_quit = false;
 

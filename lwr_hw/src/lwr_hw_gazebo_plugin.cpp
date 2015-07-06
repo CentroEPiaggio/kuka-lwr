@@ -13,7 +13,7 @@
 #include <gazebo/common/common.hh>
 
 // LWR sim class
-#include "lwr_hw/lwr_hw_sim.hpp"
+#include "lwr_hw/lwr_hw_gazebo.hpp"
 
 namespace lwr_hw
 {
