@@ -15,12 +15,12 @@
 
 namespace lwr_hw {
 
-class LWRHWsim : public LWRHW
+class LWRHWGazebo : public LWRHW
 {
 public:
 
-  LWRHWsim() : LWRHW() {}
-  ~LWRHWsim() {}
+  LWRHWGazebo() : LWRHW() {}
+  ~LWRHWGazebo() {}
 
   void setParentModel(gazebo::physics::ModelPtr parent_model){parent_model_ = parent_model; parent_set_ = true;};
 
@@ -34,7 +34,7 @@ public:
     }
 
     gazebo::physics::JointPtr joint;
-    for(unsigned int j=0; j < n_joints_; j++)
+    for(int j=0; j < n_joints_; j++)
     {
       joint = parent_model_->GetJoint(joint_names_[j]);
       if (!joint)
@@ -51,7 +51,7 @@ public:
 
   void read(ros::Time time, ros::Duration period)
   {
-    for(unsigned int j=0; j < n_joints_; ++j)
+    for(int j=0; j < n_joints_; ++j)
     {
       joint_position_prev_[j] = joint_position_[j];
       joint_position_[j] += angles::shortest_angular_distance(joint_position_[j],
@@ -59,7 +59,7 @@ public:
       joint_position_kdl_(j) = joint_position_[j];
       // derivate velocity as in the real hardware instead of reading it from simulation
       joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j] - joint_position_prev_[j])/period.toSec(), joint_velocity_[j], 0.2);
-      joint_effort_[j] = sim_joints_[j]->GetForce((unsigned int)(0));
+      joint_effort_[j] = sim_joints_[j]->GetForce((int)(0));
       joint_stiffness_[j] = joint_stiffness_command_[j];
     }
   }
@@ -72,7 +72,7 @@ public:
     {
 
       case JOINT_POSITION:
-        for(unsigned int j=0; j < n_joints_; j++)
+        for(int j=0; j < n_joints_; j++)
         {
           // according to the gazebo_ros_control plugin, this must *not* be called if SetForce is going to be called
           // but should be called when SetPostion is going to be called
@@ -94,7 +94,7 @@ public:
         // compute the gracity term
         f_dyn_solver_->JntToGravity(joint_position_kdl_, gravity_effort_);
         
-        for(unsigned int j=0; j < n_joints_; j++)
+        for(int j=0; j < n_joints_; j++)
         {
           // replicate the joint impedance control strategy
           // tau = k (q_FRI - q_msr) + tau_FRI + D(q_msr) + f_dyn(q_msr)

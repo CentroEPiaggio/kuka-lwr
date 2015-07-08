@@ -21,9 +21,6 @@ find_package(catkin REQUIRED COMPONENTS
   gazebo_ros
 )
 
-# Depend on system install of Gazebo 
-find_package(gazebo REQUIRED)
-
 add_definitions (-fpermissive -std=c++11)
 
 catkin_package(
@@ -43,7 +40,7 @@ catkin_package(
     transmission_interface
     gazebo_ros
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} lwr_hw_sim_plugin friremote
+  LIBRARIES ${PROJECT_NAME} lwr_hw_gazebo_plugin friremote frilremote
   DEPENDS gazebo
 )
 
@@ -54,9 +51,7 @@ catkin_package(
 include_directories(include
   ${Boost_INCLUDE_DIR}
   ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
 )
-link_directories(${GAZEBO_LIBRARY_DIRS})
 
 ## LWR HW BASE CLASS TO RULE'EM ALL
 add_library(${PROJECT_NAME}
@@ -68,34 +63,65 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 ## REAL 
-## FRI library
+# KUKA FRI library
 add_library(friremote
   src/fri/friremote.cpp
   src//fri/friudp.cpp
 )
-## lwr hw real node
-add_executable(lwr_hw_node  src/lwr_hw_real_node.cpp
-  include/${PROJECT_NAME}/lwr_hw_real.hpp
+# lwr hw fri node
+add_executable(lwr_hw_fri_node  src/lwr_hw_fri_node.cpp
+  include/${PROJECT_NAME}/lwr_hw_fri.hpp
 )
-add_dependencies(lwr_hw_node
+add_dependencies(lwr_hw_fri_node
   friremote
   ${PROJECT_NAME} 
 )
-target_link_libraries(lwr_hw_node
+target_link_libraries(lwr_hw_fri_node
   friremote
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
-## SIMULATION
-# lwr hw sim gazebo plugin
-add_library(lwr_hw_sim_plugin  src/lwr_hw_sim_plugin.cpp
-  include/${PROJECT_NAME}/lwr_hw_sim.hpp
+# Standford FRILibrary support in PROGRESS
+message(WARNING "ATTENTION: This project supports the fork of the Standford library found in https://github.com/iocroblab/fril, and install the libraries in your catkin workspace, not in the system")
+include(ExternalProject)
+ExternalProject_Add(FRILibrary
+  GIT_REPOSITORY https://github.com/iocroblab/fril.git
+  GIT_TAG a10695fad32ba8315817c42020e2dbc66f4505dd
+  BUILD_COMMAND make
+  BUILD_IN_SOURCE 1
+  CONFIGURE_COMMAND cmake -DCMAKE_INSTALL_PREFIX=${CATKIN_DEVEL_PREFIX}
+  INSTALL_COMMAND make install
 )
-add_dependencies(lwr_hw_sim_plugin
+
+# lwr hw fril node
+include_directories(${CATKIN_DEVEL_PREFIX}/include/fril)
+link_directories(${CATKIN_DEVEL_PREFIX}/lib)
+add_executable(lwr_hw_fril_node  src/lwr_hw_fril_node.cpp
+  include/${PROJECT_NAME}/lwr_hw_fril.hpp
+)
+add_dependencies(lwr_hw_fril_node
+  FRILibrary
+  ${PROJECT_NAME} 
+)
+target_link_libraries(lwr_hw_fril_node
+  fril
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
+
+## SIMULATION
+# lwr hw sim gazebo plugin 
+find_package(gazebo REQUIRED)
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+add_library(lwr_hw_gazebo_plugin  src/lwr_hw_gazebo_plugin.cpp
+  include/${PROJECT_NAME}/lwr_hw_gazebo.hpp
+)
+add_dependencies(lwr_hw_gazebo_plugin
   ${PROJECT_NAME}
 )
-target_link_libraries(lwr_hw_sim_plugin
+target_link_libraries(lwr_hw_gazebo_plugin
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${GAZEBO_LIBRARIES}

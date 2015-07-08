@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <math.h>
 #include <limits.h>
+#include <thread>
 #include "fri/friudp.h"
 #include "fri/friremote.h"
 
@@ -17,16 +18,13 @@
 namespace lwr_hw
 {
 
-class LWRHWreal : public LWRHW
+class LWRHWFRI : public LWRHW
 {
 
 public:
 
-  LWRHWreal() : LWRHW() {}
-  ~LWRHWreal() {}
-
-  void stop(){return;};
-  void set_mode(){return;};
+  LWRHWFRI() : LWRHW() {}
+  ~LWRHWFRI() { stopKRCComm_ = true; KRCCommThread_.get()->join();}
 
   void setPort(int port){port_ = port; port_set_ = true;};
   void setIP(std::string hintToRemoteHost){hintToRemoteHost_ = hintToRemoteHost; ip_set_ = true;};
@@ -51,40 +49,19 @@ public:
       << FRI_MAJOR_VERSION << "." << FRI_SUB_VERSION << "." <<FRI_DATAGRAM_ID_CMD << "." <<FRI_DATAGRAM_ID_MSR 
       << " Interface for LWR ROS server" << std::endl;
 
-    std::cout << "Performing handshake with the KRC unit..." << std::endl;
-
     // if off, wait for monitor mode to avoid loosing UDP packages
+    std::cout << "Checking if the robot is Stopped..." << std::endl;
     if( device_->getState() == FRI_STATE_OFF )
     {
-      while( device_->getState() != FRI_STATE_MON )
-      {
-        std::cout << "Please, start the KRL script now." << std::endl;
-        usleep(1000000);
-      }
+      std::cout << "Please, start the KRL script now." << std::endl;
     }
+    KRCCommThread_.reset( new std::thread( &LWRHWFRI::KRCCommThreadCallback,this ) );
 
-    std::cout << "Performing handshake with the KRC unit..." << std::endl;
+    startFRI();
 
-    // salute KRL
-    device_->setToKRLInt(15,1);
-    // be polite and wait for KRL to salute back
-    while( device_->getFrmKRLInt(15) == 1 )
-    {
-      device_->doDataExchange();
-    }
+    std::cout << "Ready, FRI has been started!" << std::endl;
+    std::cout << "FRI Status:\n" << device_->getMsrBuf().intf << std::endl;
 
-    std::cout << "Done handshake." << std::endl;
-    
-    // wait for good quality
-    while ( device_->getQuality() >= FRI_QUALITY_OK) {}
-
-    // wait for FRI to start
-    while ( device_->getState() != FRI_STATE_CMD) {}
-
-    // debug
-    // std::cout << "LWR Status:\n" << device_->getMsrBuf().intf << std::endl;
-
-    std::cout << "FRI has been started!" << std::endl;
     return true;
   }
 
@@ -106,67 +83,45 @@ public:
   {
     enforceLimits(period);
 
-    // ensure the robot is powered and it is in control mode, almost like the isMachineOk() of Standford
-    if ( device_->isPowerOn() && (device_->getState() == FRI_STATE_CMD) )
-    { 
-      switch (getControlStrategy())
-      {
+    float newJntPosition[n_joints_];
+    float newJntStiff[n_joints_];
+    float newJntDamp[n_joints_];
+    float newJntAddTorque[n_joints_];
 
-        case JOINT_POSITION:
+    switch (getControlStrategy())
+    {
+      case JOINT_POSITION:
+        for (int j = 0; j < n_joints_; j++)
+        {
+          newJntPosition[j] = joint_position_command_[j];
+        }
+        device_->doPositionControl(newJntPosition, false);
+        break;
 
-          // Ensure the robot is in this mode
-          if( (device_->getCurrentControlScheme() == FRI_CTRL_POSITION) )
-          {
-            float newJntPosition[n_joints_];
+      case CARTESIAN_IMPEDANCE:
+        break;
 
-            for (unsigned int j = 0; j < n_joints_; j++)
-            {
-              newJntPosition[j] = joint_position_command_[j]; 
-            }
-            device_->doPositionControl(newJntPosition, true);
-          }
-          break;
+      case JOINT_IMPEDANCE:
+        // WHEN THE URDF MODEL IS PRECISE
+        // 1. compute the gracity term
+        // f_dyn_solver_->JntToGravity(joint_position_kdl_, gravity_effort_);
 
-        case CARTESIAN_IMPEDANCE:
-          ROS_WARN("CARTESIAN IMPEDANCE NOT IMPLEMENTED");
-          break;
+        // 2. read gravity term from FRI and add it with opposite sign and add the URDF gravity term
+        // newJntAddTorque = gravity_effort_  - device_->getF_DYN??
 
-        case JOINT_IMPEDANCE:
+        for(int j=0; j < n_joints_; j++)
+        {
+          newJntPosition[j] = joint_position_[j];
+          newJntAddTorque[j] = joint_effort_command_[j];
+          newJntStiff[j] = 0.01;//joint_stiffness_command_[j];
+          newJntDamp[j] = 0.01;//joint_damping_command_[j];
+        }
+        // device_->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
+        device_->doJntImpedanceControl(NULL, NULL, NULL, newJntAddTorque, false);
+        break;
 
-          // Ensure the robot is in this mode
-          if( (device_->getCurrentControlScheme() == FRI_CTRL_JNT_IMP) )
-          {
-            float newJntPosition[n_joints_];
-            float newJntStiff[n_joints_];
-            float newJntDamp[n_joints_];
-            float newJntAddTorque[n_joints_];
-
-            // WHEN THE URDF MODEL IS PRECISE
-            // 1. compute the gracity term
-            // f_dyn_solver_->JntToGravity(joint_position_kdl_, gravity_effort_);
-
-            // 2. read gravity term from FRI and add it with opposite sign and add the URDF gravity term
-            // newJntAddTorque = gravity_effort_  - device_->getF_DYN??
-            
-            for(int j=0; j < n_joints_; j++)
-            {
-              newJntPosition[j] = joint_position_command_[j];
-              newJntAddTorque[j] = joint_effort_command_[j];
-              newJntStiff[j] = joint_stiffness_command_[j];
-              newJntDamp[j] = joint_damping_command_[j];
-            }
-            device_->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, true);
-          }
-          break;
-
-        case GRAVITY_COMPENSATION:
-          if( device_->getCurrentControlScheme() == FRI_CTRL_OTHER )
-          {
-            // just read status to keep FRI alive
-            device_->doDataExchange();
-          }
-          break;
-      }
+      case GRAVITY_COMPENSATION:
+        break;
     }
     return;
   }
@@ -216,21 +171,14 @@ public:
     }
     else
     {
-      setControlStrategy(desired_strategy);
-      
-      // trigger the KRL with the new stragety value
+      stopFRI();
+
+      // send to KRL the new strategy
       device_->setToKRLInt(0, desired_strategy);
-      device_->doDataExchange();
 
-      // wait until friStop() is called
-      while ( device_->getFrmKRLInt(0) != 0) {}
+      startFRI();
 
-      // wait for good quality comm again
-      while ( device_->getQuality() >= FRI_QUALITY_OK) {}
-
-      // wait for FRI to start again before exiting the switch
-      while ( device_->getState() != FRI_STATE_CMD) {}
-
+      setControlStrategy(desired_strategy);
       std::cout << "The ControlStrategy changed to: " << getControlStrategy() << std::endl;
     }
   }
@@ -249,6 +197,49 @@ private:
   // FRI values
   FRI_QUALITY lastQuality_;
   FRI_CTRL lastCtrlScheme_;
+
+  boost::shared_ptr<std::thread> KRCCommThread_;
+  bool stopKRCComm_ = false;
+  void KRCCommThreadCallback()
+  {
+    while(!stopKRCComm_)
+    {
+      device_->doDataExchange();
+    }
+    return;
+  }
+
+  void startFRI()
+  {
+    // wait until FRI enters in command mode
+    // std::cout << "Waiting for good communication quality..." << std::endl;
+    // while( device_->getQuality() != FRI_QUALITY_OK ){};
+    device_->setToKRLInt(1, 1);
+
+    // std::cout << "Waiting for command mode..." << std::endl;
+    // while ( device_->getFrmKRLInt(1) != 1 )
+    // {
+      // std::cout << "device_->getState(): " << device_->getState() << std::endl;
+      // device_->setToKRLInt(1, 1);
+      // usleep(1000000);
+    // }
+    return;
+  }
+
+  void stopFRI()
+  {
+    // wait until FRI enters in command mode
+    device_->setToKRLInt(1, 0);
+    std::cout << "Waiting for monitor mode..." << std::endl;
+    while ( device_->getFrmKRLInt(1) != 0 ){}
+    // {
+      // std::cout << "device_->getState(): " << device_->getState() << std::endl;
+      // std::cout << "Waiting for monitor mode..." << std::endl;
+      // device_->setToKRLInt(1, 0);
+      // usleep(1000000);
+    // }
+    return;
+  }
 
 };
 

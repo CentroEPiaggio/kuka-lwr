@@ -2,7 +2,6 @@
 
 namespace lwr_hw
 {
-
   void LWRHW::create(std::string name, std::string urdf_string)
   {
     // SET NAME AND MODEL

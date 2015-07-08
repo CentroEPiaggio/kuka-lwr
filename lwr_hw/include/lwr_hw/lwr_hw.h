@@ -49,9 +49,12 @@ public:
   // control strategies
   // JOINT_POSITION -> strategy 10 -> triggered with PoitionJointInterface
   // CARTESIAN_IMPEDANCE -> strategy 20 (not implemented)
-  // JOINT_IMPEDANCE -> strategy 30 -> triggered with EffortJointInterface
+  // JOINT_IMPEDANCE -> strategy 30 -> triggered with (ToDo) ImpedanceJointInterface
+  // JOINT_EFFORT -> strategy 30 with special configuration, triggered with EffortJointInterface
+  // JOINT_STIFFNESS -> strategy 30 with special configuration, trigered with (ToDo) StiffnessJointInterface
   // GRAVITY_COMPENSATION -> (not implemented, achieved with low stiffness)
-  enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, GRAVITY_COMPENSATION = 40};
+  // __Note__: StiffnessJointInterface + EffortJointInterface = ImpedanceJointInterface
+  enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, JOINT_EFFORT = 40, JOINT_STIFFNESS = 50, GRAVITY_COMPENSATION = 50};
   virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const;
   virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list);
 

@@ -10,7 +10,7 @@
 #include <controller_manager/controller_manager.h>
 
 // the lwr hw fri interface
-#include "lwr_hw/lwr_hw_fri.hpp"
+#include "lwr_hw/lwr_hw_fril.hpp"
 
 bool g_quit = false;
 
@@ -31,14 +31,14 @@ std::string getURDF(ros::NodeHandle &model_nh_, std::string param_name)
     std::string search_param_name;
     if (model_nh_.searchParam(param_name, search_param_name))
     {
-      ROS_INFO_ONCE_NAMED("LWRHWFRI", "LWRHWFRI node is waiting for model"
+      ROS_INFO_ONCE_NAMED("LWRHWFRIL", "LWRHWFRIL node is waiting for model"
         " URDF in parameter [%s] on the ROS param server.", search_param_name.c_str());
 
       model_nh_.getParam(search_param_name, urdf_string);
     }
     else
     {
-      ROS_INFO_ONCE_NAMED("LWRHWFRI", "LWRHWFRI node is waiting for model"
+      ROS_INFO_ONCE_NAMED("LWRHWFRIL", "LWRHWFRIL node is waiting for model"
         " URDF in parameter [%s] on the ROS param server.", robot_description.c_str());
 
       model_nh_.getParam(param_name, urdf_string);
@@ -46,7 +46,7 @@ std::string getURDF(ros::NodeHandle &model_nh_, std::string param_name)
 
     usleep(100000);
   }
-  ROS_DEBUG_STREAM_NAMED("LWRHWFRI", "Recieved urdf from param server, parsing...");
+  ROS_DEBUG_STREAM_NAMED("LWRHWFRIL", "Recieved urdf from param server, parsing...");
 
   return urdf_string;
 }
@@ -69,19 +69,16 @@ int main( int argc, char** argv )
   ros::NodeHandle lwr_nh;
 
   // get params or give default values
-  int port;
-  std::string hintToRemoteHost;
-  lwr_nh.param("port", port, 49939);
-  lwr_nh.param("ip", hintToRemoteHost, std::string("192.168.0.10") );
-
+  std::string file;
+  lwr_nh.param("file", file, std::string(""));
+  
   std::string urdf_string = getURDF(lwr_nh, "/robot_description");
 
   // construct and start the real lwr
-  lwr_hw::LWRHWFRI lwr_robot;
+  lwr_hw::LWRHWFRIL lwr_robot;
   std::cout << "namespace: " << lwr_nh.getNamespace() << std::endl;
   lwr_robot.create(std::string("lwr"), urdf_string);
-  lwr_robot.setPort(port);
-  lwr_robot.setIP(hintToRemoteHost);
+  lwr_robot.setInitFile(file);
   if(!lwr_robot.init())
   {
     ROS_FATAL_NAMED("lwr_hw","Could not initialize robot real interface");
@@ -97,21 +94,21 @@ int main( int argc, char** argv )
   controller_manager::ControllerManager manager(&lwr_robot, lwr_nh);
 
   // run as fast as possible
-  while( !g_quit )
+  while( !g_quit ) 
   {
     // get the time / period
-    if (!clock_gettime(CLOCK_REALTIME, &ts))
+    if (!clock_gettime(CLOCK_REALTIME, &ts)) 
     {
       now.sec = ts.tv_sec;
       now.nsec = ts.tv_nsec;
       period = now - last;
       last = now;
     } 
-    else
+    else 
     {
       ROS_FATAL("Failed to poll realtime clock!");
       break;
-    }
+    } 
 
     // read the state from the lwr
     lwr_robot.read(now, period);
@@ -126,10 +123,10 @@ int main( int argc, char** argv )
   std::cerr<<"Stopping spinner..."<<std::endl;
   spinner.stop();
 
-  //std::cerr<<"Stopping LWR..."<<std::endl;
-  //lwr_robot.stopFRI();
+  std::cerr<<"Stopping LWR..."<<std::endl;
+  lwr_robot.stop();
 
-  std::cerr<<"Bye!"<<std::endl;
+  std::cerr<<"This node was killed!"<<std::endl;
 
   return 0;
 }

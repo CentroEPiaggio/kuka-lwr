@@ -5,12 +5,21 @@
 	<arg name="port" default="49939"/>
 	<arg name="ip" default="192.168.0.20"/>
 
+	<arg name="file_with_path" default="" />
+
 	<!-- LAUNCH IMPLEMENTATION -->
 
+	<!-- KUKA FRI -->
 	<!-- addresses /-->
 	<param name="port" value="$(arg port)"/>
 	<param name="ip" value="$(arg ip)"/>
 	<!-- the real hardware interface /-->
 	<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_fri_node" respawn="false" output="screen"/>
+
+	<!-- STANDFORD FRIL -->
+	<!-- init file /-->
+	<param name="file" value="$(arg file_with_path)"/>
+	<!-- the real hardware interface /-->
+	<!-- node required="true" name="lwr_hw" pkg="lwr_hw" type="lwr_hw_fril_node" respawn="false" output="screen"/-->
 
 </launch>

@@ -111,7 +111,7 @@ public:
     const std::string urdf_string = getURDF(robot_description_);
 
     // Load the LWRHWsim abstraction to interface the controllers with the gazebo model
-    robot_hw_sim_.reset( new lwr_hw::LWRHWsim() );
+    robot_hw_sim_.reset( new lwr_hw::LWRHWGazebo() );
     robot_hw_sim_->create(robot_namespace_, urdf_string);
     robot_hw_sim_->setParentModel(parent_model_);
     if(!robot_hw_sim_->init())
@@ -217,7 +217,7 @@ private:
 
   // Robot simulator interface
   std::string robot_hw_sim_type_str_;
-  boost::shared_ptr<lwr_hw::LWRHWsim> robot_hw_sim_;
+  boost::shared_ptr<lwr_hw::LWRHWGazebo> robot_hw_sim_;
 
   // Controller manager
   boost::shared_ptr<controller_manager::ControllerManager> controller_manager_;
