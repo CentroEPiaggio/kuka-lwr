@@ -54,7 +54,7 @@ public:
   // JOINT_STIFFNESS -> strategy 30 with special configuration, trigered with (ToDo) StiffnessJointInterface
   // GRAVITY_COMPENSATION -> (not implemented, achieved with low stiffness)
   // __Note__: StiffnessJointInterface + EffortJointInterface = ImpedanceJointInterface
-  enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, JOINT_EFFORT = 40, JOINT_STIFFNESS = 50, GRAVITY_COMPENSATION = 50};
+  enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, JOINT_EFFORT = 40, JOINT_STIFFNESS = 50, GRAVITY_COMPENSATION = 90};
   virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const;
   virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list);
 
@@ -64,13 +64,15 @@ public:
   virtual void write(ros::Time time, ros::Duration period) = 0;
 
   // get/set control method
-  void setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;}; // CHECK CONFLICT
+  void setControlStrategy( ControlStrategy strategy){current_strategy_ = strategy;};
   ControlStrategy getControlStrategy(){ return current_strategy_;};
 
   // Hardware interfaces
   hardware_interface::JointStateInterface state_interface_;
   hardware_interface::EffortJointInterface effort_interface_;
   hardware_interface::PositionJointInterface position_interface_;
+  // hardware_interface::StiffnessJointInterface stiffness_interface_; // ToDo
+  // hardware_interface::ImpedanceointInterface impedance_interface_; // ToDo
 
   ControlStrategy current_strategy_;
 

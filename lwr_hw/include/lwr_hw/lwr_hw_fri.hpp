@@ -49,7 +49,6 @@ public:
       << FRI_MAJOR_VERSION << "." << FRI_SUB_VERSION << "." <<FRI_DATAGRAM_ID_CMD << "." <<FRI_DATAGRAM_ID_MSR 
       << " Interface for LWR ROS server" << std::endl;
 
-    // if off, wait for monitor mode to avoid loosing UDP packages
     std::cout << "Checking if the robot is Stopped..." << std::endl;
     if( device_->getState() == FRI_STATE_OFF )
     {
@@ -102,25 +101,36 @@ public:
         break;
 
       case JOINT_IMPEDANCE:
-        // WHEN THE URDF MODEL IS PRECISE
-        // 1. compute the gracity term
-        // f_dyn_solver_->JntToGravity(joint_position_kdl_, gravity_effort_);
-
-        // 2. read gravity term from FRI and add it with opposite sign and add the URDF gravity term
-        // newJntAddTorque = gravity_effort_  - device_->getF_DYN??
-
         for(int j=0; j < n_joints_; j++)
         {
-          newJntPosition[j] = joint_position_[j];
+          newJntPosition[j] = joint_position_command_[j];
           newJntAddTorque[j] = joint_effort_command_[j];
-          newJntStiff[j] = 0.01;//joint_stiffness_command_[j];
-          newJntDamp[j] = 0.01;//joint_damping_command_[j];
+          newJntStiff[j] = joint_stiffness_command_[j];
+          newJntDamp[j] = joint_damping_command_[j];
         }
-        // device_->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
-        device_->doJntImpedanceControl(NULL, NULL, NULL, newJntAddTorque, false);
+        device_->doJntImpedanceControl(newJntPosition, newJntStiff, newJntDamp, newJntAddTorque, false);
+        break;
+
+     case JOINT_EFFORT:
+        for(int j=0; j < n_joints_; j++)
+        {
+            newJntAddTorque[j] = joint_effort_command_[j];
+        }
+        // mirror the position
+        device_->doJntImpedanceControl(device_->getMsrMsrJntPosition(), NULL, NULL, newJntAddTorque, false);
+        break;
+
+      case JOINT_STIFFNESS:
+        for(int j=0; j < n_joints_; j++)
+        {
+          newJntPosition[j] = joint_position_command_[j];
+          newJntStiff[j] = joint_stiffness_command_[j];
+        }
+        device_->doJntImpedanceControl(newJntPosition, newJntStiff, NULL, NULL, false);
         break;
 
       case GRAVITY_COMPENSATION:
+        device_->doJntImpedanceControl(device_->getMsrMsrJntPosition(), NULL, NULL, NULL, false);
         break;
     }
     return;
@@ -142,8 +152,8 @@ public:
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
       {
-        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
-        desired_strategy = JOINT_IMPEDANCE;
+        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_EFFORT)" << std::endl;
+        desired_strategy = JOINT_EFFORT;
         break;
       }
     }
@@ -174,7 +184,10 @@ public:
       stopFRI();
 
       // send to KRL the new strategy
-      device_->setToKRLInt(0, desired_strategy);
+      if( desired_strategy == JOINT_POSITION )
+        device_->setToKRLInt(0, JOINT_POSITION);
+      else if( desired_strategy >= JOINT_IMPEDANCE)
+        device_->setToKRLInt(0, JOINT_IMPEDANCE);
 
       startFRI();
 
