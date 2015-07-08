@@ -11,6 +11,8 @@
 	<arg name="lwr_powered" default="false"/>
 	<arg name="port" default="49939"/>
 	<arg name="ip" default="192.168.0.10"/>
+	<arg name="file" default="$(find single_lwr_robot)/config/980241-FRI-Driver.init"/>
+
     <arg name="t1_limits" default="false"/>
     <arg name="controllers" default="joint_trajectory_controller"/>
     <arg name="stopped_controllers" default="gravity_compensation_controller one_task_inverse_kinematics"/>
@@ -90,6 +92,7 @@
 			<include file="$(find lwr_hw)/launch/lwr_hw.launch">
 				<arg name="port" value="$(arg port)"/>
 				<arg name="ip" value="$(arg ip)"/>
+				<arg name="file_with_path" value="$(arg file)"/>
 			</include>
 		</group>
 
