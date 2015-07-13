@@ -1,8 +1,8 @@
 # KUKA LWR 4+
 
-[![Build Status](https://api.travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr) (<- waiting for Ubuntu 14.04 support)
+[![Build Status](https://api.travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
 
-ROS indigo metapackage that contains packages to work with the KUKA LWR 4+.
+ROS (tested on indigo) packages to work with the KUKA LWR 4+.
 
 ## Overview
 The main packages are:
