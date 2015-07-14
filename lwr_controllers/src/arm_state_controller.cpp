@@ -3,6 +3,7 @@
 
 #include <lwr_controllers/arm_state_controller.h>
 #include <kdl_conversions/kdl_msg.h>
+#include <utils/pseudo_inversion.h>
 
 namespace arm_state_controller  
 {
@@ -87,11 +88,14 @@ namespace arm_state_controller
                     return;
                 }
                 
+                Eigen::MatrixXd jinv;
+                pseudo_inverse(jacobian_->data.transpose(),jinv,false);                
+                
                 KDL::Wrench wrench;
                 
                 for (unsigned int i = 0; i < 6; i++) 
                     for (unsigned int j = 0; j < kdl_chain_.getNrOfJoints(); j++)
-                        wrench[i] += (*jacobian_)(i,j) * realtime_pub_->msg_.est_ext_torques[j];
+                        wrench[i] += jinv(i,j) * realtime_pub_->msg_.est_ext_torques[j];
                     
                 // Transform cartesian wrench into tool reference frame
                 KDL::Frame tool_frame;
