@@ -5,10 +5,10 @@ Name=980241
 
 [Priorities]
 #Priority range: 1..63
-KRCCommunicationThread=1
-TimerThread=1
-MainThread=1
-OutputConsoleThread=1
+KRCCommunicationThread=60
+TimerThread=55
+MainThread=50
+OutputConsoleThread=5
 
 [ControlValues]
 # Cycle time in seconds

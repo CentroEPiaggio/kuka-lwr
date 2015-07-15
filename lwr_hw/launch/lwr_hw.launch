@@ -14,7 +14,7 @@
 	<param name="port" value="$(arg port)"/>
 	<param name="ip" value="$(arg ip)"/>
 	<!-- the real hardware interface /-->
-	<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_fri_node" respawn="false" output="screen"/>
+	<node required="true" name="lwr_hw" pkg="lwr_hw" type="lwr_hw_fri_node" respawn="false" output="screen"/-->
 
 	<!-- STANDFORD FRIL -->
 	<!-- init file /-->
