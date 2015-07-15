@@ -24,19 +24,14 @@ Check the [`.travis.yaml`](https://github.com/CentroEPiaggio/kuka-lwr/blob/maste
 
 You need to provide your user name with real time priority and memlock limits higher than the default ones. You can do it permanently like this:
 
-1. `sudo nano /etc/security/limits.conf` and add these lines:
+1. `sudo nano /etc/security/limits.conf` and add these lines: 
 ```
 YOUR_USERNAME hard rtprio 95
 YOUR_USERNAME soft rtprio 95
 YOUR_USERNAME hard memlock unlimited
 YOUR_USERNAME soft memlock unlimited
 ```
-2. `sudo  nano /etc/pam.d/common-session` and add
-```
-session required pam_limits.so
-```
+2. `sudo  nano /etc/pam.d/common-session` and add `session required pam_limits.so`
 3. Reboot, open a terminal, and check that `ulimit -r -l` gives you the values set above.
-
 4. You need to edit manually the [lwr_hw.launch](lwr_hw/launch/lwr_hw.launch)
-
 5. Load the script that is downloaded with the library and follow the instructions from the [original link](http://cs.stanford.edu/people/tkr/fri/html/) to set up network and other requirements properly.
