@@ -100,9 +100,10 @@
 		</group>
 
 		<!-- spawn only desired controllers in current namespace -->
-		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller $(arg controllers)"/>
+		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller arm_state_controller $(arg controllers)"/>
 
 		<node name="controller_stopper" pkg="controller_manager" type="spawner" args="--stopped $(arg stopped_controllers)" />
+
 	</group>
 
 </launch>
