@@ -4,6 +4,7 @@
 #include <lwr_controllers/arm_state_controller.h>
 #include <kdl_conversions/kdl_msg.h>
 #include <utils/pseudo_inversion.h>
+#include <control_toolbox/filters.h>
 
 namespace arm_state_controller  
 {
@@ -58,9 +59,10 @@ namespace arm_state_controller
                 last_publish_time_ = last_publish_time_ + ros::Duration(1.0/publish_rate_);
                 
                 for (unsigned i = 0; i < joint_handles_.size(); i++) {
+                    float acceleration = filters::exponentialSmoothing((joint_handles_[i].getPosition() - (*joint_position_)(i))/period.toSec(), joint_handles_[i].getVelocity(), 0.2);
                     (*joint_position_)(i) = joint_handles_[i].getPosition();
                     (*joint_velocity_)(i) = joint_handles_[i].getVelocity();
-                    (*joint_acceleration_)(i) = 0; 
+                    (*joint_acceleration_)(i) = acceleration; 
                 }
                                 
                 // Compute Dynamics 
