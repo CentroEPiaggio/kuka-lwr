@@ -60,7 +60,7 @@ namespace arm_state_controller
                 for (unsigned i = 0; i < joint_handles_.size(); i++) {
                     (*joint_position_)(i) = joint_handles_[i].getPosition();
                     (*joint_velocity_)(i) = joint_handles_[i].getVelocity();
-                    (*joint_acceleration_)(i) = 0;  // TODO: compute from previous velocity?
+                    (*joint_acceleration_)(i) = 0; 
                 }
                                 
                 // Compute Dynamics 
@@ -96,6 +96,8 @@ namespace arm_state_controller
                 for (unsigned int i = 0; i < 6; i++) 
                     for (unsigned int j = 0; j < kdl_chain_.getNrOfJoints(); j++)
                         wrench[i] += jinv(i,j) * realtime_pub_->msg_.est_ext_torques[j];
+                    
+                tf::wrenchKDLToMsg(wrench, realtime_pub_->msg_.est_ee_wrench_base);        
                     
                 // Transform cartesian wrench into tool reference frame
                 KDL::Frame tool_frame;
