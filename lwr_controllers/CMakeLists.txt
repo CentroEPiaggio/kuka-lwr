@@ -4,6 +4,7 @@ project(lwr_controllers)
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
   control_msgs
+  geometry_msgs
   forward_command_controller
   control_toolbox
   realtime_tools
@@ -12,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
+  kdl_conversions
 )
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
@@ -23,6 +25,7 @@ add_message_files(
    PoseRPY.msg
    RPY.msg
    MultiPriorityTask.msg
+   ArmState.msg
 )
 
 generate_messages(
@@ -35,6 +38,7 @@ catkin_package(
   CATKIN_DEPENDS
     controller_interface
     control_msgs
+    geometry_msgs
     control_toolbox
     realtime_tools
     urdf
@@ -58,6 +62,7 @@ add_library(${PROJECT_NAME}
   src/dynamic_sliding_mode_controller_task_space.cpp
   src/one_task_inverse_dynamics_jl.cpp
   src/gravity_compensation.cpp
+  src/arm_state_controller.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
