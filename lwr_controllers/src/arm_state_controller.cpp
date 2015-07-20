@@ -91,7 +91,7 @@ namespace arm_state_controller
                 }
                 
                 Eigen::MatrixXd jinv;
-                pseudo_inverse(jacobian_->data.transpose(),jinv,false);                
+                pseudo_inverse(jacobian_->data.transpose(),jinv,true);                
                 
                 KDL::Wrench wrench;
                 
