@@ -8,15 +8,25 @@
 // ROS headers
 #include <ros/ros.h>
 #include <controller_manager/controller_manager.h>
+#include <std_msgs/String.h>
 
 // the lwr hw real interface
 #include "lwr_hw/lwr_hw_real.h"
 
 bool g_quit = false;
+volatile bool paused = false;
 
 void quitRequested(int sig)
 {
   g_quit = true;
+}
+
+void stopUpdatingController(const std_msgs::String::ConstPtr & msg)
+{
+  if(msg->data == "stop")
+    paused = true;
+  if(msg->data == "start")
+    paused = false;
 }
 
 int main( int argc, char** argv )
@@ -36,6 +46,8 @@ int main( int argc, char** argv )
   // construct the lwr
   ros::NodeHandle lwr_nh("");
   lwr_hw::LWRHWreal lwr_robot(lwr_nh);
+  
+  ros::Subscriber s = lwr_nh.subscribe<std_msgs::String>("emergency_stop",10,&stopUpdatingController);
 
   // configuration routines
   lwr_robot.start();
@@ -77,7 +89,8 @@ int main( int argc, char** argv )
     }
 
     // update the controllers
-    manager.update(now, period);
+    if(!paused)
+      manager.update(now, period);
 
     // write the command to the lwr
     lwr_robot.write(now, period);
