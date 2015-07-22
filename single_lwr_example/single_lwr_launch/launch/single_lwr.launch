@@ -93,6 +93,9 @@
 				<arg name="port" value="$(arg port)"/>
 				<arg name="ip" value="$(arg ip)"/>
 				<arg name="file_with_path" value="$(arg file)"/>
+				<!-- this name MUST match the name you give to the arm in the URDF instance -->
+				<!-- to minimize errors, you could pass it as a xacro parameter -->
+				<arg name="name" value="lwr"/>
 			</include>
 		</group>
 

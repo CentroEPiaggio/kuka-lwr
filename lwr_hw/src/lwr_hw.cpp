@@ -4,6 +4,8 @@ namespace lwr_hw
 {
   void LWRHW::create(std::string name, std::string urdf_string)
   {
+    std::cout << "Creating a KUKA LWR 4+ called: " << name << std::endl;
+
     // SET NAME AND MODEL
     robot_namespace_ = name;
     urdf_string_ = urdf_string;
@@ -41,19 +43,26 @@ namespace lwr_hw
     // RESET VARIABLES
     reset();
 
+    std::cout << "Parsing transmissions from the URDF..." << std::endl;
+
     // GET TRANSMISSIONS THAT BELONG TO THIS LWR 4+ ARM
     if (!parseTransmissionsFromURDF(urdf_string_))
     {
       std::cout << "lwr_hw: " << "Error parsing URDF in lwr_hw.\n" << std::endl;
       return;
     }
+
+    std::cout << "Registering interfaces..." << std::endl;
+
     const urdf::Model *const urdf_model_ptr = urdf_model_.initString(urdf_string_) ? &urdf_model_ : NULL;
     registerInterfaces(urdf_model_ptr, transmissions_);
+
+    std::cout << "Initializing KDL variables..." << std::endl;
 
     // INIT KDL STUFF
     initKDLdescription(urdf_model_ptr);
 
-    std::cout << "Succesfully created an abstract LWR 4+ ARM with interfaces" << std::endl;
+    std::cout << "Succesfully created an abstract LWR 4+ ARM with interfaces to ROS control" << std::endl;
   }
 
   // reset values
@@ -295,6 +304,9 @@ namespace lwr_hw
         }
       }
     }
+
+    if( transmissions_.empty() )
+      return false;
 
     return true;
   }

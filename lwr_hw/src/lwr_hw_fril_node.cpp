@@ -70,14 +70,16 @@ int main( int argc, char** argv )
 
   // get params or give default values
   std::string file;
+  std::string name;
   lwr_nh.param("file", file, std::string(""));
+  lwr_nh.param("name", name, std::string("lwr"));
   
+  // get the general robot description, the lwr class will take care of parsing what's useful to itself
   std::string urdf_string = getURDF(lwr_nh, "/robot_description");
 
   // construct and start the real lwr
   lwr_hw::LWRHWFRIL lwr_robot;
-  std::cout << "namespace: " << lwr_nh.getNamespace() << std::endl;
-  lwr_robot.create(std::string("lwr"), urdf_string);
+  lwr_robot.create(name, urdf_string);
   lwr_robot.setInitFile(file);
   if(!lwr_robot.init())
   {

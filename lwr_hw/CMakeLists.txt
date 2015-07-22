@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   transmission_interface
   gazebo_ros
+  std_msgs
 )
 
 add_definitions (-fpermissive -std=c++11)
@@ -39,6 +40,7 @@ catkin_package(
     kdl_parser
     transmission_interface
     gazebo_ros
+    std_msgs
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME} lwr_hw_gazebo_plugin friremote frilremote
   DEPENDS gazebo
