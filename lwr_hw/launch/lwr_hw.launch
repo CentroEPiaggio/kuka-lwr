@@ -1,32 +1,27 @@
 <launch>
 
 	<!-- LAUNCH INTERFACE -->
+	<arg name="name" default="lwr" doc="The kuka lwr 4+ name. Ensure this is the same name you give to the arm in the urdf instance."/>
+
 	<arg name="port" default="49939"/>
 	<arg name="ip" default="192.168.0.20"/>
-	<arg name="use_default_joint_names" default="true"/>
-	<arg name="use_default_namespace" default="true"/>
+
+	<arg name="file_with_path" default="" />
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
-	<group ns="lwr" if="$(arg use_default_joint_names)">
-		<group if="$(arg use_default_joint_names)">
-			<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
-		</group>
-		<!-- addresses /-->
-		<param name="port" value="$(arg port)"/>
-		<param name="ip" value="$(arg ip)"/>
-		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
-	</group>
-	<group unless="$(arg use_default_joint_names)">
-		<group if="$(arg use_default_joint_names)">
-			<rosparam command="load" file="$(find lwr_hw)/config/joint_names.yaml" />
-		</group>
-		<!-- addresses /-->
-		<param name="port" value="$(arg port)"/>
-		<param name="ip" value="$(arg ip)"/>
-		<!-- the real hardware interface /-->
-		<node name="lwr_hw" pkg="lwr_hw" type="lwr_hw_node" respawn="false" output="screen"/>
-	</group>
+	<!-- KUKA FRI -->
+	<!-- addresses /-->
+	<param name="name" value="$(arg name)"/>
+	<param name="port" value="$(arg port)"/>
+	<param name="ip" value="$(arg ip)"/>
+	<!-- the real hardware interface /-->
+	<node required="true" name="lwr_hw" pkg="lwr_hw" type="lwr_hw_fri_node" respawn="false" output="screen"/>
+
+	<!-- STANDFORD FRIL -->
+	<!-- init file /-->
+	<param name="file" value="$(arg file_with_path)"/>
+	<!-- the real hardware interface /-->
+	<!-- node required="true" name="lwr_hw" pkg="lwr_hw" type="lwr_hw_fril_node" respawn="false" output="screen"/-->
 
 </launch>

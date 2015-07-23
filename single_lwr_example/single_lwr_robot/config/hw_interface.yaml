@@ -1,0 +1,14 @@
+# make the namespace match the name you use to instantiate the arm in the xacro
+lwr:
+  root: lwr_base_link
+  tip: lwr_7_link
+  # joints is not used, since with the robot name and urdf name conventions, the parsing is hardcoded
+  # but as a general solution, joint names could be loaded as well, like controllers do
+  joints: 
+  - lwr_0_joint
+  - lwr_1_joint
+  - lwr_2_joint
+  - lwr_3_joint
+  - lwr_4_joint
+  - lwr_5_joint
+  - lwr_6_joint

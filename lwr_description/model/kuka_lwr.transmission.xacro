@@ -2,13 +2,16 @@
 
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
+	<xacro:property name="Interface10" value="PositionJointInterface"/>
+	<xacro:property name="Interface30" value="EffortJointInterface"/>
+
 	<xacro:macro name="kuka_lwr_transmission" params="name">
 
 		<transmission name="${name}_0_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_0_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_0_motor">
 				<mechanicalReduction>1</mechanicalReduction>
@@ -16,10 +19,10 @@
 		</transmission>
 
 		<transmission name="${name}_1_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_1_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_1_motor">
 				<mechanicalReduction>1</mechanicalReduction>
@@ -27,10 +30,10 @@
 		</transmission>
 
 		<transmission name="${name}_2_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_2_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_2_motor">
 				<mechanicalReduction>1</mechanicalReduction>
@@ -38,10 +41,10 @@
 		</transmission>
 
 		<transmission name="${name}_3_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_3_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_3_motor">
 				<mechanicalReduction>1</mechanicalReduction>
@@ -49,10 +52,10 @@
 		</transmission>
 
 		<transmission name="${name}_4_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_4_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_4_motor">
 				<mechanicalReduction>1</mechanicalReduction>
@@ -60,10 +63,10 @@
 		</transmission>
 
 		<transmission name="${name}_5_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_5_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_5_motor">
 				<mechanicalReduction>1</mechanicalReduction>
@@ -71,92 +74,15 @@
 		</transmission>
 
 		<transmission name="${name}_6_trans">
-			<robotNamespace>${name}</robotNamespace>
 			<type>transmission_interface/SimpleTransmission</type>
 			<joint name="${name}_6_joint">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
+				<hardwareInterface>${Interface10}</hardwareInterface>
+				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
 			<actuator name="${name}_6_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
-
-		<!-- <transmission name="${name}_0_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_0_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_0_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission>
-
-		<transmission name="${name}_1_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_1_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_1_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission>
-
-		<transmission name="${name}_2_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_2_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_2_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission>
-
-		<transmission name="${name}_3_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_3_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_3_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission>
-
-		<transmission name="${name}_4_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_4_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_4_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission>
-
-		<transmission name="${name}_5_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_5_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_5_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission>
-
-		<transmission name="${name}_6_trans_stiff">
-			<robotNamespace>${name}</robotNamespace>
-			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_6_joint_stiffness">
-				<hardwareInterface>PositionJointInterface</hardwareInterface>
-			</joint>
-			<actuator name="${name}_6_position">
-				<mechanicalReduction>1</mechanicalReduction>
-			</actuator>
-		</transmission> -->
 
 	</xacro:macro>
 

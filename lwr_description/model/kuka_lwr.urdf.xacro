@@ -23,390 +23,390 @@
 	<!-- URDF model /-->
 	<xacro:macro name="kuka_lwr" params="parent name *origin">
 
-	<!-- First (shoulder) element of the arm. Fixed to its parent. -->
-	<joint name="${parent}_${name}_base_joint" type="fixed">
-		<insert_block name="origin"/>
-		<origin xyz="0 0 0" rpy="0 0 0"/>
-		<parent link="${parent}"/>
-		<child link="${name}_base_link"/>
-	</joint>
+		<!-- First (shoulder) element of the arm. Fixed to its parent. -->
+		<joint name="${parent}_${name}_base_joint" type="fixed">
+			<insert_block name="origin"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<parent link="${parent}"/>
+			<child link="${name}_base_link"/>
+		</joint>
 
-	<link name="${name}_base_link">
-		<inertial>
-			<mass value="${base_mass}"/>
-			<origin xyz="0 0 0.055"  />
-			<cylinder_inertia_def radius="0.06" length="0.11" mass="${base_mass}"/>
-		</inertial>
-		<visual>
-			<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
-			<geometry>
-				<mesh filename="package://lwr_description/meshes/base.STL"/>
-			</geometry>
-			<material name="Kuka/Orange"/>
-		</visual>
-		<collision>
-			<origin xyz="0 0 0.055" rpy="0 0 ${M_PI}"/>
-			<geometry>
-				<!-- <mesh filename="package://lwr_description/meshes/convex/arm_base_convex.stl"/> -->
-				<cylinder radius="0.07" length="0.11"/>
-			</geometry>
-		</collision>
-	</link>
+		<link name="${name}_base_link">
+			<inertial>
+				<mass value="${base_mass}"/>
+				<origin xyz="0 0 0.055"  />
+				<cylinder_inertia_def radius="0.06" length="0.11" mass="${base_mass}"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/base.STL"/>
+				</geometry>
+				<material name="Kuka/Orange"/>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0.055" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<!-- <mesh filename="package://lwr_description/meshes/convex/arm_base_convex.stl"/> -->
+					<cylinder radius="0.07" length="0.11"/>
+				</geometry>
+			</collision>
+		</link>
 
-	<!-- Second segment of the arm. Joint along z-axis -->
-	<joint name="${name}_0_joint" type="revolute">
-		<origin xyz="0 0 0.11" rpy="0 0 0"/>
-		<axis xyz="0 0 1"/>
-		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_base_link"/>
-		<child link="${name}_1_link"/>
-	</joint>
+		<!-- Second segment of the arm. Joint along z-axis -->
+		<joint name="${name}_0_joint" type="revolute">
+			<origin xyz="0 0 0.11" rpy="0 0 0"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_base_link"/>
+			<child link="${name}_1_link"/>
+		</joint>
 
-	<joint name="${name}_0_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_base_link"/>
-		<child link="${name}_1_link_dummy"/>
-	</joint>
-	<link name="${name}_1_link_dummy"/>
+		<joint name="${name}_0_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_base_link"/>
+			<child link="${name}_1_link_dummy"/>
+		</joint>
+		<link name="${name}_1_link_dummy"/>
 
-	<link name="${name}_1_link">
-		<inertial>
-			<mass value="${link_mass}"/>
-			<origin rpy="0 0 0" xyz="0 -0.06 0.130"/>
-			<cuboid_inertia_def length="0.12" width="0.06" height="0.260" mass="${link_mass}"/>
-		</inertial>
-		<visual>
-			<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
-			<geometry>
-				<mesh filename="package://lwr_description/meshes/link_1.STL"/>
-			</geometry>
-			<material name="Kuka/Orange"/>
-		</visual>
-		<collision>
-			<origin xyz="0 0 0.0" rpy="0 0 0"/>
-			<geometry>
-				<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_a_convex.stl"/-->
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 0.06 0.2" rpy="0 0 0"/>
-			<geometry>
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 0.03 0.1" rpy="-0.291 0 0"/>
-			<geometry>
-				<cylinder radius="0.07" length="0.208"/>
-			</geometry>
-		</collision>
-	</link>
+		<link name="${name}_1_link">
+			<inertial>
+				<mass value="${link_mass}"/>
+				<origin rpy="0 0 0" xyz="0 -0.06 0.130"/>
+				<cuboid_inertia_def length="0.12" width="0.06" height="0.260" mass="${link_mass}"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/link_1.STL"/>
+				</geometry>
+				<material name="Kuka/Orange"/>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0.0" rpy="0 0 0"/>
+				<geometry>
+					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_a_convex.stl"/-->
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 0.06 0.2" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 0.03 0.1" rpy="-0.291 0 0"/>
+				<geometry>
+					<cylinder radius="0.07" length="0.208"/>
+				</geometry>
+			</collision>
+		</link>
 
-	<!-- Third segment of the arm. Joint along y-axis -->
-	<joint name="${name}_1_joint" type="revolute">
-		<origin xyz="0 0 0.2005" rpy="0 0 0"/>
-		<axis xyz="0 -1 0"/>
-		<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_1_link"/>
-		<child link="${name}_2_link"/>
-	</joint>
+		<!-- Third segment of the arm. Joint along y-axis -->
+		<joint name="${name}_1_joint" type="revolute">
+			<origin xyz="0 0 0.2005" rpy="0 0 0"/>
+			<axis xyz="0 -1 0"/>
+			<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_1_link"/>
+			<child link="${name}_2_link"/>
+		</joint>
 
-	<joint name="${name}_1_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_1_link"/>
-		<child link="${name}_2_link_dummy"/>
-	</joint>
-	<link name="${name}_2_link_dummy"/>
+		<joint name="${name}_1_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_1_link"/>
+			<child link="${name}_2_link_dummy"/>
+		</joint>
+		<link name="${name}_2_link_dummy"/>
 
-	<link name="${name}_2_link">
-		<inertial>
-			<mass value="${link_mass}"/>
-			<origin rpy="0 0 0" xyz="0 0.06 ${0.130 - 0.06}"/>
-			<cuboid_inertia_def length="0.12" width="0.06" height="0.260" mass="${link_mass}"/>
-		</inertial>
+		<link name="${name}_2_link">
+			<inertial>
+				<mass value="${link_mass}"/>
+				<origin rpy="0 0 0" xyz="0 0.06 ${0.130 - 0.06}"/>
+				<cuboid_inertia_def length="0.12" width="0.06" height="0.260" mass="${link_mass}"/>
+			</inertial>
 
-		<visual>
-			<origin xyz="0 0 0.0" rpy="0 0 ${M_PI}"/>
-			<geometry>
-				<mesh filename="package://lwr_description/meshes/link_2.STL"/>
-			</geometry>
-			<material name="Kuka/Orange"/>
-		</visual>
-		<collision>
+			<visual>
+				<origin xyz="0 0 0.0" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/link_2.STL"/>
+				</geometry>
+				<material name="Kuka/Orange"/>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0.2" rpy="0 0 0"/>
+				<geometry>
+					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_b_convex.stl"/-->
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 -0.06 0.0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 -0.03 0.1" rpy="-0.291 0 0"/>
+				<geometry>
+					<cylinder radius="0.07" length="0.208"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<!-- Fourth element of the arm. z-axis -->
+		<joint name="${name}_2_joint" type="revolute">
+			<origin xyz="0 0 0.20" rpy="0 0 0"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_2_link"/>
+			<child link="${name}_3_link"/>
+		</joint>
+
+		<joint name="${name}_2_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_2_link"/>
+			<child link="${name}_3_link_dummy"/>
+		</joint>
+		<link name="${name}_3_link_dummy"/>
+
+		<link name="${name}_3_link">
+			<inertial>
+				<mass value="${link_mass}"/>
+				<origin rpy="0 0 0" xyz="0 0.06 0.130"/>
+				<cuboid_inertia_def length="0.12" width="0.06" height="0.260" mass="${link_mass}"/>
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/link_3.STL"/>
+				</geometry>
+				<material name="Kuka/Orange"/>
+			</visual>
+			<collision>
+				<origin xyz="0 0 0.0" rpy="0 0 0"/>
+				<geometry>
+					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_a_convex.stl"/-->
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 -0.06 0.2" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 -0.03 0.1" rpy="0.291 0 0"/>
+				<geometry>
+					<cylinder radius="0.07" length="0.208"/>
+				</geometry>
+			</collision>
+		</link>
+
+		<!-- fifth element of the arm. x-axis -->
+		<joint name="${name}_3_joint" type="revolute">
+			<origin xyz="0 0 0.20" rpy="0 0 0"/>
+			<axis xyz="0 1 0"/>
+			<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_3_link"/>
+			<child link="${name}_4_link"/>
+		</joint>
+
+		<joint name="${name}_3_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_3_link"/>
+			<child link="${name}_4_link_dummy"/>
+		</joint>
+		<link name="${name}_4_link_dummy"/>
+
+		<link name="${name}_4_link">
+			<inertial>
+				<mass value="${link_mass}"/>
+				<origin rpy="0 0 0" xyz="0 -0.06 ${0.130 - 0.06}"/>
+				<cuboid_inertia_def length="0.12" width="0.06" height="0.2600" mass="${link_mass}"/>
+			</inertial>
+
+			<visual>
+				<origin xyz="0 0 0.0" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/link_4.STL"/>
+				</geometry>
+				<material name="Kuka/Orange"/>
+			</visual>
+			<collision>
 			<origin xyz="0 0 0.2" rpy="0 0 0"/>
 			<geometry>
 				<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_b_convex.stl"/-->
 				<sphere radius="0.07"/>
 			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 -0.06 0.0" rpy="0 0 0"/>
-			<geometry>
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 -0.03 0.1" rpy="-0.291 0 0"/>
-			<geometry>
-				<cylinder radius="0.07" length="0.208"/>
-			</geometry>
-		</collision>
-	</link>
+			</collision>
+			<collision>
+				<origin xyz="0 0.06 0.0" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 0.03 0.1" rpy="0.291 0 0"/>
+				<geometry>
+					<cylinder radius="0.07" length="0.208"/>
+				</geometry>
+			</collision>
+		</link>
 
-	<!-- Fourth element of the arm. z-axis -->
-	<joint name="${name}_2_joint" type="revolute">
-		<origin xyz="0 0 0.20" rpy="0 0 0"/>
-		<axis xyz="0 0 1"/>
-		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_2_link"/>
-		<child link="${name}_3_link"/>
-	</joint>
+		<!-- Sixth element of the arm. z-axis -->
+		<joint name="${name}_4_joint" type="revolute">
+			<origin xyz="0 0 0.20" rpy="0 0 0"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 204 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_4_link"/>
+			<child link="${name}_5_link"/>
+		</joint>
 
-	<joint name="${name}_2_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_2_link"/>
-		<child link="${name}_3_link_dummy"/>
-	</joint>
-	<link name="${name}_3_link_dummy"/>
+		<joint name="${name}_4_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_4_link"/>
+			<child link="${name}_5_link_dummy"/>
+		</joint>
+		<link name="${name}_5_link_dummy"/>
 
-	<link name="${name}_3_link">
-		<inertial>
-			<mass value="${link_mass}"/>
-			<origin rpy="0 0 0" xyz="0 0.06 0.130"/>
-			<cuboid_inertia_def length="0.12" width="0.06" height="0.260" mass="${link_mass}"/>
-		</inertial>
+		<link name="${name}_5_link">
+			<inertial>
+				<mass value="${link_mass}"/>
+				<origin rpy="0 0 0" xyz="0 0 0.124"/>
+				<cuboid_inertia_def length="0.12" width="0.06" height="0.248" mass="${link_mass}"/>
+			</inertial>
 
-		<visual>
-			<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
-			<geometry>
-				<mesh filename="package://lwr_description/meshes/link_3.STL"/>
-			</geometry>
-			<material name="Kuka/Orange"/>
-		</visual>
-		<collision>
-			<origin xyz="0 0 0.0" rpy="0 0 0"/>
-			<geometry>
-				<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_a_convex.stl"/-->
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 -0.06 0.2" rpy="0 0 0"/>
-			<geometry>
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 -0.03 0.1" rpy="0.291 0 0"/>
-			<geometry>
-				<cylinder radius="0.07" length="0.208"/>
-			</geometry>
-		</collision>
-	</link>
+			<visual>
+				<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
+				<geometry name="${name}_5_geom">
+					<mesh filename="package://lwr_description/meshes/link_5.STL"/>
+				</geometry>
+				<material name="Kuka/Orange"/>
+			</visual>
 
-	<!-- fifth element of the arm. x-axis -->
-	<joint name="${name}_3_joint" type="revolute">
-		<origin xyz="0 0 0.20" rpy="0 0 0"/>
-		<axis xyz="0 1 0"/>
-		<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_3_link"/>
-		<child link="${name}_4_link"/>
-	</joint>
+			<collision>
+				<origin xyz="0 0 0.0" rpy="0 0 0"/>
+				<geometry>
+					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_last_convex.stl"/-->
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 0.04 0.19" rpy="0 0 0"/>
+				<geometry>
+					<sphere radius="0.07"/>
+				</geometry>
+			</collision>
+			<collision>
+				<origin xyz="0 0.02 0.095" rpy="-0.207 0 0"/>
+				<geometry>
+					<cylinder radius="0.07" length="0.198"/>
+				</geometry>
+			</collision>
+		</link>
 
-	<joint name="${name}_3_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_3_link"/>
-		<child link="${name}_4_link_dummy"/>
-	</joint>
-	<link name="${name}_4_link_dummy"/>
+		<!-- Seventh element of the arm. z-axis -->
+		<joint name="${name}_5_joint" type="revolute">
+			<origin xyz="0 0 0.19" rpy="0 0 0"/>
+			<axis xyz="0 -1 0"/>
+			<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_5_link"/>
+			<child link="${name}_6_link"/>
+		</joint>
 
-	<link name="${name}_4_link">
-		<inertial>
-			<mass value="${link_mass}"/>
-			<origin rpy="0 0 0" xyz="0 -0.06 ${0.130 - 0.06}"/>
-			<cuboid_inertia_def length="0.12" width="0.06" height="0.2600" mass="${link_mass}"/>
-		</inertial>
+		<joint name="${name}_5_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_5_link"/>
+			<child link="${name}_6_link_dummy"/>
+		</joint>
+		<link name="${name}_6_link_dummy"/>
 
-		<visual>
-			<origin xyz="0 0 0.0" rpy="0 0 ${M_PI}"/>
-			<geometry>
-				<mesh filename="package://lwr_description/meshes/link_4.STL"/>
-			</geometry>
-			<material name="Kuka/Orange"/>
-		</visual>
-		<collision>
-		<origin xyz="0 0 0.2" rpy="0 0 0"/>
-		<geometry>
-			<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_b_convex.stl"/-->
-			<sphere radius="0.07"/>
-		</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 0.06 0.0" rpy="0 0 0"/>
-			<geometry>
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision> 
-		<collision>
-			<origin xyz="0 0.03 0.1" rpy="0.291 0 0"/>
-			<geometry>
-				<cylinder radius="0.07" length="0.208"/>
-			</geometry>
-		</collision>
-	</link>
+		<link name="${name}_6_link">
+			<inertial>
+				<mass value="0.2"/>
+				<origin rpy="0 0 0" xyz="0 0 0.0625"/>
+				<cuboid_inertia_def length="0.125" width="0.125" height="0.125" mass="0.2"/>
+			</inertial>
 
-	<!-- Sixth element of the arm. z-axis -->
-	<joint name="${name}_4_joint" type="revolute">
-		<origin xyz="0 0 0.20" rpy="0 0 0"/>
-		<axis xyz="0 0 1"/>
-		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 204 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_4_link"/>
-		<child link="${name}_5_link"/>
-	</joint>
-
-	<joint name="${name}_4_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_4_link"/>
-		<child link="${name}_5_link_dummy"/>
-	</joint>
-	<link name="${name}_5_link_dummy"/>
-
-	<link name="${name}_5_link">
-		<inertial>
-			<mass value="${link_mass}"/>
-			<origin rpy="0 0 0" xyz="0 0 0.124"/>
-			<cuboid_inertia_def length="0.12" width="0.06" height="0.248" mass="${link_mass}"/>
-		</inertial>
-
-		<visual>
-			<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
-			<geometry name="${name}_5_geom">
-				<mesh filename="package://lwr_description/meshes/link_5.STL"/>
-			</geometry>
-			<material name="Kuka/Orange"/>
-		</visual>
-
-		<collision>
-			<origin xyz="0 0 0.0" rpy="0 0 0"/>
-			<geometry>
-				<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_last_convex.stl"/-->
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 0.04 0.19" rpy="0 0 0"/>
-			<geometry>
-				<sphere radius="0.07"/>
-			</geometry>
-		</collision>
-		<collision>
-			<origin xyz="0 0.02 0.095" rpy="-0.207 0 0"/>
-			<geometry>
-				<cylinder radius="0.07" length="0.198"/>
-			</geometry>
-		</collision>
-	</link>
-
-	<!-- Seventh element of the arm. z-axis -->
-	<joint name="${name}_5_joint" type="revolute">
-		<origin xyz="0 0 0.19" rpy="0 0 0"/>
-		<axis xyz="0 -1 0"/>
-		<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_5_link"/>
-		<child link="${name}_6_link"/>
-	</joint>
-
-	<joint name="${name}_5_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_5_link"/>
-		<child link="${name}_6_link_dummy"/>
-	</joint>
-	<link name="${name}_6_link_dummy"/>
-
-	<link name="${name}_6_link">
-		<inertial>
-			<mass value="0.2"/>
-			<origin rpy="0 0 0" xyz="0 0 0.0625"/>
-			<cuboid_inertia_def length="0.125" width="0.125" height="0.125" mass="0.2"/>
-		</inertial>
-
-		<visual>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/link_6.STL"/>
+				</geometry>
+			<material name="Kuka/Grey"/>
+			</visual>
+			<collision>
 			<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 			<geometry>
-				<mesh filename="package://lwr_description/meshes/link_6.STL"/>
+				<mesh filename="package://lwr_description/meshes/convex/arm_wrist_convex.stl"/>
 			</geometry>
-		<material name="Kuka/Grey"/>
-		</visual>
-		<collision>
-		<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
-		<geometry>
-			<mesh filename="package://lwr_description/meshes/convex/arm_wrist_convex.stl"/>
-		</geometry>
-		</collision>
-	</link>
+			</collision>
+		</link>
 
-	<!-- Eighth element of the arm. z-axis -->
-	<joint name="${name}_6_joint" type="revolute">
-		<origin xyz="0 0 0.078" rpy="0 0 0"/>
-		<axis xyz="0 0 1"/>
-		<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
-		<dynamics friction="10.0" damping="1.0"/>
-		<parent link="${name}_6_link"/>
-		<child link="${name}_7_link"/>
-	</joint>
+		<!-- Eighth element of the arm. z-axis -->
+		<joint name="${name}_6_joint" type="revolute">
+			<origin xyz="0 0 0.078" rpy="0 0 0"/>
+			<axis xyz="0 0 1"/>
+			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
+			<dynamics friction="10.0" damping="1.0"/>
+			<parent link="${name}_6_link"/>
+			<child link="${name}_7_link"/>
+		</joint>
 
-	<joint name="${name}_6_joint_stiffness" type="revolute">
-		<axis xyz="0 0 1"/>
-		<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
-		<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
-		<parent link="${name}_6_link"/>
-		<child link="${name}_7_link_dummy"/>
-	</joint>
-	<link name="${name}_7_link_dummy"/>
+		<joint name="${name}_6_joint_stiffness" type="revolute">
+			<axis xyz="0 0 1"/>
+			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
+			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
+			<parent link="${name}_6_link"/>
+			<child link="${name}_7_link_dummy"/>
+		</joint>
+		<link name="${name}_7_link_dummy"/>
 
-	<link name="${name}_7_link">
-		<inertial>
-			<mass value="0.2"/>
-			<origin xyz="0 0 0"/>
-			<cuboid_inertia_def length="1" width="1" height="1" mass="0.2"/>
-		</inertial>
-		<visual>
+		<link name="${name}_7_link">
+			<inertial>
+				<mass value="0.2"/>
+				<origin xyz="0 0 0"/>
+				<cuboid_inertia_def length="1" width="1" height="1" mass="0.2"/>
+			</inertial>
+			<visual>
+				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+				<geometry>
+					<mesh filename="package://lwr_description/meshes/link_7.STL"/>
+				</geometry>
+			<material name="Kuka/DarkGrey"/>
+			</visual>
+
+			<collision>
 			<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 			<geometry>
-				<mesh filename="package://lwr_description/meshes/link_7.STL"/>
+				<cylinder radius="0.04" length="0.05"/>
 			</geometry>
-		<material name="Kuka/DarkGrey"/>
-		</visual>
+			</collision>
+		</link>
 
-		<collision>
-		<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
-		<geometry>
-			<cylinder radius="0.04" length="0.05"/>
-		</geometry>
-		</collision>
-	</link>
-
-	<xacro:kuka_lwr_gazebo name="${name}"/>
-	<xacro:kuka_lwr_transmission name="${name}"/>
+		<xacro:kuka_lwr_gazebo name="${name}"/>
+		<xacro:kuka_lwr_transmission name="${name}"/>
 
 	</xacro:macro>
 

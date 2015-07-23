@@ -1,30 +1,27 @@
+# travis beta feature
+dist: trusty
+
 language:
   - cpp
 
 compiler:
   - gcc
 
-env:
-  global:
-  - ROS_DISTRO=indigo
-
 before_install:
-  #- vagrant status
-  - export CI_SOURCE_PATH=$(pwd)
-  - export REPOSITORY_NAME=${PWD##*/}
-  #- codename=`cat /etc/lsb-release | grep -m 1 "DISTRIB_CODENAME=" | cut -d "=" -f2`
-  - lsb_release -a
-  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list'
+  #- export CI_SOURCE_PATH=$(pwd)
+  - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
   - wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-  - sudo apt-get update
+  - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install ros-$ROS_DISTRO-desktop-full ros-$ROS_DISTRO-ros-control ros-$ROS_DISTRO-ros-controllers ros-$ROS_DISTRO-gazebo4-ros ros-$ROS_DISTRO-gazebo4-ros-pkgs 
+  - sudo apt-get install ros-indigo-ros-base ros-indigo-cmake-modules ros-indigo-orocos-kdl ros-indigo-kdl-parser ros-indigo-ros-control ros-indigo-ros-controllers ros-indigo-gazebo4-ros ros-indigo-gazebo4-ros-pkgs
 
 before_script:
-  - source /opt/ros/$ROS_DISTRO/setup.bash
+  - sudo rosdep init
+  - rosdep update
+  - source /opt/ros/indigo/setup.bash
   - mkdir -p ~/catkin_ws/src
   - export REPOSITORY_NAME=${PWD##*/}
   - ln -s $(pwd) ~/catkin_ws/src/$REPOSITORY_NAME

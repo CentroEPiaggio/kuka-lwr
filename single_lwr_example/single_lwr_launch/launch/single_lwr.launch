@@ -10,33 +10,29 @@
 	<!-- set the parameters for the real interface -->
 	<arg name="lwr_powered" default="false"/>
 	<arg name="port" default="49939"/>
-	<arg name="ip" default="192.168.0.20"/>
+	<arg name="ip" default="192.168.0.10"/>
+	<arg name="file" default="$(find single_lwr_robot)/config/980241-FRI-Driver.init"/>
+
     <arg name="t1_limits" default="false"/>
-    <arg name="controllers" default="joint_trajectory_controller stiffness_trajectory_controller"/>
+    <arg name="controllers" default="joint_trajectory_controller"/>
+    <arg name="stopped_controllers" default="gravity_compensation_controller one_task_inverse_kinematics"/>
 
 	<!-- in case you want to load moveit from here, it might be hard with the real HW though -->
 	<arg name="load_moveit" default="false"/>
 
-	<!-- this must be in accordance to the hardware interface in the model, there should be a xacro parameter to facilitate that to users -->
-	<!-- arg name="controller" default="joint_position_trajectory_controller"/-->
-
 	<!-- set some ros tools -->
 	<arg name="use_rviz" default="false"/>
 	<arg name="gui" default="false" />
-	<arg name="use_joint_state_publisher" default="true"/>
 
 	<!-- LAUNCH IMPLEMENTATION -->
 
-	<!-- the urdf/srdf parameter -->
+	<!-- the urdf/sdf parameter -->
 	<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
 	
 	<!-- joint and robot state publishers of the full robot description -->
-	<param name="use_gui" value="$(arg gui)"/>
-	<group if="$(arg use_joint_state_publisher)">
-		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
-			<rosparam param="source_list">[/lwr/joint_states]</rosparam>
-		</node>
-	</group>
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+		<rosparam param="source_list">[/lwr/joint_states]</rosparam>
+	</node>
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 	
 	<group if="$(arg use_rviz)">
@@ -56,6 +52,7 @@
 			<arg name="gui" value="true"/>
 			<arg name="headless" value="false"/>
 			<arg name="debug" value="false"/>
+
 		</include>
 	</group>
 
@@ -80,7 +77,10 @@
         <rosparam command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
     </group>
 
-    <!-- load all controller configurations to rosparam server-->
+	<!-- load robotHW configurations to rosparam server -->
+	<rosparam command="load" file="$(find single_lwr_robot)/config/hw_interface.yaml"/>
+
+    <!-- load all controller configurations to rosparam server -->
     <rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
 
     <!-- real robot and controllers -->
@@ -89,19 +89,20 @@
 			<!--add a copy of the robot description within the name space -->
 			<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
 
-			<rosparam command="load" file="$(find single_lwr_robot)/config/joint_names.yaml" />
-
 			<include file="$(find lwr_hw)/launch/lwr_hw.launch">
 				<arg name="port" value="$(arg port)"/>
 				<arg name="ip" value="$(arg ip)"/>
-				<arg name="use_default_joint_names" default="false"/>
-				<arg name="use_default_namespace" default="false"/>
+				<arg name="file_with_path" value="$(arg file)"/>
+				<!-- this name MUST match the name you give to the arm in the URDF instance -->
+				<!-- to minimize errors, you could pass it as a xacro parameter -->
+				<arg name="name" value="lwr"/>
 			</include>
-			<!-- perhaps it is worth remapping joint states -->
 		</group>
 
 		<!-- spawn only desired controllers in current namespace -->
-		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller $(arg controllers)"/>
+		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="joint_state_controller $(arg controllers)"/>
+
+		<node name="controller_stopper" pkg="controller_manager" type="spawner" args="--stopped $(arg stopped_controllers)" />
 	</group>
 
 </launch>

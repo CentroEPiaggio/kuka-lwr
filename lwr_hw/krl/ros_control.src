@@ -1,0 +1,189 @@
+&ACCESS RVP
+&REL 3
+&PARAM TEMPLATE = C:\KRC\Roboter\Template\vorgabe
+&PARAM EDITMASK = *
+DEF ros_control( )
+;FOLD INI
+  ;FOLD BASISTECH INI
+
+    GLOBAL INTERRUPT DECL 3 WHEN $STOPMESS==TRUE DO IR_STOPM ( )
+    INTERRUPT ON 3 
+    BAS (#INITMOV,0 )
+  ;ENDFOLD (BASISTECH INI)
+  ;FOLD USER INI
+    ;Make your modifications here
+  ;ENDFOLD (USER INI)
+;ENDFOLD (INI)
+
+;FOLD Contact information
+  ;-----------------------------------------------
+  ; KRL script to be used with the pkgs in
+  ; https://github.com/CentroEPiaggio/kuka-lwr
+  ; 
+  ; Author: Carlos J. Rosales, cjrosales@gmail.com
+  ;-----------------------------------------------
+;ENDFOLD (Contact information)
+
+;FOLD Variable definitions
+  ; ----------------------------------------------
+  ;
+  ; INDEXES: IN KRL [1-16] / IN C++ [0-15]
+  ;
+  ; ----------------------------------------------
+  ; $FRI_FRM_INT[1]
+  ; This value is used to read from the remote
+  ; the desired control strategy, i.e.
+  ; 
+  ; 10 -> joint position control
+  ; 20 -> Cartesian impedance control 
+  ; 30 -> joint impedance control 
+  ; 
+  ; An stopFRI() - setToKRLInt(0, $) - startFRI()
+  ; sequence must be performed in the remote.
+  ; ----------------------------------------------
+  ; $FRI_FRM_INT[2]
+  ; This value is used to call friStart() or
+  ; friStop() from the remote
+  ; 
+  ; 1 -> to call friStart()
+  ; 0 -> to call fiStop()
+  ; ----------------------------------------------
+  ; $FRI_TO_INT[2]
+  ; This value is used to tell the remote that
+  ; either friStart() or friStop() was called
+  ;
+  ; 0 -> fiStop() was called
+  ; 1 -> friStart() was called
+  ; 10 -> Init flag, to avoid cyclic start/stop
+  ; ----------------------------------------------
+  ; $FRI_FRM_INT[16] AND $FRI_TO_INT[16]
+  ; $FRI_FRM_REA[16] AND $FRI_TO_REA[16]
+  ;
+  ; These values are used for the handshake
+  ; ----------------------------------------------
+;ENDFOLD (Variable definitions)
+
+;FOLD Init
+  ;Close and stop the communication in case it is open
+  retVal = friStop()
+  retVal = friClose()
+
+  ;Reset FRI values
+  FOR I = 1 TO 16
+    $FRI_TO_INT[i] = 0
+    $FRI_TO_REA[i] = 0.0
+  ENDFOR
+
+  ;Init flag
+  $FRI_TO_INT[2] = 10
+
+  ; Stay at the same position
+  PTP $AXIS_ACT_MES
+
+  ;Impedance default parameters
+  ;$stiffness.axisstiffness={A1 1000, A2 1000, A3 1000, A4 1000, A5 1000, A6 1000, E1 1000}
+  ;$stiffness.axisdamping = {A1 0.7, A2 0.7, A3 0.7, A4 0.7, A5 0.7, A6 0.7, E1 0.7}
+  $stiffness.axismaxdeltatrq={A1 100, A2 100, A3 100, A4 100, A5 100, A6 30, E1 30}
+  $stiffness.axismaxdelta = {A1 100.0, A2 100.0, A3 100.0, A4 100.0, A5 100.0, A6 100.0, E1 100.0}
+
+  ;Start with position control
+  $stiffness.strategy = 10
+  $stiffness.commit = true
+;ENDFOLD (init)
+
+;Input correct tool number here and restart
+BAS (#tool,1 )
+
+;Specify ip and port
+retVal = friSetup("192.168.0.150", 49939, 49939)
+
+;Open FRI with datarate 2 msec
+retVal=friOpen(2)
+
+;FOLD Screen output
+  WAIT FOR ($FriState == #MON)
+  $MSG_T.KEY[] = "FRI successfully opened."
+  $MSG_T.VALID = TRUE
+  WAIT SEC 0.3
+;ENDFOLD (Screen output)
+
+;The infinite loop
+LOOP
+
+  ;stopFRI() from remote
+  IF ($FRI_FRM_INT[2] == 0) AND ($FRI_TO_INT[2] == 1) THEN
+    ;FOLD Screen output
+      $MSG_T.KEY[] = "Stopping FRI..."
+      $MSG_T.VALID = TRUE
+      WAIT SEC 0.5
+    ;ENDFOLD (Screen output)
+
+    retVal = friStop()
+    $FRI_TO_INT[2] = 0
+    WAIT FOR ($FriState == #MON)
+
+    ;FOLD Screen output
+      $MSG_T.KEY[] = "FRI successfully stopped."
+      $MSG_T.VALID = TRUE
+      WAIT SEC 0.5
+    ;ENDFOLD (Screen output)
+  ENDIF
+
+  ;startFRI() from remote in desired strategy
+  IF ($FRI_FRM_INT[2] == 1) AND ($FRI_TO_INT[2] <> 1) THEN
+    ;Only change strategy after init
+    IF ($FRI_TO_INT[2] <> 10) THEN
+      $stiffness.strategy = $FRI_FRM_INT[1]
+      $stiffness.commit = true
+    ENDIF
+
+    ;FOLD Screen output
+      $MSG_T.KEY[] = "Starting FRI..."
+      $MSG_T.VALID = TRUE
+      WAIT SEC 0.5
+    ;ENDFOLD (Screen output)
+
+    ;Please, start the ROS node.
+    WAIT FOR ($FriQuality == #PERFECT)
+
+    ;Due to init, wait to actually trigger the start
+    WAIT FOR $FRI_FRM_INT[2] == 1
+    retVal = friStart(1.0)
+    WAIT FOR ($FriState == #CMD)
+    $FRI_TO_INT[2] = 1
+
+    ;FOLD Screen output
+      $MSG_T.KEY[] = "FRI successfully started."
+      $MSG_T.VALID = TRUE
+      WAIT SEC 0.5
+    ;ENDFOLD (Screen output)
+
+    ;FOLD Screen output
+      IF ($stiffness.strategy == 10) THEN
+        $MSG_T.KEY[] = "ControlStrategy changed to JOINT_POSITION"
+      ELSE
+        IF($stiffness.strategy == 20) THEN
+          $MSG_T.KEY[] = "ControlStrategy changed to CARTESIAN_IMPEDANCE"
+        ELSE
+          IF ($stiffness.strategy == 30) THEN
+            $MSG_T.KEY[] = "ControlStrategy changed to JOINT_IMPEDANCE"
+          ELSE
+            $MSG_T.KEY[] = "ERROR: Unknown ControlStrategy."
+          ENDIF
+        ENDIF
+      ENDIF
+      $MSG_T.VALID = TRUE
+    ;ENDFOLD (Screen output)
+  ENDIF
+
+  ;FRI / ROS control - communication activated
+  WAIT SEC 0.05
+
+ENDLOOP
+
+;Stop and close when done
+retVal = friStop()
+WAIT sec 0.5
+retVal = friClose()
+
+END

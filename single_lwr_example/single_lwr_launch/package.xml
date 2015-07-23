@@ -10,10 +10,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <!-- main meta package dependency -->
-  <run_depend>kuka_lwr</run_depend>
-
-  <!-- local packages -->
   <run_depend>single_lwr_robot</run_depend>
   <run_depend>single_lwr_moveit</run_depend>
 

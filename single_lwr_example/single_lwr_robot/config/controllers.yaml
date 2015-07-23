@@ -28,13 +28,13 @@ lwr:
       - lwr_6_joint_stiffness
 
 ## OTHER CUSTOM CONTROLLERS LEFT HERE AS EXAMPLES
-  GravityCompensation: 
+  gravity_compensation_controller:
     type: lwr_controllers/GravityCompensation
     root_name: lwr_base_link
     tip_name: lwr_7_link
 
   #   Joint Impedance Controllers
-  JointImpedanceControl:
+  joint_impedance_controller:
     type: lwr_controllers/JointImpedanceController
     root_name: lwr_base_link
     tip_name: lwr_7_link
@@ -42,32 +42,25 @@ lwr:
     damping_gains: .7
 
   # Inverse Dynamics Controllers
-  InverseDynamicsControl:
+  inverse_dynamics_controller:
     type: lwr_controllers/InverseDynamicsController
     root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # Computed Torque Controllers
-  ComputedTorqueControl: 
+  computed_torque_controller:
     type: lwr_controllers/ComputedTorqueController
     root_name: lwr_base_link
     tip_name: lwr_7_link
 
   # One Task Inverse Kinematics
-  OneTaskInverseKinematics: 
+  one_task_inverse_kinematics:
     type: lwr_controllers/OneTaskInverseKinematics
     root_name: lwr_base_link
     tip_name: lwr_7_link
-    pid_lwr_0_joint: {p: 250,  i: 10, d: 30, i_clamp_min: -0.3, i_clamp_max: 0.3}
-    pid_lwr_1_joint: {p: 220,  i: 10, d: 30, i_clamp_min: -0.3, i_clamp_max: 0.3}
-    pid_lwr_2_joint: {p: 150,  i: 6, d: 20, i_clamp_min: -0.3, i_clamp_max: 0.3}
-    pid_lwr_3_joint: {p: 150,  i: 5, d: 12, i_clamp_min: -0.3, i_clamp_max: 0.3}
-    pid_lwr_4_joint: {p: 90,  i: 5, d: 10, i_clamp_min: -0.3, i_clamp_max: 0.3}
-    pid_lwr_5_joint: {p: 40,  i: 5, d: 7, i_clamp_min: -0.3, i_clamp_max: 0.3}
-    pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # Multi Task Priority Inverse Kinematics
-  MultiTaskPriorityInverseKinematics: 
+  multi_task_priority_inverse_kinematics:
     type: lwr_controllers/MultiTaskPriorityInverseKinematics
     root_name: lwr_base_link
     tip_name: lwr_7_link
@@ -80,7 +73,7 @@ lwr:
     pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # One Task Inverse Dynamics JL
-  OneTaskInverseDynamicsJL: 
+  one_task_inverse_dynamics_JL:
     type: lwr_controllers/OneTaskInverseDynamicsJL
     root_name: lwr_base_link
     tip_name: lwr_7_link
@@ -93,7 +86,7 @@ lwr:
     pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # Multi Task Priority Inverse Dynamics
-  MultiTaskPriorityInverseDynamics: 
+  multi_task_priority_inverse_dynamics:
     type: lwr_controllers/MultiTaskPriorityInverseDynamics
     root_name: lwr_base_link
     tip_name: lwr_7_link
@@ -106,7 +99,7 @@ lwr:
     pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # Minimum Effort Inverse Dynamics
-  MinimumEffortInverseDynamics: 
+  minimum_effort_inverse_dynamics:
     type: lwr_controllers/MinimumEffortInverseDynamics
     root_name: lwr_base_link
     tip_name: lwr_7_link
@@ -119,7 +112,7 @@ lwr:
     pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # Backstepping Controller
-  BacksteppingController: 
+  back_stepping_controller:
     type: lwr_controllers/BacksteppingController
     root_name: lwr_base_link
     tip_name: lwr_7_link
@@ -132,7 +125,7 @@ lwr:
     pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # Dynamic Sliding Mode Controller
-  DynamicSlidingModeController: 
+  dynamics_sliding_mode_controller:
      type: lwr_controllers/DynamicSlidingModeController
      root_name: lwr_base_link
      tip_name: lwr_7_link
@@ -145,7 +138,7 @@ lwr:
      pid_lwr_6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
 
   # Dynamic Sliding Mode Controller Task Space
-  DynamicSlidingModeControllerTaskSpace: 
+  dynamics_sliding_mode_controller_task_space_controller:
      type: lwr_controllers/DynamicSlidingModeControllerTaskSpace
      root_name: lwr_base_link
      tip_name: lwr_7_link
