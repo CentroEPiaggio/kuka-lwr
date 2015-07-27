@@ -2,6 +2,8 @@
 
 [![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![For Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=for review&title=for%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![Build Status](https://travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
 
+You need help? Press [<kbd>F1</kbd>](https://github.com/CentroEPiaggio/kuka-lwr/issues?utf8=%E2%9C%93&q=label%3Aquestion+) or issue your question.
+
 ## Overview
 
 The main packages are:
@@ -14,14 +16,6 @@ The main packages are:
 	- [__single_lwr_launch__](single_lwr_example/single_lwr_launch): a launch interface to load different components and configuration of your setup be it real, simulation, moveit, visualization, etc.
 
 For an example using two LWR 4+ arms and two Pisa/IIT SoftHands, see the [Vito robot](https://github.com/CentroEPiaggio/vito-robot).
-
-## Install
-
-Check the [`.travis.yaml`](.travis.yml) file, that'll give you the basic steps to install
-
-## Troubleshooting
-
-Visit the [FAQ](https://github.com/CentroEPiaggio/kuka-lwr/labels/question) section, or issue it.
 
 ## Adding more interfaces/platforms
 
