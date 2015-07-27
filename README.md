@@ -25,7 +25,7 @@ Check the [`.travis.yaml`](.travis.yml) file, that'll give you the basic steps t
 
 Visit the [FAQ](https://github.com/CentroEPiaggio/kuka-lwr/labels/question) section, or issue it.
 
-### Adding more interfaces/platforms
+## Adding more interfaces/platforms
 
 The package [lwr_hw](lwr_hw) contains the abstraction that allows to make the most of the new ros control framework. To create an instance of the arm you need to call the function [`void LWRHW::create(std::string name, std::string urdf_string)`](lwr_hw/include/lwr_hw/lwr_hw.h#L40), where `name` MUST match the name you give to the xacro instance in the URDF and the `urdf_string` is any robot description containing one single instance of the lwr called as `name` (note that, several lwr can exist in `urdf_string` if they are called differently).
 
