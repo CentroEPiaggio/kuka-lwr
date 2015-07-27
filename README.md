@@ -1,24 +1,25 @@
 # KUKA LWR 4+
 
-[![Build Status](https://api.travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
+[![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![For Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=for review&title=for%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![Open Questions](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=question&title=FAQ)](http://waffle.io/CentroEPiaggio/kuka-lwr)
 
-ROS (tested on indigo) packages to work with the KUKA LWR 4+.
+[![Build Status](https://travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
 
 ## Overview
+
 The main packages are:
-- [__lwr_description__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_description): a package that defines the model of the robot (ToDo: name it __lwr_model__)
-- [__lwr_hw__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_hw): a package that contains the LWR 4+ definition within the ros control framework, and also final interfaces using Kuka FRI, Stanford FRI Library or a Gazebo plugin. Read adding an interface below if you wish to add a different non-existing interface. 
-- [__lwr_controllers__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/lwr_controllers): a package that implement a set of useful controllers (ToDo: perhaps moving this to a forked version of `ros_controllers` would be ok, but some controllers are specific for the a 7-dof arm).
-- [__single_lwr_example__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example): a cofiguration-based meta-package that shows how to use the `kuka_lwr` packages.
-	- [__single_lwr_robot__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example/single_lwr_robot): the package where you define your robot using the LWR 4+ arm.
-	- [__single_lwr_moveit__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example/single_lwr_moveit): the moveit configuration for your `single_lwr_robot` description.
-	- [__single_lwr_launch__](https://github.com/CentroEPiaggio/kuka-lwr/tree/master/single_lwr_example/single_lwr_launch): a launch interface to load different components and configuration of your setup be it real, simulation, moveit, visualization, etc.
+- [__lwr_description__](lwr_description): a package that defines the model of the robot (ToDo: name it __lwr_model__)
+- [__lwr_hw__](lwr_hw): a package that contains the LWR 4+ definition within the ros control framework, and also final interfaces using Kuka FRI, Stanford FRI Library or a Gazebo plugin. Read adding an interface below if you wish to add a different non-existing interface. 
+- [__lwr_controllers__](lwr_controllers): a package that implement a set of useful controllers (ToDo: perhaps moving this to a forked version of `ros_controllers` would be ok, but some controllers are specific for the a 7-dof arm).
+- [__single_lwr_example__](single_lwr_example): a cofiguration-based meta-package that shows how to use the `kuka_lwr` packages.
+	- [__single_lwr_robot__](single_lwr_example/single_lwr_robot): the package where you define your robot using the LWR 4+ arm.
+	- [__single_lwr_moveit__](single_lwr_example/single_lwr_moveit): the moveit configuration for your `single_lwr_robot` description.
+	- [__single_lwr_launch__](single_lwr_example/single_lwr_launch): a launch interface to load different components and configuration of your setup be it real, simulation, moveit, visualization, etc.
 
 For an example using two LWR 4+ arms and two Pisa/IIT SoftHands, see the [Vito robot](https://github.com/CentroEPiaggio/vito-robot).
 
 ## Install
 
-Check the [`.travis.yaml`](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/.travis.yml) file, that'll give you the basic steps to install all necessary packages to compile the package.
+Check the [`.travis.yaml`](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/.travis.yml) file, that'll give you the basic steps to install
 
 ## Adding more interfaces/platforms
 
