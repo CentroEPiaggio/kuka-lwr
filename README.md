@@ -1,8 +1,6 @@
 # KUKA LWR 4+
 
-[![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![For Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=for review&title=for%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr)
-
-[![Build Status](https://travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
+[![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![For Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=for review&title=for%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![Build Status](https://travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
 
 ## Overview
 
