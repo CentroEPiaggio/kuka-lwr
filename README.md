@@ -1,6 +1,6 @@
 # KUKA LWR 4+
 
-[![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![For Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=for review&title=for%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![Open Questions](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=question&title=FAQ)](http://waffle.io/CentroEPiaggio/kuka-lwr)
+[![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![For Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=for review&title=for%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr)
 
 [![Build Status](https://travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
 
@@ -19,9 +19,13 @@ For an example using two LWR 4+ arms and two Pisa/IIT SoftHands, see the [Vito r
 
 ## Install
 
-Check the [`.travis.yaml`](https://github.com/CentroEPiaggio/kuka-lwr/blob/master/.travis.yml) file, that'll give you the basic steps to install
+Check the [`.travis.yaml`](.travis.yml) file, that'll give you the basic steps to install
 
-## Adding more interfaces/platforms
+## Troubleshooting
+
+Visit the [FAQ](https://github.com/CentroEPiaggio/kuka-lwr/labels/question) section, or issue it.
+
+### Adding more interfaces/platforms
 
 The package [lwr_hw](lwr_hw) contains the abstraction that allows to make the most of the new ros control framework. To create an instance of the arm you need to call the function [`void LWRHW::create(std::string name, std::string urdf_string)`](lwr_hw/include/lwr_hw/lwr_hw.h#L40), where `name` MUST match the name you give to the xacro instance in the URDF and the `urdf_string` is any robot description containing one single instance of the lwr called as `name` (note that, several lwr can exist in `urdf_string` if they are called differently).
 
