@@ -1,8 +1,8 @@
-# KUKA LWR 4+
+# KUKA LWR 4+ 
 
 [![In Progress](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in progress&title=in%20progress)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![In Review](https://badge.waffle.io/CentroEPiaggio/kuka-lwr.svg?label=in review&title=in%20review)](http://waffle.io/CentroEPiaggio/kuka-lwr) [![Build Status](https://travis-ci.org/CentroEPiaggio/kuka-lwr.svg)](https://travis-ci.org/CentroEPiaggio/kuka-lwr)
 
-You need help? Press [<kbd>F1</kbd>](https://github.com/CentroEPiaggio/kuka-lwr/issues?utf8=%E2%9C%93&q=label%3Aquestion+) or issue your question.
+You need help? Press [<kbd>F1</kbd>](https://github.com/CentroEPiaggio/kuka-lwr/issues?utf8=%E2%9C%93&q=label%3Aquestion+) for FAQs, [issue](https://github.com/CentroEPiaggio/kuka-lwr/issues) your question, or [![Join the chat at https://gitter.im/CentroEPiaggio/kuka-lwr](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CentroEPiaggio/kuka-lwr?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Overview
 
