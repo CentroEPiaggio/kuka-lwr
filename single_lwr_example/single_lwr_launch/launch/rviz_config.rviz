@@ -7,7 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
       Splitter Ratio: 0.5
-    Tree Height: 156
+    Tree Height: 164
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -58,47 +58,75 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        box:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         lwr_1_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        lwr_1_link_dummy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         lwr_2_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        lwr_2_link_dummy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         lwr_3_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        lwr_3_link_dummy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         lwr_4_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        lwr_4_link_dummy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         lwr_5_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        lwr_5_link_dummy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         lwr_6_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        lwr_6_link_dummy:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         lwr_7_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        lwr_base_link:
+        lwr_7_link_dummy:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
-        world:
+        lwr_base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -126,47 +154,75 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          box:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           lwr_1_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_1_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_2_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_2_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_3_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_3_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_4_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_4_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_5_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_5_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_6_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_6_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_7_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          lwr_base_link:
+          lwr_7_link_dummy:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
-          world:
+          lwr_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -191,7 +247,7 @@ Visualization Manager:
         Goal State Color: 250; 128; 0
         Interactive Marker Size: 0
         Joint Violation Color: 255; 0; 255
-        Planning Group: lwr
+        Planning Group: ""
         Query Goal State: true
         Query Start State: true
         Show Workspace: false
@@ -214,47 +270,75 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
+          box:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           lwr_1_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_1_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_2_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_2_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_3_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_3_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_4_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_4_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_5_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_5_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_6_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
+          lwr_6_link_dummy:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
           lwr_7_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
             Value: true
-          lwr_base_link:
+          lwr_7_link_dummy:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
-          world:
+          lwr_base_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -266,7 +350,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: world
+    Fixed Frame: box
     Frame Rate: 30
   Name: root
   Tools:
@@ -312,7 +396,7 @@ Window Geometry:
   Hide Right Dock: false
   Motion Planning:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000002a200000299fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000041000000dd000000dd00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000124000001b6000001b600ffffff000000010000010f00000278fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002800000278000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004b00000003bfc0100000002fb0000000800540069006d00650100000000000004b0000002f600fffffffb0000000800540069006d00650100000000000004500000000000000000000002080000029900000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000002a2000002b2fc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006400fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000000e5000000dd00fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000113000001c7000001ab00ffffff000000010000010f00000278fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002800000278000000b000fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004b00000003bfc0100000002fb0000000800540069006d00650100000000000004b0000002f600fffffffb0000000800540069006d0065010000000000000450000000000000000000000208000002b200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -322,5 +406,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 37
-  Y: 19
+  X: 27
+  Y: 14

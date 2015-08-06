@@ -1,10 +1,10 @@
 controller_list:
   - name: fake_full_lwr_controller
     joints:
-      - lwr_0_joint
-      - lwr_1_joint
-      - lwr_2_joint
-      - lwr_3_joint
-      - lwr_4_joint
-      - lwr_5_joint
-      - lwr_6_joint
+      - lwr_a1_joint
+      - lwr_a2_joint
+      - lwr_e1_joint
+      - lwr_a3_joint
+      - lwr_a4_joint
+      - lwr_a5_joint
+      - lwr_a6_joint
