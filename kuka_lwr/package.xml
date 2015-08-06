@@ -5,7 +5,7 @@
     ROS meta-package containing kuka lwr packages.
   </description>
   <maintainer email="carlos.rosales@for.unipi.it">Carlos Rosales</maintainer>
-  <maintainer email="manuel.bonilla@centropiaggio.unipi.it">Manuel Bonilla</maintainer>
+
   <license>GPLv2</license>
   
   <buildtool_depend>catkin</buildtool_depend>
