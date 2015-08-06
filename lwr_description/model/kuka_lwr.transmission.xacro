@@ -7,79 +7,79 @@
 
 	<xacro:macro name="kuka_lwr_transmission" params="name">
 
-		<transmission name="${name}_0_trans">
+		<transmission name="${name}_a1_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_0_joint">
+			<joint name="${name}_a1_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_0_motor">
+			<actuator name="${name}_a1_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
 
-		<transmission name="${name}_1_trans">
+		<transmission name="${name}_a2_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_1_joint">
+			<joint name="${name}_a2_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_1_motor">
+			<actuator name="${name}_a2_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
 
-		<transmission name="${name}_2_trans">
+		<transmission name="${name}_e1_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_2_joint">
+			<joint name="${name}_e1_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_2_motor">
+			<actuator name="${name}_e1_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
 
-		<transmission name="${name}_3_trans">
+		<transmission name="${name}_a3_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_3_joint">
+			<joint name="${name}_a3_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_3_motor">
+			<actuator name="${name}_a3_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
 
-		<transmission name="${name}_4_trans">
+		<transmission name="${name}_a4_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_4_joint">
+			<joint name="${name}_a4_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_4_motor">
+			<actuator name="${name}_a4_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
 
-		<transmission name="${name}_5_trans">
+		<transmission name="${name}_a5_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_5_joint">
+			<joint name="${name}_a5_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_5_motor">
+			<actuator name="${name}_a5_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>
 
-		<transmission name="${name}_6_trans">
+		<transmission name="${name}_a6_trans">
 			<type>transmission_interface/SimpleTransmission</type>
-			<joint name="${name}_6_joint">
+			<joint name="${name}_a6_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
 			</joint>
-			<actuator name="${name}_6_motor">
+			<actuator name="${name}_a6_motor">
 				<mechanicalReduction>1</mechanicalReduction>
 			</actuator>
 		</transmission>

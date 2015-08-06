@@ -40,21 +40,20 @@
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/base.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/base.STL"/>
 				</geometry>
 				<material name="Kuka/Orange"/>
 			</visual>
 			<collision>
 				<origin xyz="0 0 0.055" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<!-- <mesh filename="package://lwr_description/meshes/convex/arm_base_convex.stl"/> -->
 					<cylinder radius="0.07" length="0.11"/>
 				</geometry>
 			</collision>
 		</link>
 
 		<!-- Second segment of the arm. Joint along z-axis -->
-		<joint name="${name}_0_joint" type="revolute">
+		<joint name="${name}_a1_joint" type="revolute">
 			<origin xyz="0 0 0.11" rpy="0 0 0"/>
 			<axis xyz="0 0 1"/>
 			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
@@ -63,7 +62,7 @@
 			<child link="${name}_1_link"/>
 		</joint>
 
-		<joint name="${name}_0_joint_stiffness" type="revolute">
+		<joint name="${name}_a1_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -81,14 +80,13 @@
 			<visual>
 				<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/link_1.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_1.STL"/>
 				</geometry>
 				<material name="Kuka/Orange"/>
 			</visual>
 			<collision>
 				<origin xyz="0 0 0.0" rpy="0 0 0"/>
 				<geometry>
-					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_a_convex.stl"/-->
 					<sphere radius="0.07"/>
 				</geometry>
 			</collision>
@@ -107,7 +105,7 @@
 		</link>
 
 		<!-- Third segment of the arm. Joint along y-axis -->
-		<joint name="${name}_1_joint" type="revolute">
+		<joint name="${name}_a2_joint" type="revolute">
 			<origin xyz="0 0 0.2005" rpy="0 0 0"/>
 			<axis xyz="0 -1 0"/>
 			<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="176" velocity="${velocity_scale * 110 * M_PI / 180}" />
@@ -116,7 +114,7 @@
 			<child link="${name}_2_link"/>
 		</joint>
 
-		<joint name="${name}_1_joint_stiffness" type="revolute">
+		<joint name="${name}_a2_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -135,14 +133,13 @@
 			<visual>
 				<origin xyz="0 0 0.0" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/link_2.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_2.STL"/>
 				</geometry>
 				<material name="Kuka/Orange"/>
 			</visual>
 			<collision>
 				<origin xyz="0 0 0.2" rpy="0 0 0"/>
 				<geometry>
-					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_b_convex.stl"/-->
 					<sphere radius="0.07"/>
 				</geometry>
 			</collision>
@@ -161,7 +158,7 @@
 		</link>
 
 		<!-- Fourth element of the arm. z-axis -->
-		<joint name="${name}_2_joint" type="revolute">
+		<joint name="${name}_e1_joint" type="revolute">
 			<origin xyz="0 0 0.20" rpy="0 0 0"/>
 			<axis xyz="0 0 1"/>
 			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
@@ -170,7 +167,7 @@
 			<child link="${name}_3_link"/>
 		</joint>
 
-		<joint name="${name}_2_joint_stiffness" type="revolute">
+		<joint name="${name}_e1_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -189,14 +186,13 @@
 			<visual>
 				<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/link_3.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_3.STL"/>
 				</geometry>
 				<material name="Kuka/Orange"/>
 			</visual>
 			<collision>
 				<origin xyz="0 0 0.0" rpy="0 0 0"/>
 				<geometry>
-					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_a_convex.stl"/-->
 					<sphere radius="0.07"/>
 				</geometry>
 			</collision>
@@ -215,7 +211,7 @@
 		</link>
 
 		<!-- fifth element of the arm. x-axis -->
-		<joint name="${name}_3_joint" type="revolute">
+		<joint name="${name}_a3_joint" type="revolute">
 			<origin xyz="0 0 0.20" rpy="0 0 0"/>
 			<axis xyz="0 1 0"/>
 			<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="100" velocity="${velocity_scale * 128 * M_PI / 180}" />
@@ -224,7 +220,7 @@
 			<child link="${name}_4_link"/>
 		</joint>
 
-		<joint name="${name}_3_joint_stiffness" type="revolute">
+		<joint name="${name}_a3_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -243,14 +239,13 @@
 			<visual>
 				<origin xyz="0 0 0.0" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/link_4.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_4.STL"/>
 				</geometry>
 				<material name="Kuka/Orange"/>
 			</visual>
 			<collision>
 			<origin xyz="0 0 0.2" rpy="0 0 0"/>
 			<geometry>
-				<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_b_convex.stl"/-->
 				<sphere radius="0.07"/>
 			</geometry>
 			</collision>
@@ -269,7 +264,7 @@
 		</link>
 
 		<!-- Sixth element of the arm. z-axis -->
-		<joint name="${name}_4_joint" type="revolute">
+		<joint name="${name}_a4_joint" type="revolute">
 			<origin xyz="0 0 0.20" rpy="0 0 0"/>
 			<axis xyz="0 0 1"/>
 			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="100" velocity="${velocity_scale * 204 * M_PI / 180}" />
@@ -278,7 +273,7 @@
 			<child link="${name}_5_link"/>
 		</joint>
 
-		<joint name="${name}_4_joint_stiffness" type="revolute">
+		<joint name="${name}_a4_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -297,7 +292,7 @@
 			<visual>
 				<origin xyz="0 0 -0.008" rpy="0 0 ${M_PI}"/>
 				<geometry name="${name}_5_geom">
-					<mesh filename="package://lwr_description/meshes/link_5.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_5.STL"/>
 				</geometry>
 				<material name="Kuka/Orange"/>
 			</visual>
@@ -305,7 +300,6 @@
 			<collision>
 				<origin xyz="0 0 0.0" rpy="0 0 0"/>
 				<geometry>
-					<!--mesh filename="package://lwr_description/meshes/convex/arm_segment_last_convex.stl"/-->
 					<sphere radius="0.07"/>
 				</geometry>
 			</collision>
@@ -324,7 +318,7 @@
 		</link>
 
 		<!-- Seventh element of the arm. z-axis -->
-		<joint name="${name}_5_joint" type="revolute">
+		<joint name="${name}_a5_joint" type="revolute">
 			<origin xyz="0 0 0.19" rpy="0 0 0"/>
 			<axis xyz="0 -1 0"/>
 			<limit lower="${-120 * M_PI / 180}" upper="${120 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
@@ -333,7 +327,7 @@
 			<child link="${name}_6_link"/>
 		</joint>
 
-		<joint name="${name}_5_joint_stiffness" type="revolute">
+		<joint name="${name}_a5_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -352,20 +346,20 @@
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/link_6.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_6.STL"/>
 				</geometry>
 			<material name="Kuka/Grey"/>
 			</visual>
 			<collision>
-			<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
+			<origin xyz="0 -0.01 0" rpy="0 0 ${M_PI}"/>
 			<geometry>
-				<mesh filename="package://lwr_description/meshes/convex/arm_wrist_convex.stl"/>
+				<sphere radius="0.08"/>
 			</geometry>
 			</collision>
 		</link>
 
 		<!-- Eighth element of the arm. z-axis -->
-		<joint name="${name}_6_joint" type="revolute">
+		<joint name="${name}_a6_joint" type="revolute">
 			<origin xyz="0 0 0.078" rpy="0 0 0"/>
 			<axis xyz="0 0 1"/>
 			<limit lower="${-170 * M_PI / 180}" upper="${170 * M_PI / 180}" effort="38" velocity="${velocity_scale * 184 * M_PI / 180}" />
@@ -374,7 +368,7 @@
 			<child link="${name}_7_link"/>
 		</joint>
 
-		<joint name="${name}_6_joint_stiffness" type="revolute">
+		<joint name="${name}_a6_joint_stiffness" type="revolute">
 			<axis xyz="0 0 1"/>
 			<limit lower="${min_stiffness}" upper="${max_stiffness}" effort="0" velocity="${rate_stiffness}" />
 			<safety_controller soft_lower_limit="${min_stiffness}" soft_upper_limit="${max_stiffness}" k_position="30" k_velocity="30"/>
@@ -392,7 +386,7 @@
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 				<geometry>
-					<mesh filename="package://lwr_description/meshes/link_7.STL"/>
+					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_7.STL"/>
 				</geometry>
 			<material name="Kuka/DarkGrey"/>
 			</visual>
