@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>lwr_hw</name>
-  <version>0.2.0</version>
+  <version>1.0.0</version>
   <description>The lwr_hw package implementes real and simulation interfaces to the LWR 4+</description>
 
   <maintainer email="cjrosales@gmail.com">Carlos J. Rosales</maintainer>
