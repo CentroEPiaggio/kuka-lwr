@@ -336,7 +336,7 @@ namespace lwr_hw
     
     std::string tip_name;
     ros::param::get(std::string("/") + robot_namespace_ + std::string("/tip"), tip_name);
-    if( root_name.empty() )
+    if( tip_name.empty() )
       tip_name = robot_namespace_ + std::string("_7_link"); ; // default
 
     std::cout << "Using root: " << root_name << " and tip: " << tip_name << std::endl;
