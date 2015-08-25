@@ -12,7 +12,9 @@
 
 	<!-- properties /-->
 	<xacro:property name="base_mass" value="2.0"/>
-	<xacro:property name="link_mass" value="2.0"/>
+	<xacro:property name="link_mass" value="2.35"/>
+    <xacro:property name="wrist_mass" value="1.1"/>
+    <xacro:property name="tip_mass" value="0.25"/>
 	<xacro:property name="velocity_scale" value="1"/>
 	<xacro:property name="effort_scale" value="1"/>
 
@@ -338,9 +340,9 @@
 
 		<link name="${name}_6_link">
 			<inertial>
-				<mass value="0.2"/>
+				<mass value="${wrist_mass}"/>
 				<origin rpy="0 0 0" xyz="0 0 0.0625"/>
-				<cuboid_inertia_def length="0.125" width="0.125" height="0.125" mass="0.2"/>
+				<cuboid_inertia_def length="0.125" width="0.125" height="0.125" mass="${wrist_mass}"/>
 			</inertial>
 
 			<visual>
@@ -379,18 +381,18 @@
 
 		<link name="${name}_7_link">
 			<inertial>
-				<mass value="0.2"/>
+				<mass value="${tip_mass}"/>
 				<origin xyz="0 0 0"/>
-				<cuboid_inertia_def length="1" width="1" height="1" mass="0.2"/>
+				<cuboid_inertia_def length="0.1" width="0.1" height="0.1" mass="${tip_mass}"/>
 			</inertial>
 			<visual>
 				<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 				<geometry>
 					<mesh filename="package://lwr_description/meshes/lwr4plus/visual/link_7.STL"/>
 				</geometry>
-			<material name="Kuka/DarkGrey"/>
+                <material name="Kuka/DarkGrey"/>
 			</visual>
-
+            
 			<collision>
 			<origin xyz="0 0 0" rpy="0 0 ${M_PI}"/>
 			<geometry>
