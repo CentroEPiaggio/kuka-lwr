@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<package>
+<package format="2">
   <name>single_lwr_robot</name>
   <version>0.1.0</version>
   <description>The single_lwr_robot package</description>
@@ -11,9 +10,9 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>lwr_hw</run_depend>
-  <run_depend>lwr_description</run_depend>
-  <run_depend>lwr_controllers</run_depend>
+  <exec_depend>lwr_hw</exec_depend>
+  <exec_depend>lwr_description</exec_depend>
+  <exec_depend>lwr_controllers</exec_depend>
 
   <export>
   </export>
