@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<package>
+<package format="2">
   <name>single_lwr_example</name>
   <version>0.1.0</version>
   <description>The single_lwr_example package</description>
@@ -12,11 +11,11 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <!-- main meta package dependency -->
-  <run_depend>kuka_lwr</run_depend>
+  <exec_depend>kuka_lwr</exec_depend>
 
   <!-- local packages -->
-  <run_depend>single_lwr_robot</run_depend>
-  <run_depend>single_lwr_moveit</run_depend>
+  <exec_depend>single_lwr_robot</exec_depend>
+  <exec_depend>single_lwr_moveit</exec_depend>
 
   <export>
     <metapackage/>

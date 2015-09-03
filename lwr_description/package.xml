@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<package>
+<package format="2">
   <name>lwr_description</name>
   <version>1.0.0</version>
   <description>The lwr_description package contains the model of a KUKA LWR 4+ arm.</description>
