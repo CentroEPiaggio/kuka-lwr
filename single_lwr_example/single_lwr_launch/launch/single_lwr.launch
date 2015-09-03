@@ -10,7 +10,7 @@
 	<!-- set the parameters for the real interface -->
 	<arg name="lwr_powered" default="false"/>
 	<arg name="port" default="49939"/>
-	<arg name="ip" default="192.168.0.10"/>
+	<arg name="ip" default="192.168.0.20"/>
 	<arg name="file" default="$(find single_lwr_robot)/config/980241-FRI-Driver.init"/>
 
 	<arg name="t1_limits" default="false"/>
