@@ -127,7 +127,7 @@ namespace lwr_controllers
         // set controls for joints
         for (int i = 0; i < joint_handles_.size(); i++)
         {
-            joint_handles_[i].setCommand(q_cmd_(i));
+            joint_handles_[i].setCommand(joint_des_states_.q(i));
         }
     }
 
