@@ -16,6 +16,7 @@
 
 	<!-- in case you want to load moveit from here, it might be hard with the real HW though -->
 	<arg name="load_moveit" default="false"/>
+    <arg name="load_moveit_rviz" default="false"/>
 
 	<!-- this must be in accordance to the hardware interface in the model, there should be a xacro parameter to facilitate that to users -->
 	<!-- arg name="controller" default="joint_position_trajectory_controller"/-->
@@ -69,7 +70,7 @@
         </include>
 
 		<!-- run Rviz and load the default config to see the state of the move_group node -->
-		<include file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
+		<include if="$(arg load_moveit_rviz)" file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
 			<arg name="config" value="true"/>
 			<arg name="debug" value="false"/>
 		</include>
