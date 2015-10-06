@@ -10,7 +10,7 @@ namespace lwr_controllers
     
     bool GravityCompensation::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
     {
-        KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
+        PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
         
         // find stiffness (dummy) joints; this is necessary until proper position/stiffness/damping interface exists
         // for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)

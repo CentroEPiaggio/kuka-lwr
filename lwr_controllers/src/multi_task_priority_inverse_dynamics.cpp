@@ -14,7 +14,7 @@ namespace lwr_controllers
 
 	bool MultiTaskPriorityInverseDynamics::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
-        KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
+        PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
 
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));

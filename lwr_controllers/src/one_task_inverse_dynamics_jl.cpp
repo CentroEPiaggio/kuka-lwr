@@ -15,7 +15,7 @@ namespace lwr_controllers
 
 	bool OneTaskInverseDynamicsJL::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
-        KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
+        PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
 
 		jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 		id_solver_.reset(new KDL::ChainDynParam(kdl_chain_,gravity_));
@@ -117,6 +117,11 @@ namespace lwr_controllers
 	    	if (Equal(x_,x_des_,0.05))
 	    	{
 	    		ROS_INFO("On target");
+          for(int i=0; i < joint_handles_.size(); i++) 
+          {
+            joint_des_states_.q(i) = joint_msr_states_.q(i);
+            joint_des_states_.qdot(i) = joint_msr_states_.qdot(i);
+          }
 	    		cmd_flag_ = 0;
 	    		return;	    		
 	    	}
