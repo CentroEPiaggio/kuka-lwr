@@ -29,7 +29,7 @@ namespace lwr_controllers
 
   bool InverseDynamicsController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
   {
-    PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
+    KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
 
     //Create inverse dynamics solver
     id_solver_.reset( new KDL::ChainIdSolver_RNE( kdl_chain_, gravity_) );

@@ -11,7 +11,7 @@ namespace lwr_controllers
 
 	bool ComputedTorqueController::init(hardware_interface::EffortJointInterface *robot, ros::NodeHandle &n)
 	{
-        PIDKinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
+        KinematicChainControllerBase<hardware_interface::EffortJointInterface>::init(robot, n);
         
 		id_solver_.reset( new KDL::ChainDynParam( kdl_chain_, gravity_) );
 

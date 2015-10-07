@@ -163,8 +163,11 @@ namespace controller_interface
         // Get joint handles for all of the joints in the chain
         for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
         {
-            joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
-            ROS_DEBUG("%s", it->getJoint().getName().c_str() );
+            if ( it->getJoint().getType() != 8 )
+            {
+                joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
+                ROS_DEBUG("%s", it->getJoint().getName().c_str() );
+            }
         }
 
         ROS_DEBUG("Number of joints in handle = %lu", joint_handles_.size() );
