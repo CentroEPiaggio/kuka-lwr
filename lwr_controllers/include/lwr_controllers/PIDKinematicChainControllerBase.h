@@ -30,7 +30,7 @@ namespace controller_interface
     {
         KinematicChainControllerBase<JI>::init(robot, n);
         
-        PIDs_.resize(kdl_chain_.getNrOfJoints());
+        PIDs_.resize(joint_handles_.size() );
         
         // Parsing PID gains from YAML 
         std::string pid_ = ("pid_");
@@ -42,6 +42,7 @@ namespace controller_interface
                 return false;
             }
         }
+        return true;
     }
 
 }
