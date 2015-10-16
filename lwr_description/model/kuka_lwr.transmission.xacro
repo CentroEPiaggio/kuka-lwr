@@ -9,6 +9,7 @@
 
 		<transmission name="${name}_0_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_0_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
@@ -20,6 +21,7 @@
 
 		<transmission name="${name}_1_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_1_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
@@ -31,6 +33,7 @@
 
 		<transmission name="${name}_2_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_2_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
@@ -42,6 +45,7 @@
 
 		<transmission name="${name}_3_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_3_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
@@ -53,6 +57,7 @@
 
 		<transmission name="${name}_4_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_4_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
@@ -64,6 +69,7 @@
 
 		<transmission name="${name}_5_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_5_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
@@ -75,6 +81,7 @@
 
 		<transmission name="${name}_6_trans">
 			<type>transmission_interface/SimpleTransmission</type>
+			<robotNamespace>${name}</robotNamespace>
 			<joint name="${name}_6_joint">
 				<hardwareInterface>${Interface10}</hardwareInterface>
 				<hardwareInterface>${Interface30}</hardwareInterface>
