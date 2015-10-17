@@ -12,6 +12,10 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
+  kdl_conversions
+  sensor_msgs
+  geometry_msgs
+  std_msgs
 )
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
@@ -23,12 +27,15 @@ add_message_files(
    PoseRPY.msg
    RPY.msg
    MultiPriorityTask.msg
+   CartesianImpedanceReference.msg
+   Stiffness.msg
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
   geometry_msgs
+  sensor_msgs
 )
 
 catkin_package(
@@ -58,6 +65,7 @@ add_library(${PROJECT_NAME}
   src/dynamic_sliding_mode_controller_task_space.cpp
   src/one_task_inverse_dynamics_jl.cpp
   src/gravity_compensation.cpp
+  src/cartesian_impedance_controller.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
