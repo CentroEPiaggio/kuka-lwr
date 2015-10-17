@@ -39,7 +39,7 @@ namespace lwr_controllers
         KDL::Stiffness k( 1000, 1000, 1000, 200, 200, 200 );
         k_des_ = k;
 
-        sub_command_ = nh_.subscribe("command", 1, &CartesianImpedanceController::command, this);
+        sub_command_ = nh_.subscribe(nh_.resolveName("command"), 1, &CartesianImpedanceController::command, this);
         sub_command_ = nh_.subscribe(nh_.resolveName("ft_measures"), 1, &CartesianImpedanceController::updateFT, this);
 
         return true;
