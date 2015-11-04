@@ -1,4 +1,4 @@
-<package>
+<package format="2">
   <name>kuka_lwr</name>
   <version>0.1.0</version>
   <description>
@@ -13,13 +13,13 @@
   <!-- PACKAGES -->
 
   <!-- Model -->
-  <run_depend> lwr_description </run_depend>
+  <depend> lwr_description </depend>
 
   <!-- ROSControl-based controllers -->
-  <run_depend> lwr_controllers </run_depend>
+  <depend> lwr_controllers </depend>
 
   <!--  Hardware interfaces real/sim -->
-  <run_depend> lwr_hw </run_depend>
+  <depend> lwr_hw </depend>
 
   <export>
     <metapackage/>

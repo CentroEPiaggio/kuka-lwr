@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(lwr_hw)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   control_toolbox
   controller_interface
@@ -55,7 +52,7 @@ include_directories(include
   ${catkin_INCLUDE_DIRS}
 )
 
-## LWR HW BASE CLASS TO RULE'EM ALL
+## LWR HW BASE CLASS
 add_library(${PROJECT_NAME}
   include/${PROJECT_NAME}/lwr_hw.h
   src/lwr_hw.cpp
@@ -84,7 +81,7 @@ target_link_libraries(lwr_hw_fri_node
   ${catkin_LIBRARIES}
 )
 
-# Standford FRILibrary support in PROGRESS
+# Standford FRILibrary (support in PROGRESS)
 message(WARNING "ATTENTION: This project supports the fork of the Standford library found in https://github.com/iocroblab/fril, and install the libraries in your catkin workspace, not in the system")
 include(ExternalProject)
 ExternalProject_Add(FRILibrary
@@ -95,7 +92,6 @@ ExternalProject_Add(FRILibrary
   CONFIGURE_COMMAND cmake -DCMAKE_INSTALL_PREFIX=${CATKIN_DEVEL_PREFIX}
   INSTALL_COMMAND make install
 )
-
 # lwr hw fril node
 include_directories(${CATKIN_DEVEL_PREFIX}/include/fril)
 link_directories(${CATKIN_DEVEL_PREFIX}/lib)

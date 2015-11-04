@@ -13,9 +13,9 @@
 	<arg name="ip" default="192.168.0.10"/>
 	<arg name="file" default="$(find single_lwr_robot)/config/980241-FRI-Driver.init"/>
 
-    <arg name="t1_limits" default="false"/>
-    <arg name="controllers" default="joint_trajectory_controller"/>
-    <arg name="stopped_controllers" default="gravity_compensation_controller one_task_inverse_kinematics"/>
+	<arg name="t1_limits" default="false"/>
+	<arg name="controllers" default="joint_trajectory_controller"/>
+	<arg name="stopped_controllers" default="one_task_inverse_dynamics_JL gravity_compensation_controller one_task_inverse_kinematics"/>
 
 	<!-- in case you want to load moveit from here, it might be hard with the real HW though -->
 	<arg name="load_moveit" default="false"/>
@@ -57,33 +57,33 @@
 	</group>
 
 	<!-- load moveit configuration -->
-    <group if="$(arg load_moveit)">
-        <include file="$(find single_lwr_moveit)/launch/move_group.launch">
-            <arg name="allow_trajectory_execution" value="true"/>  
-            <arg name="fake_execution" value="false"/>
-            <arg name="info" value="true"/>
-            <arg name="debug" value="false"/>
-        </include>
+	<group if="$(arg load_moveit)">
+		<include file="$(find single_lwr_moveit)/launch/move_group.launch">
+			<arg name="allow_trajectory_execution" value="true"/>  
+			<arg name="fake_execution" value="false"/>
+			<arg name="info" value="true"/>
+			<arg name="debug" value="false"/>
+		</include>
 
 		<!-- run Rviz and load the default config to see the state of the move_group node -->
 		<include file="$(find single_lwr_moveit)/launch/moveit_rviz.launch">
 			<arg name="config" value="true"/>
 			<arg name="debug" value="false"/>
 		</include>
-    </group>
-    
-    <!-- Load updated joint limits (override information from single_lwr_moveit) to respect T1 mode limits -->
-    <group if="$(arg t1_limits)" ns="robot_description_planning">
-        <rosparam command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
-    </group>
+	</group>
+	
+	<!-- Load updated joint limits (override information from single_lwr_moveit) to respect T1 mode limits -->
+	<group if="$(arg t1_limits)" ns="robot_description_planning">
+		<rosparam command="load" file="$(find single_lwr_robot)/config/t1_joint_limits.yaml"/>
+	</group>
 
 	<!-- load robotHW configurations to rosparam server -->
 	<rosparam command="load" file="$(find single_lwr_robot)/config/hw_interface.yaml"/>
 
-    <!-- load all controller configurations to rosparam server -->
-    <rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
+	<!-- load all controller configurations to rosparam server -->
+	<rosparam file="$(find single_lwr_robot)/config/controllers.yaml" command="load"/>
 
-    <!-- real robot and controllers -->
+	<!-- real robot and controllers -->
 	<group ns="lwr">
 		<group if="$(arg lwr_powered)">
 			<!--add a copy of the robot description within the name space -->
