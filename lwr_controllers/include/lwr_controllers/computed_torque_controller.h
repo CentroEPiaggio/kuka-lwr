@@ -1,7 +1,7 @@
 #ifndef LWR_CONTROLLERS__COMPUTED_TORQUE_CONTROLLER_H
 #define LWR_CONTROLLERS__COMPUTED_TORQUE_CONTROLLER_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 
 #include <std_msgs/Float64MultiArray.h>
 

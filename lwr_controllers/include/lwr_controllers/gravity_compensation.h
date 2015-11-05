@@ -1,7 +1,7 @@
 #ifndef GRAVITY_COMPENSATION_H
 #define GRAVITY_COMPENSATION_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float32.h>

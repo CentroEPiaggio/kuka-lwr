@@ -8,6 +8,9 @@
 
 #include <math.h>
 
+#include <cmath>
+
+
 namespace lwr_controllers 
 {
 	OneTaskInverseDynamicsJL::OneTaskInverseDynamicsJL() {}
@@ -36,8 +39,9 @@ namespace lwr_controllers
 
 		sub_command_ = nh_.subscribe("command", 1, &OneTaskInverseDynamicsJL::command, this);
 		pub_error_ = nh_.advertise<std_msgs::Float64MultiArray>("error", 1000);
-		pub_pose_ = nh_.advertise<std_msgs::Float64MultiArray>("pose", 1000);
-		pub_marker_ = nh_.advertise<visualization_msgs::Marker>("marker",1000);
+		// pub_pose_ = nh_.advertise<std_msgs::Float64MultiArray>("pose", 1000);
+		// pub_marker_ = nh_.advertise<visualization_msgs::Marker>("marker",1000);
+
 
 		return true;
 	}
@@ -45,20 +49,21 @@ namespace lwr_controllers
 	void OneTaskInverseDynamicsJL::starting(const ros::Time& time)
 	{
 		// get joint positions
-  		for(int i=0; i < joint_handles_.size(); i++) 
+  		for(unsigned int i=0; i < joint_handles_.size(); i++) 
   		{
     		joint_msr_states_.q(i) = joint_handles_[i].getPosition();
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
     		joint_des_states_.q(i) = joint_msr_states_.q(i);
     		joint_des_states_.qdot(i) = joint_msr_states_.qdot(i);
-    		Kp_(i) = 100;
-  			Kd_(i) = 20;
+    		Kp_(i) = 50;
+  			Kd_(i) = 10;
     	}
 
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
     	e_ref_ = Eigen::Matrix<double,6,1>::Zero();
+      fk_pos_solver_->JntToCart(joint_msr_states_.q,x_des_);
 
-    	first_step_ = 0;
+    	first_step_ = 1;
     	cmd_flag_ = 0;
     	step_ = 0;
 
@@ -67,7 +72,9 @@ namespace lwr_controllers
 	void OneTaskInverseDynamicsJL::update(const ros::Time& time, const ros::Duration& period)
 	{
 		// get joint positions
-  		for(int i=0; i < joint_handles_.size(); i++) 
+
+
+  		for(unsigned int i=0; i < joint_handles_.size(); i++) 
   		{
     		joint_msr_states_.q(i) = joint_handles_[i].getPosition();
     		joint_msr_states_.qdot(i) = joint_handles_[i].getVelocity();
@@ -75,111 +82,93 @@ namespace lwr_controllers
 
     	// clearing msgs before publishing
     	msg_err_.data.clear();
-    	msg_pose_.data.clear();
+    	// msg_pose_.data.clear();
     	
-    	if (cmd_flag_)
+    	// if (cmd_flag_)
+    	// {
+  		// resetting N and tau(t=0) for the highest priority task
+  		N_trans_ = I_;	
+  		SetToZero(tau_);
+
+  		// computing Inertia, Coriolis and Gravity matrices
+	    id_solver_->JntToMass(joint_msr_states_.q, M_);
+	    id_solver_->JntToCoriolis(joint_msr_states_.q, joint_msr_states_.qdot, C_);
+	    id_solver_->JntToGravity(joint_msr_states_.q, G_);
+	    G_.data.setZero();
+
+	    // computing the inverse of M_ now, since it will be used often
+	    pseudo_inverse(M_.data,M_inv_,false); //M_inv_ = M_.data.inverse(); 
+
+
+    	// computing Jacobian J(q)
+    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
+
+    	// computing the distance from the mid points of the joint ranges as objective function to be minimized
+    	phi_ = task_objective_function(joint_msr_states_.q);
+
+      fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
+
+    	// using the first step to compute jacobian of the tasks
+    	if (first_step_ == 1)
     	{
-    		// resetting N and tau(t=0) for the highest priority task
-    		N_trans_ = I_;	
-    		SetToZero(tau_);
-
-    		// computing Inertia, Coriolis and Gravity matrices
-		    id_solver_->JntToMass(joint_msr_states_.q, M_);
-		    id_solver_->JntToCoriolis(joint_msr_states_.q, joint_msr_states_.qdot, C_);
-		    id_solver_->JntToGravity(joint_msr_states_.q, G_);
-		    G_.data.setZero();
-
-		    // computing the inverse of M_ now, since it will be used often
-		    pseudo_inverse(M_.data,M_inv_,false); //M_inv_ = M_.data.inverse(); 
-
-
-	    	// computing Jacobian J(q)
-	    	jnt_to_jac_solver_->JntToJac(joint_msr_states_.q,J_);
-
-	    	// computing the distance from the mid points of the joint ranges as objective function to be minimized
-	    	phi_ = task_objective_function(joint_msr_states_.q);
-
-	    	// using the first step to compute jacobian of the tasks
-	    	if (first_step_)
-	    	{
-	    		J_last_ = J_;
-	    		phi_last_ = phi_;
-	    		first_step_ = 0;
-	    		return;
-	    	}
-
-	    	// computing the derivative of Jacobian J_dot(q) through numerical differentiation
-	    	J_dot_.data = (J_.data - J_last_.data)/period.toSec();
-
-	    	// computing forward kinematics
-	    	fk_pos_solver_->JntToCart(joint_msr_states_.q,x_);
-
-	    	if (Equal(x_,x_des_,0.05))
-	    	{
-	    		ROS_INFO("On target");
-	    		cmd_flag_ = 0;
-	    		return;	    		
-	    	}
-
-	    	// pushing x to the pose msg
-	    	for (int i = 0; i < 3; i++)
-	    		msg_pose_.data.push_back(x_.p(i));
-
-	    	// setting marker parameters
-	    	set_marker(x_,msg_id_);
-
-	    	// computing end-effector position/orientation error w.r.t. desired frame
-	    	x_err_ = diff(x_,x_des_);
-
-	    	x_dot_ = J_.data*joint_msr_states_.qdot.data;    	
-
-	    	// setting error reference
-	    	for(int i = 0; i < e_ref_.size(); i++)
-		    {
-	    		// e = x_des_dotdot + Kd*(x_des_dot - x_dot) + Kp*(x_des - x)
-	    		e_ref_(i) =  -Kd_(i)*(x_dot_(i)) + Kp_(i)*x_err_(i);
-    			msg_err_.data.push_back(e_ref_(i));
-	    	}
-
-    		// computing b = J*M^-1*(c+g) - J_dot*q_dot
-    		b_ = J_.data*M_inv_*(C_.data + G_.data) - J_dot_.data*joint_msr_states_.qdot.data;
-
-	    	// computing omega = J*M^-1*N^T*J
-	    	omega_ = J_.data*M_inv_*N_trans_*J_.data.transpose();
-
-	    	// computing lambda = omega^-1
-	    	pseudo_inverse(omega_,lambda_);
-	    	//lambda_ = omega_.inverse();
-
-	    	// computing nullspace
-	    	N_trans_ = N_trans_ - J_.data.transpose()*lambda_*J_.data*M_inv_;  	    		
-
-	    	// finally, computing the torque tau
-	    	tau_.data = J_.data.transpose()*lambda_*(e_ref_ + b_) + N_trans_*(Eigen::Matrix<double,7,1>::Identity(7,1)*(phi_ - phi_last_)/(period.toSec()));
-
-	    	// saving J_ and phi of the last iteration
-	    	J_last_ = J_;
-	    	phi_last_ = phi_;
-	
+    		J_last_ = J_;
+    		phi_last_ = phi_;
+    		first_step_ = 0;
+    		return;
     	}
+
+      // std::cout << "timer: " << timer_control_.toSec() << std::endl;
+    	// computing the derivative of Jacobian J_dot(q) through numerical differentiation
+    	J_dot_.data = (J_.data - J_last_.data)/period.toSec();
+
+    	// computing forward kinematics
+    	// set_marker(x_,msg_id_);
+
+    	// computing end-effector position/orientation error w.r.t. desired frame
+
+      x_err_ = diff(x_,x_des_);
+      
+
+    	x_dot_ = J_.data*joint_msr_states_.qdot.data;    	
+
+    	// setting error reference
+    	for(unsigned int i = 0; i < e_ref_.size(); i++)
+	    {
+    		// e = x_des_dotdot + Kd*(x_des_dot - x_dot) + Kp*(x_des - x)
+    		e_ref_(i) =  -Kd_(i)*(x_dot_(i)) + Kp_(i)*x_err_(i);
+  			msg_err_.data.push_back(x_err_(i));
+    	}
+
+  		// computing b = J*M^-1*(c+g) - J_dot*q_dot
+  		b_ = J_.data*M_inv_*(C_.data + G_.data) - J_dot_.data*joint_msr_states_.qdot.data;
+
+    	// computing omega = J*M^-1*N^T*J
+    	omega_ = J_.data*M_inv_*N_trans_*J_.data.transpose();
+
+    	// computing lambda = omega^-1
+    	pseudo_inverse(omega_,lambda_);
+    	//lambda_ = omega_.inverse();
+
+    	// computing nullspace
+    	N_trans_ = N_trans_ - J_.data.transpose()*lambda_*J_.data*M_inv_;  	    		
+
+    	// finally, computing the torque tau
+    	tau_.data = J_.data.transpose()*lambda_*(e_ref_ + b_);// + N_trans_*(Eigen::Matrix<double,7,1>::Identity(7,1)*(phi_ - phi_last_)/(period.toSec()));
+
+    	// saving J_ and phi of the last iteration
+    	J_last_ = J_;
+    	phi_last_ = phi_;
+	
 
     	// set controls for joints
-    	for (int i = 0; i < joint_handles_.size(); i++)
+    	for (unsigned int i = 0; i < joint_handles_.size(); i++)
     	{
-    		if(cmd_flag_)
     			joint_handles_[i].setCommand(tau_(i));
-    		else
-       			joint_handles_[i].setCommand(PIDs_[i].computeCommand(joint_des_states_.q(i) - joint_msr_states_.q(i),period));
     	}
 
-    	// publishing markers for visualization in rviz
-    	pub_marker_.publish(msg_marker_);
-    	msg_id_++;
 
 	    // publishing error 
 	    pub_error_.publish(msg_err_);
-	    // publishing pose 
-	    pub_pose_.publish(msg_pose_);
 	    ros::spinOnce();
 
 	}
@@ -218,34 +207,11 @@ namespace lwr_controllers
 			ROS_INFO("Wrong message ID");
 			return;
 		}
-		
 		x_des_ = frame_des_;
-		cmd_flag_ = 1;
+
+    first_step_ = 1;
 	}
 
-	void OneTaskInverseDynamicsJL::set_marker(KDL::Frame x, int id)
-	{			
-				msg_marker_.header.frame_id = "world";
-				msg_marker_.header.stamp = ros::Time();
-				msg_marker_.ns = "end_effector";
-				msg_marker_.id = id;
-				msg_marker_.type = visualization_msgs::Marker::SPHERE;
-				msg_marker_.action = visualization_msgs::Marker::ADD;
-				msg_marker_.pose.position.x = x.p(0);
-				msg_marker_.pose.position.y = x.p(1);
-				msg_marker_.pose.position.z = x.p(2);
-				msg_marker_.pose.orientation.x = 0.0;
-				msg_marker_.pose.orientation.y = 0.0;
-				msg_marker_.pose.orientation.z = 0.0;
-				msg_marker_.pose.orientation.w = 1.0;
-				msg_marker_.scale.x = 0.005;
-				msg_marker_.scale.y = 0.005;
-				msg_marker_.scale.z = 0.005;
-				msg_marker_.color.a = 1.0;
-				msg_marker_.color.r = 0.0;
-				msg_marker_.color.g = 1.0;
-				msg_marker_.color.b = 0.0;	
-	}
 
 	double OneTaskInverseDynamicsJL::task_objective_function(KDL::JntArray q)
 	{
@@ -265,4 +231,9 @@ namespace lwr_controllers
 	}
 }
 
+
+
+
+
 PLUGINLIB_EXPORT_CLASS(lwr_controllers::OneTaskInverseDynamicsJL, controller_interface::ControllerBase)
+

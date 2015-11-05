@@ -95,6 +95,7 @@ int main( int argc, char** argv )
   lwr_robot.create(name, urdf_string);
   lwr_robot.setPort(port);
   lwr_robot.setIP(hintToRemoteHost);
+
   if(!lwr_robot.init())
   {
     ROS_FATAL_NAMED("lwr_hw","Could not initialize robot real interface");
@@ -105,6 +106,10 @@ int main( int argc, char** argv )
   struct timespec ts = {0, 0};
   ros::Time last(ts.tv_sec, ts.tv_nsec), now(ts.tv_sec, ts.tv_nsec);
   ros::Duration period(1.0);
+
+  float sampling_time = lwr_robot.getSampleTime();
+  ROS_INFO("Sampling time on robot: %f", sampling_time);
+  // std::cout << "timer_robot: " << sampling_time << std::endl;
 
   //the controller manager
   controller_manager::ControllerManager manager(&lwr_robot, lwr_nh);
@@ -154,6 +159,10 @@ int main( int argc, char** argv )
 
     // write the command to the lwr
     lwr_robot.write(now, period);
+
+    ros::Duration(sampling_time).sleep();
+    // std::cout << "timer: " << period.toSec() << std::endl;
+    // std::cout << "timer_robot: " << sampling_time << std::endl;
   }
 
   std::cerr<<"Stopping spinner..."<<std::endl;

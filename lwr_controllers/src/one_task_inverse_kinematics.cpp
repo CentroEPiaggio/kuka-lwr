@@ -40,6 +40,7 @@ namespace lwr_controllers
 
         // computing forward kinematics
         fk_pos_solver_->JntToCart(joint_msr_states_.q, x_);
+        fk_pos_solver_->JntToCart(joint_msr_states_.q, x_des_);
 
         //Desired posture is the current one
         x_des_ = x_;
@@ -65,8 +66,8 @@ namespace lwr_controllers
             joint_msr_states_.q(i) = joint_handles_[i].getPosition();
         }
 
-        if (cmd_flag_)
-        {
+        // if (cmd_flag_)
+        // {
             // computing Jacobian
             jnt_to_jac_solver_->JntToJac(joint_msr_states_.q, J_);
 
@@ -117,12 +118,12 @@ namespace lwr_controllers
                     joint_des_states_.q(i) = joint_limits_.max(i);
             }
 
-            if (Equal(x_, x_des_, 0.005))
-            {
-                ROS_INFO("On target");
-                cmd_flag_ = 0;
-            }
-        }
+            // if (Equal(x_, x_des_, 0.005))
+            // {
+            //     ROS_INFO("On target");
+            //     cmd_flag_ = 0;
+            // }
+        // }
 
         // set controls for joints
         for (int i = 0; i < joint_handles_.size(); i++)
@@ -167,7 +168,7 @@ namespace lwr_controllers
         }
 
         x_des_ = frame_des_;
-        cmd_flag_ = 1;
+        // cmd_flag_ = 1;
     }
 }
 

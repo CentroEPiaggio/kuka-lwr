@@ -2,7 +2,7 @@
 #ifndef LWR_CONTROLLERS__JOINT_INPEDANCE_CONTROLLER_H
 #define LWR_CONTROLLERS__JOINT_INPEDANCE_CONTROLLER_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 
 #include <visualization_msgs/Marker.h>
 #include <std_msgs/Float64MultiArray.h>

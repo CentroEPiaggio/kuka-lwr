@@ -14,6 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
 )
 
+
+add_definitions(-std=c++11 --all-warnings -O3) 
+
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
 link_directories(${catkin_LIBRARY_DIRS})

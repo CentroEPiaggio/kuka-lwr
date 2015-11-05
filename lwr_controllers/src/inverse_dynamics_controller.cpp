@@ -35,12 +35,13 @@ namespace lwr_controllers
     id_solver_.reset( new KDL::ChainIdSolver_RNE( kdl_chain_, gravity_) );
 
     // Resize working vectors
+    n_dof_ = joint_handles_.size();
     joint_states_.resize(n_dof_);
     torques_.resize(n_dof_);
     ext_wrenches_.resize(kdl_chain_.getNrOfSegments());
 
     // Zero out torque data
-    torques_.data.setZero();
+    torques_.data.setZero(); 
 
     // Subscribe to external wrench topic
     ext_wrench_sub_ = nh_.subscribe<geometry_msgs::WrenchStamped>(

@@ -140,32 +140,38 @@ namespace controller_interface
         ROS_DEBUG("Number of joints in chain: %d", kdl_chain_.getNrOfJoints());
         
         // Parsing joint limits from urdf model along kdl chain
+        
+        // Get joint handles for all of the joints in the chain
+        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
+        {
+            if ( it->getJoint().getType() != 8 )
+            {
+                joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
+
+                ROS_DEBUG("%s", it->getJoint().getName().c_str() );
+            }
+        }
+
         boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
         boost::shared_ptr<const urdf::Joint> joint_;
-        joint_limits_.min.resize(kdl_chain_.getNrOfJoints());
-        joint_limits_.max.resize(kdl_chain_.getNrOfJoints());
-        joint_limits_.center.resize(kdl_chain_.getNrOfJoints());
-        int index;
+        joint_limits_.min.resize(joint_handles_.size());
+        joint_limits_.max.resize(joint_handles_.size());
+        joint_limits_.center.resize(joint_handles_.size());
+        // int index;
         
-        for (int i = 0; i < kdl_chain_.getNrOfJoints() && link_; i++)
+        for (int i = 0; i < joint_handles_.size() ; i++)
         {
-            joint_ = model.getJoint(link_->parent_joint->name);  
+            joint_ = model.getJoint(joint_handles_[i].getName());  
             ROS_INFO("Getting limits for joint: %s", joint_->name.c_str());
-            index = kdl_chain_.getNrOfJoints() - i - 1;
+            // index = joint_handles_.size() - i - 1;
 
-            joint_limits_.min(index) = joint_->limits->lower;
-            joint_limits_.max(index) = joint_->limits->upper;
-            joint_limits_.center(index) = (joint_limits_.min(index) + joint_limits_.max(index))/2;
+            joint_limits_.min(i) = joint_->limits->lower;
+            joint_limits_.max(i) = joint_->limits->upper;
+            joint_limits_.center(i) = (joint_limits_.min(i) + joint_limits_.max(i))/2;
 
             link_ = model.getLink(link_->getParent()->name);
         }
 
-        // Get joint handles for all of the joints in the chain
-        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
-        {
-            joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
-            ROS_DEBUG("%s", it->getJoint().getName().c_str() );
-        }
 
         ROS_DEBUG("Number of joints in handle = %lu", joint_handles_.size() );
         
