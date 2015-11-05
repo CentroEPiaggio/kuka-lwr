@@ -1,7 +1,6 @@
 #include <lwr_controllers/one_task_inverse_dynamics_jl.h>
 #include <utils/pseudo_inversion.h>
 #include <utils/skew_symmetric.h>
-#include <utils/interpolationmb.h>
 
 #include <pluginlib/class_list_macros.h>
 #include <kdl_parser/kdl_parser.hpp>
@@ -43,9 +42,6 @@ namespace lwr_controllers
 		// pub_pose_ = nh_.advertise<std_msgs::Float64MultiArray>("pose", 1000);
 		// pub_marker_ = nh_.advertise<visualization_msgs::Marker>("marker",1000);
 
-    struct timespec ts = {0, 0};
-    timer_comulated_ = ros::Time(ts.tv_sec, ts.tv_nsec);
-    timer_control_ = timer_comulated_ - timer_comulated_;
 
 		return true;
 	}
@@ -66,15 +62,10 @@ namespace lwr_controllers
     	I_ = Eigen::Matrix<double,7,7>::Identity(7,7);
     	e_ref_ = Eigen::Matrix<double,6,1>::Zero();
       fk_pos_solver_->JntToCart(joint_msr_states_.q,x_des_);
-      x_temp_ = x_des_;
 
     	first_step_ = 1;
     	cmd_flag_ = 0;
     	step_ = 0;
-
-      x_error_initial_ = diff(x_des_,x_des_);
-    // struct timespec ts = {0, 0};
-    // timer_local_ = ros::Time(ts.tv_sec, ts.tv_nsec);
 
 	}
 
@@ -82,23 +73,6 @@ namespace lwr_controllers
 	{
 		// get joint positions
 
-
-      struct timespec ts = {0, 0};
-      ros::Time now(ts.tv_sec, ts.tv_nsec);
-      ros::Duration period_local(1.0);
-
-      if (!clock_gettime(CLOCK_MONOTONIC, &ts))
-      {
-        now.sec = ts.tv_sec;
-        now.nsec = ts.tv_nsec;
-        period_local = now - timer_comulated_;
-        timer_comulated_ = now;
-        timer_control_ += period_local;
-      } 
-      else
-      {
-        ROS_FATAL("Failed to poll realtime clock!");
-      }
 
   		for(unsigned int i=0; i < joint_handles_.size(); i++) 
   		{
@@ -140,9 +114,6 @@ namespace lwr_controllers
     		J_last_ = J_;
     		phi_last_ = phi_;
     		first_step_ = 0;
-        timer_control_ = now - now ;
-        x_temp_ = x_;
-        x_error_initial_ = diff(x_des_,x_temp_);
     		return;
     	}
 
@@ -155,20 +126,7 @@ namespace lwr_controllers
 
     	// computing end-effector position/orientation error w.r.t. desired frame
 
-      KDL::Frame x_des_interpolated;
-
-      x_des_interpolated = x_des_;
-      // x_des_interpolated.p(0) = x_temp_.p(0) + interpolatormb(timer_control_.toSec(), 2.0)*( x_error_initial_(0));
-      // x_des_interpolated.p(1) = x_temp_.p(1) + interpolatormb(timer_control_.toSec(), 2.0)*( x_error_initial_(1));
-      // x_des_interpolated.p(2) = x_temp_.p(2) + interpolatormb(timer_control_.toSec(), 2.0)*( x_error_initial_(2));
-
-
-
-    	x_err_ = diff(x_,x_des_interpolated);
-      // x_err_ = diff(x_,x_des_);
-
-      // std::cout << timer_control_.toSec() << " - " << interpolatormb(timer_control_.toSec(), 2.0) << std::endl;
-
+      x_err_ = diff(x_,x_des_);
       
 
     	x_dot_ = J_.data*joint_msr_states_.qdot.data;    	
@@ -201,16 +159,6 @@ namespace lwr_controllers
     	J_last_ = J_;
     	phi_last_ = phi_;
 	
-    	// }
-
-        tau_.data[0] = (std::abs(tau_.data[0]) >= 176 ? std::copysign(123.2,tau_.data[0]) : tau_.data[0]);
-        tau_.data[1] = (std::abs(tau_.data[1]) >= 176 ? std::copysign(123.2,tau_.data[1]) : tau_.data[1]); 
-        tau_.data[2] = (std::abs(tau_.data[2] )>= 100 ? std::copysign(70,tau_.data[2]): tau_.data[2]); 
-        tau_.data[3] = (std::abs(tau_.data[3] )>= 100 ? std::copysign(70,tau_.data[3]): tau_.data[3]); 
-        tau_.data[4] = (std::abs(tau_.data[4]) >= 100 ? std::copysign(70,tau_.data[4]): tau_.data[4]); 
-        tau_.data[5] = (std::abs(tau_.data[5]) >= 38 ? std::copysign(23.6,tau_.data[5]): tau_.data[5]); 
-        tau_.data[6] = (std::abs(tau_.data[6]) >= 38 ? std::copysign(23.6,tau_.data[6]): tau_.data[6]);  
- 
 
     	// set controls for joints
     	for (unsigned int i = 0; i < joint_handles_.size(); i++)

@@ -39,11 +39,11 @@ namespace lwr_controllers
 		KDL::Frame x_,x0_;	//current e-e pose
 		Eigen::Matrix<double,6,1> x_dot_;	//current e-e velocity
 
-		KDL::Frame x_des_, x_temp_;	//desired pose
+		KDL::Frame x_des_;	//desired pose
 		KDL::Twist x_des_dot_;
 		KDL::Twist x_des_dotdot_;
 
-		KDL::Twist x_err_, x_error_initial_;
+		KDL::Twist x_err_;
 
 		KDL::JntArray Kp_,Kd_;
 
@@ -85,8 +85,6 @@ namespace lwr_controllers
 		//boost::scoped_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverAcc_recursive> fk_acc_solver_;
 
-		ros::Time timer_comulated_;
-		ros::Duration timer_control_;
 	};
 
 }
