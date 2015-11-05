@@ -24,30 +24,26 @@ namespace lwr_controllers
 		void starting(const ros::Time& time);
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command(const lwr_controllers::PoseRPY::ConstPtr &msg);
-		void set_marker(KDL::Frame x, int id);
 		double task_objective_function(KDL::JntArray q);
 
 	private:
 		ros::Subscriber sub_command_;
 		ros::Publisher pub_error_;
-		ros::Publisher pub_pose_;
-		ros::Publisher pub_marker_;
+
 
 		std_msgs::Float64MultiArray msg_err_;
-		std_msgs::Float64MultiArray msg_pose_;
-		visualization_msgs::Marker msg_marker_;
-		std::stringstream sstr_;
+		
         
 		KDL::JntArray qdot_last_;
 
 		KDL::Frame x_,x0_;	//current e-e pose
 		Eigen::Matrix<double,6,1> x_dot_;	//current e-e velocity
 
-		KDL::Frame x_des_;	//desired pose
+		KDL::Frame x_des_, x_temp_;	//desired pose
 		KDL::Twist x_des_dot_;
 		KDL::Twist x_des_dotdot_;
 
-		KDL::Twist x_err_;
+		KDL::Twist x_err_, x_error_initial_;
 
 		KDL::JntArray Kp_,Kd_;
 
@@ -80,7 +76,6 @@ namespace lwr_controllers
 		int msg_id_;
 		int cmd_flag_;
 		int ntasks_;
-		bool on_target_flag_;
 		int links_index_;
 
 
@@ -89,6 +84,9 @@ namespace lwr_controllers
 		boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> fk_pos_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverVel_recursive> fk_vel_solver_;
 		//boost::scoped_ptr<KDL::ChainFkSolverAcc_recursive> fk_acc_solver_;
+
+		ros::Time timer_comulated_;
+		ros::Duration timer_control_;
 	};
 
 }

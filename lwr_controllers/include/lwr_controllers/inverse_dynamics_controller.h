@@ -1,7 +1,7 @@
 #ifndef LWR_CONTROLLERS__INVERSE_DYNAMICS_CONTROLLER_H
 #define LWR_CONTROLLERS__INVERSE_DYNAMICS_CONTROLLER_H
 
-#include "KinematicChainControllerBase.h"
+#include "PIDKinematicChainControllerBase.h"
 
 #include <geometry_msgs/WrenchStamped.h>
 #include <kdl/chainidsolver_recursive_newton_euler.hpp>
