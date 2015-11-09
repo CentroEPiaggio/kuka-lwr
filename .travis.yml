@@ -1,14 +1,16 @@
 # travis beta feature
 dist: trusty
 
-language:
-  - cpp
+language: generic
 
 compiler:
   - gcc
 
+branches:
+  only:
+    - master
+
 before_install:
-  #- export CI_SOURCE_PATH=$(pwd)
   - sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
   - sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-latest.list'
   - wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
@@ -16,7 +18,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install ros-indigo-ros-base ros-indigo-cmake-modules ros-indigo-orocos-kdl ros-indigo-kdl-parser ros-indigo-ros-control ros-indigo-ros-controllers ros-indigo-gazebo4-ros ros-indigo-gazebo4-ros-pkgs
+  - sudo apt-get -qq install ros-indigo-ros-base ros-indigo-cmake-modules ros-indigo-orocos-kdl ros-indigo-kdl-parser ros-indigo-ros-control ros-indigo-ros-controllers ros-indigo-gazebo4-ros ros-indigo-gazebo4-ros-pkgs
 
 before_script:
   - sudo rosdep init
