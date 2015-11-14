@@ -1,3 +1,5 @@
 /mongod.lock
+*.0
+*.ns
 /local.ns
 *.0
