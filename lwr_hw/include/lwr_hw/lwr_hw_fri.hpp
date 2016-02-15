@@ -156,8 +156,8 @@ public:
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
       {
-        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_EFFORT)" << std::endl;
-        desired_strategy = JOINT_EFFORT;
+        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
+        desired_strategy = JOINT_IMPEDANCE;
         break;
       }
     }
