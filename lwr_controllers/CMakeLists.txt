@@ -23,14 +23,17 @@ include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
 add_message_files(
-   FILES
-   PoseRPY.msg
-   RPY.msg
-   MultiPriorityTask.msg
-   CartesianImpedanceReference.msg
-   Stiffness.msg
+  FILES
+  PoseRPY.msg
+  RPY.msg
+  MultiPriorityTask.msg
+  CartesianImpedancePoint.msg
+  Stiffness.msg
 )
-
+add_service_files(
+  FILES
+  SetCartesianImpedanceCommand.srv
+)
 generate_messages(
   DEPENDENCIES
   std_msgs
