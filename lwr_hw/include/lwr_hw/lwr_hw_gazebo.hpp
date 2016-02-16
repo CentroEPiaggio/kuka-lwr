@@ -87,7 +87,18 @@ public:
         break;
 
       case CARTESIAN_IMPEDANCE:
-        ROS_WARN("CARTESIAN IMPEDANCE NOT IMPLEMENTED");
+        ROS_WARN("CARTESIAN IMPEDANCE NOT AVAILABLE IN GAZEBO, PRINTING THE COMMANDED VALUES:");
+        for(int i=0; i < 12; ++i)
+        {
+          std::cout << "cart_pos_command_[" << i << "] = " << cart_pos_command_[i] << std::endl;
+        }
+        for(int i=0; i < 6; i++)
+        {
+          std::cout << "cart_stiff_command_[" << i << "] = " << cart_stiff_command_[i] << std::endl;
+          std::cout << "cart_damp_command_[" << i << "] = " << cart_damp_command_[i] << std::endl;
+          std::cout << "cart_wrench_command_[" << i << "] = " << cart_wrench_command_[i] << std::endl;
+        }
+        std::cout << "Here, the call to doCartesianImpedanceControl() is done" << std::endl;
         break;
 
       case JOINT_IMPEDANCE:
