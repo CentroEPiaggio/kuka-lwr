@@ -124,17 +124,17 @@ namespace lwr_hw
     for(int i=0; i < 3; i++)
     {
       cart_stiff_[i] = 0.0;
-      cart_stiff_[2*i +1] = 0.0;
+      cart_stiff_[i + 3] = 0.0;
       cart_damp_[i] = 0.0;
-      cart_damp_[2*i +1] = 0.0;
+      cart_damp_[i + 3] = 0.0;
       cart_wrench_[i] = 0.0;
-      cart_wrench_[2*i +1] = 0.0;
+      cart_wrench_[i + 3] = 0.0;
       cart_stiff_command_[i] = 800;
-      cart_stiff_command_[2*i + 1] = 50;
+      cart_stiff_command_[i + 3] = 50;
       cart_damp_command_[i] = 10;
-      cart_damp_command_[2*i + 1] = 1;
+      cart_damp_command_[i + 3] = 1;
       cart_wrench_command_[i] = 0.0;
-      cart_wrench_command_[2*i + 1] = 0.0;
+      cart_wrench_command_[i + 3] = 0.0;
     }
 
     current_strategy_ = JOINT_POSITION;
