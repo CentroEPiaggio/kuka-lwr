@@ -32,7 +32,13 @@ lwr:
     type: lwr_controllers/GravityCompensation
     root_name: lwr_base_link
     tip_name: lwr_7_link
-
+    
+  cartesian_impedance_controller:
+    type: lwr_controllers/CartesianImpedanceController
+    robot_name: lwr
+    root_name: lwr_base_link
+    tip_name: lwr_7_link
+    
   #   Joint Impedance Controllers
   joint_impedance_controller:
     type: lwr_controllers/JointImpedanceController
