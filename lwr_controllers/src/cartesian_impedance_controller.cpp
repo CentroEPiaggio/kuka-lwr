@@ -174,11 +174,11 @@ namespace lwr_controllers
             if(c < 12)
                 cart_handles_.at(c).setCommand(cur_T_FRI.at(c));
             if(c > 11 && c < 18)
-                cart_handles_.at(c-12).setCommand(k_des_[c-12]);
+                cart_handles_.at(c).setCommand(k_des_[c-12]);
             if(c > 17 && c < 24)
-                cart_handles_.at(c-18).setCommand(d_des_[c-18]);
+                cart_handles_.at(c).setCommand(d_des_[c-18]);
             if(c > 23 && c < 30)
-                cart_handles_.at(c-24).setCommand(f_des_[c-24]);
+                cart_handles_.at(c).setCommand(f_des_[c-24]);
         }
     }
 
