@@ -220,7 +220,7 @@ int friRemote::doCartesianImpedanceControl(const float newCartPosition[FRI_CART_
 {
 
 		// Helper, if not properly initialized or the like...
-	cmd.cmd.cmdFlags=0;
+// 	cmd.cmd.cmdFlags=0;
 	if ( newCartPosition )
 	{
 		cmd.cmd.cmdFlags|=FRI_CMD_CARTPOS;
