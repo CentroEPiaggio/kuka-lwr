@@ -74,6 +74,48 @@ namespace lwr_controllers
         sub_ft_measures_ = n.subscribe(n.resolveName("ft_measures"), 1, &CartesianImpedanceController::updateFT, this);
         pub_goal_ = n.advertise<geometry_msgs::PoseStamped>(n.resolveName("goal"),0);
 
+        // Initial position
+        KDL::Rotation cur_R(cart_handles_.at(0).getPosition(),
+                            cart_handles_.at(1).getPosition(),
+                            cart_handles_.at(2).getPosition(),
+                            cart_handles_.at(4).getPosition(),
+                            cart_handles_.at(5).getPosition(),
+                            cart_handles_.at(6).getPosition(),
+                            cart_handles_.at(8).getPosition(),
+                            cart_handles_.at(9).getPosition(),
+                            cart_handles_.at(10).getPosition());
+        KDL::Vector cur_p(cart_handles_.at(3).getPosition(),
+                            cart_handles_.at(7).getPosition(),
+                            cart_handles_.at(11).getPosition());
+        KDL::Frame cur_T( cur_R, cur_p );
+        x_ref_ = cur_T;
+        x_des_ = cur_T;
+
+        // Initial Cartesian stiffness
+        KDL::Stiffness k( 800.0, 800.0, 800.0, 50.0, 50.0, 50.0 );
+        k_des_ = k;
+
+        // Initial force/torque measure
+        KDL::Wrench w(KDL::Vector(0.0, 0.0, 0.0), KDL::Vector(0.0, 0.0, 0.0));
+        f_des_ = w;
+
+        std::vector<double> cur_T_FRI;
+
+        fromKDLtoFRI(x_des_, cur_T_FRI);
+
+        // set initial commands already here:
+        for(int c = 0; c < 30; ++c)
+        {
+            if(c < 12)
+                cart_handles_.at(c).setCommand(cur_T_FRI.at(c));
+            if(c > 11 && c < 18)
+                cart_handles_.at(c).setCommand(k_des_[c-12]);
+            if(c > 17 && c < 24)
+                cart_handles_.at(c).setCommand(d_des_[c-18]);
+            if(c > 23 && c < 30)
+                cart_handles_.at(c).setCommand(f_des_[c-24]);
+        }
+
         return true;
     }
 
@@ -102,6 +144,22 @@ namespace lwr_controllers
         // Initial force/torque measure
         KDL::Wrench w(KDL::Vector(0.0, 0.0, 0.0), KDL::Vector(0.0, 0.0, 0.0));
         f_des_ = w;
+
+        std::vector<double> cur_T_FRI;
+
+        fromKDLtoFRI(x_des_, cur_T_FRI);
+        // forward commands to hwi
+        for(int c = 0; c < 30; ++c)
+        {
+            if(c < 12)
+                cart_handles_.at(c).setCommand(cur_T_FRI.at(c));
+            if(c > 11 && c < 18)
+                cart_handles_.at(c).setCommand(k_des_[c-12]);
+            if(c > 17 && c < 24)
+                cart_handles_.at(c).setCommand(d_des_[c-18]);
+            if(c > 23 && c < 30)
+                cart_handles_.at(c).setCommand(f_des_[c-24]);
+        }
 
     }
 
@@ -147,7 +205,7 @@ namespace lwr_controllers
     void CartesianImpedanceController::update(const ros::Time& time, const ros::Duration& period)
     {
         // get current values
-        std::cout << "Update current values" << std::endl;
+        //std::cout << "Update current values" << std::endl;
         KDL::Rotation cur_R(cart_handles_.at(0).getPosition(),
                             cart_handles_.at(1).getPosition(),
                             cart_handles_.at(2).getPosition(),
@@ -163,12 +221,10 @@ namespace lwr_controllers
         KDL::Frame cur_T( cur_R, cur_p );
         x_cur_ = cur_T;
 
-
         std::vector<double> cur_T_FRI;
 
         fromKDLtoFRI(x_des_, cur_T_FRI);
         // forward commands to hwi
-        std::cout << "Before forwarding the command" << std::endl;
         for(int c = 0; c < 30; ++c)
         {
             if(c < 12)
@@ -222,7 +278,7 @@ namespace lwr_controllers
         out.at(7) = in.p.y();
         out.at(8) = in.M.UnitX().z();
         out.at(9) = in.M.UnitY().z();
-        out.at(10) = in.M.UnitZ().y();
+        out.at(10) = in.M.UnitZ().z();
         out.at(11) = in.p.z();
 
     }
