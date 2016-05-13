@@ -1,4 +1,16 @@
 <library path="lib/liblwr_controllers">
+  
+  <class name="arm_state_controller/ArmStateController" type="arm_state_controller::ArmStateController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Information about external torque, Jacobian, etc.
+    </description>
+  </class>
+  
+  <class name="lwr_controllers/GravityCompensation" type="lwr_controllers::GravityCompensation" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Safe gravity compensation.
+    </description>
+  </class>
 
   <class name="lwr_controllers/JointImpedanceController" type="lwr_controllers::JointImpedanceController" base_class_type="controller_interface::ControllerBase">
     <description>

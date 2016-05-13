@@ -43,7 +43,7 @@ void LWRHW::reset()
     joint_velocity_command_[j] = 0.0;
     joint_effort_command_[j] = 0.0;
     joint_stiffness_command_[j] = 2500.0;
-    joint_damping_command_[j] = 0.0;
+    joint_damping_command_[j] = 0.7;
   }
 
   return;

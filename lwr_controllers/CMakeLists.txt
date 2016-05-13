@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(lwr_controllers)
 
-find_package(orocos_kdl REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
   control_msgs
+  geometry_msgs
   forward_command_controller
   control_toolbox
   realtime_tools
@@ -13,22 +13,19 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_parser
   message_generation
   cmake_modules
+  kdl_conversions
 )
 
-include_directories(include ${orocos_kdl_INCLUDE_DIRS} ${catkin_INCLUDE_DIRS})
+include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
 link_directories(${catkin_LIBRARY_DIRS})
-link_directories(${orocos_kdl_LIBRARY_DIRS})
 
-find_library(KDL_LIBRARY REQUIRED NAMES orocos-kdl HINTS ${orocos_kdl_LIBRARY_DIRS})
-include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 add_message_files(
    FILES
    PoseRPY.msg
    RPY.msg
    MultiPriorityTask.msg
-   PID.msg
-   PIDgains.msg
+   ArmState.msg
 )
 
 generate_messages(
@@ -38,10 +35,10 @@ generate_messages(
 )
 
 catkin_package(
-  DEPENDS orocos_kdl
   CATKIN_DEPENDS
     controller_interface
     control_msgs
+    geometry_msgs
     control_toolbox
     realtime_tools
     urdf
@@ -50,7 +47,7 @@ catkin_package(
     message_runtime
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  )
+)
 
 add_library(${PROJECT_NAME}
   src/joint_impedance_controller.cpp	
@@ -64,11 +61,13 @@ add_library(${PROJECT_NAME}
   src/dynamic_sliding_mode_controller.cpp
   src/dynamic_sliding_mode_controller_task_space.cpp
   src/one_task_inverse_dynamics_jl.cpp
+  src/gravity_compensation.cpp
+  src/arm_state_controller.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} kdl_parser ${orocos_kdl_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 
 install(DIRECTORY include/${PROJECT_NAME}/
