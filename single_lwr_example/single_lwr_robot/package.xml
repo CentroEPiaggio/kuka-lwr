@@ -10,10 +10,7 @@
   <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-
-  <!-- main meta package dependency -->
-  <run_depend>kuka_lwr</run_depend>
-
+  
   <export>
   </export>
 </package>
