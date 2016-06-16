@@ -42,7 +42,7 @@ catkin_package(
     gazebo_ros
     std_msgs
   INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME} lwr_hw_gazebo_plugin friremote frilremote
+  LIBRARIES ${PROJECT_NAME} lwr_hw_gazebo_plugin friremote
   DEPENDS gazebo
 )
 
@@ -128,3 +128,15 @@ target_link_libraries(lwr_hw_gazebo_plugin
   ${catkin_LIBRARIES}
   ${GAZEBO_LIBRARIES}
 )
+
+## INSTALLATION
+install(TARGETS ${PROJECT_NAME} lwr_hw_gazebo_plugin friremote
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION})
+
+install(TARGETS lwr_hw_fri_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
