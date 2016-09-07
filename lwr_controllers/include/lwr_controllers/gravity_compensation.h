@@ -27,7 +27,7 @@ namespace lwr_controllers
         // hack required as long as there is separate position handle for stiffness
         std::vector<hardware_interface::JointHandle> joint_stiffness_handles_;
         
-        const static float DEFAULT_STIFFNESS = 0.01;
+        constexpr static float DEFAULT_STIFFNESS = 0.01;
         
     };
 }
