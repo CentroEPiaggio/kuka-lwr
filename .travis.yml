@@ -18,7 +18,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -qq install ros-indigo-ros-base ros-indigo-cmake-modules ros-indigo-orocos-kdl ros-indigo-kdl-parser ros-indigo-ros-control ros-indigo-ros-controllers ros-indigo-gazebo4-ros ros-indigo-gazebo4-ros-pkgs
+  - sudo apt-get -qq install ros-indigo-ros-base ros-indigo-cmake-modules ros-indigo-orocos-kdl ros-indigo-kdl-parser ros-indigo-kdl-conversions ros-indigo-ros-control ros-indigo-ros-controllers ros-indigo-gazebo4-ros ros-indigo-gazebo4-ros-pkgs
 
 before_script:
   - sudo rosdep init
