@@ -31,6 +31,8 @@ namespace lwr_controllers
 		int cmd_flag_;	// discriminate if a user command arrived
 		double lambda;	// flattening coefficient of tanh
 		int step_;		// step used in tanh for reaching gradually the desired posture
+		KDL::JntArray joint_initial_states_; // joint as measured at the beginning of the control action
+		KDL::JntArray current_cmd_; // command value as delta to be added to joint_initial_states_
 
 		KDL::JntArray tau_cmd_;
 		KDL::JntSpaceInertiaMatrix M_; //Inertia matrix

@@ -22,6 +22,8 @@ namespace lwr_controllers
 		M_.resize(kdl_chain_.getNrOfJoints());
 		C_.resize(kdl_chain_.getNrOfJoints());
 		G_.resize(kdl_chain_.getNrOfJoints());
+        joint_initial_states_.resize(kdl_chain_.getNrOfJoints());
+        current_cmd_.resize(kdl_chain_.getNrOfJoints());
 
 		sub_posture_ = nh_.subscribe("command", 1, &ComputedTorqueController::command, this);
 		sub_gains_ = nh_.subscribe("set_gains", 1, &ComputedTorqueController::set_gains, this);
@@ -61,17 +63,26 @@ namespace lwr_controllers
     		joint_msr_states_.qdotdot(i) = 0.0;
     	}
 
-    	
     	if(cmd_flag_)
     	{
-    		// reaching desired joint position using a hyperbolic tangent function
-    		for(size_t i=0; i<joint_handles_.size(); i++)
-    		{
-    			joint_des_states_.q(i) = cmd_states_(i)*1/2*(1+ tanh(lambda*step_-M_PI)); 
-    			joint_des_states_.qdot(i) = cmd_states_(i)*1/2*lambda*(1/(cosh(M_PI-lambda*step_)*cosh(M_PI-lambda*step_))); // 1/(cosh^2) = sech^2
-    			joint_des_states_.qdotdot(i) = cmd_states_(i)*lambda*lambda*(1/(cosh(M_PI-step_)*cosh(M_PI-step_)))*tanh(M_PI-step_);
-    		}
-    		++step_;
+            if(step_ == 0)
+            {
+                joint_initial_states_ = joint_msr_states_.q;
+            }
+            // reaching desired joint position using a hyperbolic tangent function
+            double th = tanh(M_PI-lambda*step_);
+            double ch = cosh(M_PI-lambda*step_);
+            double sh2 = 1.0/(ch*ch);
+            
+            for(size_t i=0; i<joint_handles_.size(); i++)
+            {
+                // TODO: take into account also initial/final velocity and acceleration
+                current_cmd_(i) = cmd_states_(i) - joint_initial_states_(i);
+                joint_des_states_.q(i) = current_cmd_(i)*0.5*(1.0-th) + joint_initial_states_(i);
+                joint_des_states_.qdot(i) = current_cmd_(i)*0.5*lambda*sh2;
+                joint_des_states_.qdotdot(i) = current_cmd_(i)*lambda*lambda*sh2*th;
+            }
+            ++step_;
 
     		if(joint_des_states_.q == cmd_states_)
     		{
@@ -86,13 +97,23 @@ namespace lwr_controllers
     	id_solver_->JntToCoriolis(joint_msr_states_.q, joint_msr_states_.qdot, C_);
     	id_solver_->JntToGravity(joint_msr_states_.q, G_);
 
-		for(size_t i=0; i<joint_handles_.size(); i++) 
-		{
-			// control law
-			tau_cmd_(i) = M_(i,i)*(joint_des_states_.qdotdot(i) + Kv_(i)*(joint_des_states_.qdot(i) - joint_msr_states_.qdot(i)) + Kp_(i)*(joint_des_states_.q(i) - joint_msr_states_.q(i))) + C_(i)*joint_msr_states_.qdot(i) + G_(i);
-		   	joint_handles_[i].setCommand(tau_cmd_(i));
-		}	
-
+        // PID controller
+        KDL::JntArray pid_cmd_(joint_handles_.size());
+        // compensation of Coriolis and Gravity
+        KDL::JntArray cg_cmd_(joint_handles_.size());
+        for(size_t i=0; i<joint_handles_.size(); i++)
+        {
+            // control law
+            pid_cmd_(i) = joint_des_states_.qdotdot(i) + Kv_(i)*(joint_des_states_.qdot(i) - joint_msr_states_.qdot(i)) + Kp_(i)*(joint_des_states_.q(i) - joint_msr_states_.q(i));
+            cg_cmd_(i) = C_(i)*joint_msr_states_.qdot(i) + G_(i);
+        }
+        KDL::Multiply(M_,pid_cmd_,tau_cmd_);
+        KDL::Add(tau_cmd_,cg_cmd_,tau_cmd_);
+        
+        for(size_t i=0; i<joint_handles_.size(); i++)
+        {
+            joint_handles_[i].setCommand(tau_cmd_(i));
+        }
     }
 
     void ComputedTorqueController::command(const std_msgs::Float64MultiArray::ConstPtr &msg)
@@ -110,6 +131,8 @@ namespace lwr_controllers
     			cmd_states_(i) = msg->data[i];
 
     		cmd_flag_ = 1;
+            // when a new command is set, steps should be reset to avoid jumps in the update
+            step_ = 0;
     	}
 
 	}
