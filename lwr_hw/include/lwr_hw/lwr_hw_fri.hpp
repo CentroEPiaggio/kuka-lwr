@@ -28,6 +28,7 @@ public:
 
   void setPort(int port){port_ = port; port_set_ = true;};
   void setIP(std::string hintToRemoteHost){hintToRemoteHost_ = hintToRemoteHost; ip_set_ = true;};
+  float getSampleTime(){return sampling_rate_;};
 
   // Init, read, and write, with FRI hooks
   bool init()
@@ -60,6 +61,8 @@ public:
 
     std::cout << "Ready, FRI has been started!" << std::endl;
     std::cout << "FRI Status:\n" << device_->getMsrBuf().intf << std::endl;
+    sampling_rate_ = device_->getSampleTime();
+    std::cout << "Sampling Rate: " << sampling_rate_ << std::endl;
 
     return true;
   }
@@ -115,9 +118,10 @@ public:
         for(int j=0; j < n_joints_; j++)
         {
             newJntAddTorque[j] = joint_effort_command_[j];
+            newJntStiff[j] = 0.0;
         }
         // mirror the position
-        device_->doJntImpedanceControl(device_->getMsrMsrJntPosition(), NULL, NULL, newJntAddTorque, false);
+        device_->doJntImpedanceControl(device_->getMsrMsrJntPosition(), newJntStiff, NULL, newJntAddTorque, false);
         break;
 
       case JOINT_STIFFNESS:
@@ -152,8 +156,8 @@ public:
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
       {
-        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_EFFORT)" << std::endl;
-        desired_strategy = JOINT_EFFORT;
+        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
+        desired_strategy = JOINT_IMPEDANCE;
         break;
       }
     }
@@ -211,6 +215,8 @@ private:
   FRI_QUALITY lastQuality_;
   FRI_CTRL lastCtrlScheme_;
 
+  float sampling_rate_;
+
   boost::shared_ptr<std::thread> KRCCommThread_;
   bool stopKRCComm_ = false;
   void KRCCommThreadCallback()
@@ -228,6 +234,7 @@ private:
     // std::cout << "Waiting for good communication quality..." << std::endl;
     // while( device_->getQuality() != FRI_QUALITY_OK ){};
     device_->setToKRLInt(1, 1);
+    device_->doDataExchange();
 
     // std::cout << "Waiting for command mode..." << std::endl;
     // while ( device_->getFrmKRLInt(1) != 1 )

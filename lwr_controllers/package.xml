@@ -1,4 +1,4 @@
-<package>
+<package format="2">
   <name>lwr_controllers</name>
   <version>0.1.0</version>
   <description>lwr_controllers</description>
@@ -11,29 +11,18 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>angles</build_depend>
-  <build_depend>controller_interface</build_depend> 
-  <build_depend>control_msgs</build_depend> 
-  <build_depend>control_toolbox</build_depend> 
-  <build_depend>realtime_tools</build_depend> 
-  <build_depend>urdf</build_depend> 
-  <build_depend>forward_command_controller</build_depend>
-  <build_depend>dynamic_reconfigure</build_depend>
-  <build_depend>eigen</build_depend>
-  <build_depend>kdl_parser</build_depend>
-  <build_depend>message_generation</build_depend>
-
-  <run_depend>angles</run_depend>
-  <run_depend>controller_interface</run_depend> 
-  <run_depend>control_msgs</run_depend> 
-  <run_depend>control_toolbox</run_depend> 
-  <run_depend>realtime_tools</run_depend> 
-  <run_depend>urdf</run_depend> 
-  <run_depend>forward_command_controller</run_depend>
-  <run_depend>dynamic_reconfigure</run_depend>
-  <run_depend>eigen</run_depend>
-  <run_depend>kdl_parser</run_depend>
-  <run_depend>message_runtime</run_depend>
+  <depend>angles</depend>
+  <depend>controller_interface</depend> 
+  <depend>control_msgs</depend> 
+  <depend>control_toolbox</depend> 
+  <depend>realtime_tools</depend> 
+  <depend>urdf</depend> 
+  <depend>forward_command_controller</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>eigen</depend>
+  <depend>kdl_parser</depend>
+  <depend>message_runtime</depend>
+  <depend>geometry_msgs</depend>
 
   <export>
     <controller_interface plugin="${prefix}/lwr_controllers_plugins.xml"/>

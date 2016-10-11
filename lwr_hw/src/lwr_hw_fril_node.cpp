@@ -99,7 +99,7 @@ int main( int argc, char** argv )
   while( !g_quit ) 
   {
     // get the time / period
-    if (!clock_gettime(CLOCK_REALTIME, &ts)) 
+    if (!clock_gettime(CLOCK_MONOTONIC, &ts))
     {
       now.sec = ts.tv_sec;
       now.nsec = ts.tv_nsec;

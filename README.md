@@ -32,7 +32,16 @@ Adding an interface boils down to inherit from the [LWRHW class](lwr_hw/include/
 
 Examples of final interface class implementations are found for the [Kuka FRI](lwr_hw/include/lwr_hw/lwr_hw_fri.hpp), [Stanford FRI library](lwr_hw/include/lwr_hw/lwr_hw_fril.hpp) and a [Gazebo simulation](lwr_hw/include/lwr_hw/lwr_hw_gazebo.hpp). The corresponding nodes and plugin are found [here](lwr_hw/src/lwr_hw_fri_node.cpp), [here](lwr_hw/src/lwr_hw_fril_node.cpp), and [here](lwr_hw/src/lwr_hw_gazebo_plugin.cpp).
 
-## Using the Stanford FRI Library
+## How to run a real LWR 4+
+
+1. Load the script [`lwr_hw/krl/ros_control.src`](lwr_hw/krl/ros_control.src) and the corresponding [`.dat`](lwr_hw/krl/ros_control.src) on the robot. 
+2. Place the robot in a position where joints 1 and 3 are as bent as possible (at least 45 degrees) to avoid the "__FRI interpolation error__" message. A good way to check this is to go into gravity compensation, and see if the robot enters succesfully in that mode with the configured tool.
+3. Set the robot in __Position__ control.
+4. Start the script with the grey and green buttons; the scripts stops at a point and should be started again by releasing and pressing again the green button. You can also use the script in semi-automatic mode. 
+5. Start the ROS node, controllers will not start until the handshake is done.
+6. From this point on, you can manage/start/stop/run/switch controllers from ROS, and depending on which interface they use, the switch in the KRC unit is done automatically. Everytime there is a switch of interface, it might take a while to get the controllers running again. If the controllers use the same interface, the switch is done only in ROS, which is faster.
+
+### Additional information to use the Stanford FRI Library (not fully tested)
 
 You need to provide your user name with real time priority and memlock limits higher than the default ones. You can do it permanently like this:
 
