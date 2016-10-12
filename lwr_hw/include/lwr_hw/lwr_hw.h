@@ -71,6 +71,7 @@ public:
   hardware_interface::JointStateInterface state_interface_;
   hardware_interface::EffortJointInterface effort_interface_;
   hardware_interface::PositionJointInterface position_interface_;
+  hardware_interface::PositionCartesianInterface position_cart_interface_;
   // hardware_interface::StiffnessJointInterface stiffness_interface_; // ToDo
   // hardware_interface::ImpedanceointInterface impedance_interface_; // ToDo
 
@@ -94,6 +95,8 @@ public:
   // configuration
   int n_joints_ = 7; // safe magic number, the kuka lwr 4+ has 7 joints
   std::vector<std::string> joint_names_;
+  std::vector<std::string> cart_12_names_;
+  std::vector<std::string> cart_6_names_;
 
   // limits
   std::vector<double> 
@@ -117,7 +120,15 @@ public:
   joint_velocity_command_,
   joint_stiffness_command_,
   joint_damping_command_,
-  joint_effort_command_;
+  joint_effort_command_,
+  cart_pos_,
+  cart_stiff_,
+  cart_damp_,
+  cart_wrench_,
+  cart_pos_command_,
+  cart_stiff_command_,
+  cart_damp_command_,
+  cart_wrench_command_;
 
   // NOTE:
   // joint_velocity_command is not really to command the kuka arm in velocity,
