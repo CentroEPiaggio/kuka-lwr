@@ -31,6 +31,10 @@ add_message_files(
    CartesianImpedanceReference.msg
    Stiffness.msg
 )
+add_service_files(
+  FILES
+  SetCartesianImpedanceCommand.srv
+)
 
 generate_messages(
   DEPENDENCIES
