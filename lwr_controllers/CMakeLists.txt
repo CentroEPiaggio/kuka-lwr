@@ -28,7 +28,7 @@ add_message_files(
    RPY.msg
    MultiPriorityTask.msg
    ArmState.msg
-   CartesianImpedanceReference.msg
+   CartesianImpedancePoint.msg
    Stiffness.msg
 )
 add_service_files(
