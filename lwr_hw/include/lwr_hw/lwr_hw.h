@@ -27,6 +27,12 @@
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl_parser/kdl_parser.hpp>
 
+namespace hardware_interface
+{
+  /// \ref JointCommandInterface for commanding cartesian-based joints. DUMMY CLASS TO TRIGGER CARTESIAN INTERFACE
+  class PositionCartesianInterface : public JointCommandInterface {};
+}
+
 namespace lwr_hw
 {
 

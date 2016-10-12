@@ -16,7 +16,10 @@ find_package(catkin REQUIRED COMPONENTS
   kdl_conversions
   sensor_msgs
   std_msgs
+  lwr_hw
 )
+
+add_definitions (-fpermissive -std=c++11)
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
@@ -54,6 +57,7 @@ catkin_package(
     forward_command_controller
     kdl_parser
     message_runtime
+    lwr_hw
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )

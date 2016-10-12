@@ -25,6 +25,7 @@
   <depend>geometry_msgs</depend>
   <depend>kdl_conversions</depend>
   <depend>sensor_msgs</depend>
+  <depend>lwr_hw</depend>
   
   <build_depend>message_generation</build_depend>
   
