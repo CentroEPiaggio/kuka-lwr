@@ -212,7 +212,7 @@ public:
 
     if(desired_strategy == getControlStrategy())
     {
-      std::cout << "The ControlStrategy didn't changed, it is already: " << getControlStrategy() << std::endl;
+      std::cout << "The ControlStrategy didn't change, it is already: " << getControlStrategy() << std::endl;
     }
     else
     {

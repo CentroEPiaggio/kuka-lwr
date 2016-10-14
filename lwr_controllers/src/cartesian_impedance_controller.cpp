@@ -187,7 +187,7 @@ namespace lwr_controllers
         out[7] = in.p.y();
         out[8] = in.M.UnitX().z();
         out[9] = in.M.UnitY().z();
-        out[10] = in.M.UnitZ().y();
+        out[10] = in.M.UnitZ().z();
         out[11] = in.p.z();
 
     }

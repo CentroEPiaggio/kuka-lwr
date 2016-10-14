@@ -1,5 +1,5 @@
 lwr:
-  # CONTROLLERS USED IN THE EXAMLE
+  # CONTROLLERS USED IN THE EXAMPLE
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100  
