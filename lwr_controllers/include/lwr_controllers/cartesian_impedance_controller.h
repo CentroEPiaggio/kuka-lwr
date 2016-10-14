@@ -82,8 +82,14 @@ namespace lwr_controllers
 		// Computed torque
         // KDL::JntArray tau_cmd_;
 
-		// Because of the lack of the Jacobian transpose in KDL
-		void multiplyJacobian(const KDL::Jacobian& jac, const KDL::Wrench& src, KDL::JntArray& dest);
+        // Because of the lack of the Jacobian transpose in KDL
+        void multiplyJacobian(const KDL::Jacobian& jac, const KDL::Wrench& src, KDL::JntArray& dest);
+        
+        // Utility function to get the current pose
+        void getCurrentPose(KDL::Frame& f);
+        
+        // Utility function to forward commands to FRI
+        void forwardCmdFRI(const KDL::Frame& f);
 
         // FRI<->KDL conversion
         void fromKDLtoFRI(const KDL::Frame& in, std::vector<double>& out);

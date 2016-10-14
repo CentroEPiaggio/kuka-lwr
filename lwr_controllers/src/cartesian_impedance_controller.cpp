@@ -74,26 +74,16 @@ namespace lwr_controllers
         sub_ft_measures_ = n.subscribe(n.resolveName("ft_measures"), 1, &CartesianImpedanceController::updateFT, this);
         pub_goal_ = n.advertise<geometry_msgs::PoseStamped>(n.resolveName("goal"),0);
 
+        // // may be needed, to set initial commands asap
+        // starting(ros::Time::now());
+
         return true;
     }
 
     void CartesianImpedanceController::starting(const ros::Time& time)
     {
-        KDL::Rotation cur_R(cart_handles_.at(0).getPosition(),
-                            cart_handles_.at(1).getPosition(),
-                            cart_handles_.at(2).getPosition(),
-                            cart_handles_.at(4).getPosition(),
-                            cart_handles_.at(5).getPosition(),
-                            cart_handles_.at(6).getPosition(),
-                            cart_handles_.at(8).getPosition(),
-                            cart_handles_.at(9).getPosition(),
-                            cart_handles_.at(10).getPosition());
-        KDL::Vector cur_p(cart_handles_.at(3).getPosition(),
-                            cart_handles_.at(7).getPosition(),
-                            cart_handles_.at(11).getPosition());
-        KDL::Frame cur_T( cur_R, cur_p );
-        x_ref_ = cur_T;
-        x_des_ = cur_T;
+        getCurrentPose(x_ref_);
+        x_des_ = x_ref_;
 
         // Initial Cartesian stiffness
         KDL::Stiffness k( 800.0, 800.0, 800.0, 50.0, 50.0, 50.0 );
@@ -103,6 +93,8 @@ namespace lwr_controllers
         KDL::Wrench w(KDL::Vector(0.0, 0.0, 0.0), KDL::Vector(0.0, 0.0, 0.0));
         f_des_ = w;
 
+        // forward initial commands to hwi
+        forwardCmdFRI(x_des_);
     }
 
     void CartesianImpedanceController::command(const lwr_controllers::CartesianImpedancePoint::ConstPtr &msg)
@@ -148,35 +140,11 @@ namespace lwr_controllers
     {
         // get current values
         // std::cout << "Update current values" << std::endl;
-        KDL::Rotation cur_R(cart_handles_.at(0).getPosition(),
-                            cart_handles_.at(1).getPosition(),
-                            cart_handles_.at(2).getPosition(),
-                            cart_handles_.at(4).getPosition(),
-                            cart_handles_.at(5).getPosition(),
-                            cart_handles_.at(6).getPosition(),
-                            cart_handles_.at(8).getPosition(),
-                            cart_handles_.at(9).getPosition(),
-                            cart_handles_.at(10).getPosition());
-        KDL::Vector cur_p(cart_handles_.at(3).getPosition(),
-                            cart_handles_.at(7).getPosition(),
-                            cart_handles_.at(11).getPosition());
-        KDL::Frame cur_T( cur_R, cur_p );
-        x_cur_ = cur_T;
+        getCurrentPose(x_cur_);
 
-        fromKDLtoFRI(x_des_, cur_T_FRI_);
         // forward commands to hwi
         // std::cout << "Before forwarding the command" << std::endl;
-        for(int c = 0; c < 30; ++c)
-        {
-            if(c < 12)
-                cart_handles_.at(c).setCommand(cur_T_FRI_[c]);
-            if(c > 11 && c < 18)
-                cart_handles_.at(c-12).setCommand(k_des_[c-12]);
-            if(c > 17 && c < 24)
-                cart_handles_.at(c-18).setCommand(d_des_[c-18]);
-            if(c > 23 && c < 30)
-                cart_handles_.at(c-24).setCommand(f_des_[c-24]);
-        }
+        forwardCmdFRI(x_des_);
     }
 
     void CartesianImpedanceController::stopping(const ros::Time& time)
@@ -265,6 +233,39 @@ namespace lwr_controllers
         assert(in.size() == 6);
         KDL::Wrench w(KDL::Vector(in[0], in[1], in[2]), KDL::Vector(in[3], in[4], in[5]));
         out = w;
+    }
+
+    void CartesianImpedanceController::forwardCmdFRI(const KDL::Frame& f)
+    {
+        fromKDLtoFRI(f, cur_T_FRI_);
+        for(int c = 0; c < 30; ++c)
+        {
+            if(c < 12)
+                cart_handles_.at(c).setCommand(cur_T_FRI_[c]);
+            else if(c < 18)
+                cart_handles_.at(c).setCommand(k_des_[c-12]);
+            else if(c < 24)
+                cart_handles_.at(c).setCommand(d_des_[c-18]);
+            else if(c < 30)
+                cart_handles_.at(c).setCommand(f_des_[c-24]);
+        }
+    }
+
+    void CartesianImpedanceController::getCurrentPose(KDL::Frame& f)
+    {
+        KDL::Rotation cur_R(cart_handles_.at(0).getPosition(),
+                            cart_handles_.at(1).getPosition(),
+                            cart_handles_.at(2).getPosition(),
+                            cart_handles_.at(4).getPosition(),
+                            cart_handles_.at(5).getPosition(),
+                            cart_handles_.at(6).getPosition(),
+                            cart_handles_.at(8).getPosition(),
+                            cart_handles_.at(9).getPosition(),
+                            cart_handles_.at(10).getPosition());
+        KDL::Vector cur_p(cart_handles_.at(3).getPosition(),
+                          cart_handles_.at(7).getPosition(),
+                          cart_handles_.at(11).getPosition());
+        f = KDL::Frame( cur_R, cur_p );
     }
 
 }
