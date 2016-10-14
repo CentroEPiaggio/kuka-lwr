@@ -10,8 +10,7 @@
 
 // ROS controls
 #include <hardware_interface/robot_hw.h>
-#include <hardware_interface/joint_state_interface.h>
-#include <hardware_interface/joint_command_interface.h>
+#include <cartesian_hardware_interface/cartesian_command_interface.h>
 #include <transmission_interface/transmission_info.h>
 #include <transmission_interface/transmission_parser.h>
 #include <joint_limits_interface/joint_limits.h>
@@ -26,12 +25,6 @@
 #include <kdl/chain.hpp>
 #include <kdl/chaindynparam.hpp> //this to compute the gravity verctor
 #include <kdl_parser/kdl_parser.hpp>
-
-namespace hardware_interface
-{
-  /// \ref JointCommandInterface for commanding cartesian-based joints. DUMMY CLASS TO TRIGGER CARTESIAN INTERFACE
-  class PositionCartesianInterface : public JointCommandInterface {};
-}
 
 namespace lwr_hw
 {
@@ -77,6 +70,7 @@ public:
   hardware_interface::JointStateInterface state_interface_;
   hardware_interface::EffortJointInterface effort_interface_;
   hardware_interface::PositionJointInterface position_interface_;
+  hardware_interface::CartesianStateInterface cart_interface_;
   hardware_interface::PositionCartesianInterface position_cart_interface_;
   // hardware_interface::StiffnessJointInterface stiffness_interface_; // ToDo
   // hardware_interface::ImpedanceointInterface impedance_interface_; // ToDo

@@ -234,33 +234,33 @@ namespace lwr_hw
     // Now for cart variables
     for(int j=0; j < 12; ++j)
     {
-      state_interface_.registerHandle(hardware_interface::JointStateHandle(
+      cart_interface_.registerHandle(hardware_interface::CartesianStateHandle(
           cart_12_names_[j], &cart_pos_[j], &cart_stiff_[j], &cart_damp_[j]));
-      hardware_interface::JointHandle cart_pos_handle;
-      cart_pos_handle = hardware_interface::JointHandle(state_interface_.getHandle(cart_12_names_[j]),
+      hardware_interface::CartesianVariableHandle cart_pos_handle;
+      cart_pos_handle = hardware_interface::CartesianVariableHandle(cart_interface_.getHandle(cart_12_names_[j]),
                                                        &cart_pos_command_[j]);
       position_cart_interface_.registerHandle(cart_pos_handle);
     }
     for(int j=0; j < 6; ++j)
     {
-      state_interface_.registerHandle(hardware_interface::JointStateHandle(
+      cart_interface_.registerHandle(hardware_interface::CartesianStateHandle(
           cart_6_names_[j]+ std::string("_stiffness"), &cart_stiff_[j], &cart_damp_[j], &cart_wrench_[j]));
-      hardware_interface::JointHandle cart_stiff_handle;
-      cart_stiff_handle = hardware_interface::JointHandle(state_interface_.getHandle(cart_6_names_[j] + std::string("_stiffness")),
+      hardware_interface::CartesianVariableHandle cart_stiff_handle;
+      cart_stiff_handle = hardware_interface::CartesianVariableHandle(cart_interface_.getHandle(cart_6_names_[j] + std::string("_stiffness")),
                                                        &cart_stiff_command_[j]);
       position_cart_interface_.registerHandle(cart_stiff_handle);
 
-      state_interface_.registerHandle(hardware_interface::JointStateHandle(
+      cart_interface_.registerHandle(hardware_interface::CartesianStateHandle(
           cart_6_names_[j]+ std::string("_damping"), &cart_stiff_[j], &cart_damp_[j], &cart_wrench_[j]));
-      hardware_interface::JointHandle cart_damp_handle;
-      cart_damp_handle = hardware_interface::JointHandle(state_interface_.getHandle(cart_6_names_[j] + std::string("_damping")),
+      hardware_interface::CartesianVariableHandle cart_damp_handle;
+      cart_damp_handle = hardware_interface::CartesianVariableHandle(cart_interface_.getHandle(cart_6_names_[j] + std::string("_damping")),
                                                        &cart_damp_command_[j]);
       position_cart_interface_.registerHandle(cart_damp_handle);
 
-      state_interface_.registerHandle(hardware_interface::JointStateHandle(
+      cart_interface_.registerHandle(hardware_interface::CartesianStateHandle(
           cart_6_names_[j]+ std::string("_wrench"), &cart_stiff_[j], &cart_damp_[j], &cart_wrench_[j]));
-      hardware_interface::JointHandle cart_wrench_handle;
-      cart_wrench_handle = hardware_interface::JointHandle(state_interface_.getHandle(cart_6_names_[j] + std::string("_wrench")),
+      hardware_interface::CartesianVariableHandle cart_wrench_handle;
+      cart_wrench_handle = hardware_interface::CartesianVariableHandle(cart_interface_.getHandle(cart_6_names_[j] + std::string("_wrench")),
                                                        &cart_wrench_command_[j]);
       position_cart_interface_.registerHandle(cart_wrench_handle);
     }
@@ -269,6 +269,7 @@ namespace lwr_hw
     registerInterface(&state_interface_);
     registerInterface(&effort_interface_);
     registerInterface(&position_interface_);
+    registerInterface(&cart_interface_);
     registerInterface(&position_cart_interface_);
   }
 

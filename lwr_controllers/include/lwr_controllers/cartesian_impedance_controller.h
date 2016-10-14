@@ -39,7 +39,8 @@ namespace lwr_controllers
 
         std::string robot_namespace_;
         std::vector<std::string> joint_names_, cart_12_names_, cart_6_names_;
-        std::vector<hardware_interface::JointHandle> joint_handles_, cart_handles_;
+        std::vector<hardware_interface::JointHandle> joint_handles_;
+        std::vector<hardware_interface::CartesianVariableHandle> cart_handles_;
 		
         // ROS API (topic, service and dynamic reconfigure)
 		ros::Subscriber sub_command_;
