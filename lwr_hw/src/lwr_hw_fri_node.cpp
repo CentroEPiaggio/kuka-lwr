@@ -113,7 +113,8 @@ int main( int argc, char** argv )
   //the controller manager
   controller_manager::ControllerManager manager(&lwr_robot, lwr_nh);
 
-  // run as fast as possible
+  // run as fast as the robot interface, or as fast as possible
+  ros::Rate rate(1.0/sampling_time);
   while( !g_quit )
   {
     // get the time / period
@@ -158,6 +159,9 @@ int main( int argc, char** argv )
 
     // write the command to the lwr
     lwr_robot.write(now, period);
+
+    // if there is time left, sleep
+    rate.sleep();
   }
 
   std::cerr<<"Stopping spinner..."<<std::endl;
