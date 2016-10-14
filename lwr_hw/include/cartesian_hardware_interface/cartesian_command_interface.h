@@ -100,6 +100,13 @@ public:
         const std::string& myName;
     public:
         handleProxy( CartesianCommandInterface* owner, const std::string& name ) : myOwner(owner), myName(name) {}
+        /// the commented implementation is more generic, and more error prone: could try to call also different cast,
+        /// and may thus result in inconsistencies (as HardwareResourceManager<T,ClaimResources> only works for some T's
+        // template<class T>
+        // operator T() const
+        // {
+        //     return myOwner->HardwareResourceManager<T, ClaimResources>::getHandle(myName);
+        // }
         operator CartesianVariableHandle() const
         {
             return myOwner->HardwareResourceManager<CartesianVariableHandle, ClaimResources>::getHandle(myName);
@@ -118,8 +125,8 @@ public:
     /// get names for all resources
     std::vector<std::string> getNames() const
     {
-        std::vector<std::string> out1 = this->HardwareResourceManager<JointHandle, ClaimResources>::ResourceManager<JointHandle>::getNames();
-        std::vector<std::string> out2 = this->HardwareResourceManager<CartesianVariableHandle, ClaimResources>::ResourceManager<CartesianVariableHandle>::getNames();
+        std::vector<std::string> out1 = this->HardwareResourceManager<JointHandle, ClaimResources>::getNames();
+        std::vector<std::string> out2 = this->HardwareResourceManager<CartesianVariableHandle, ClaimResources>::getNames();
         out1.insert(out1.end(), std::make_move_iterator(out2.begin()), std::make_move_iterator(out2.end()));
         return out1;
     }
