@@ -208,59 +208,62 @@ namespace lwr_controllers
 
     void CartesianImpedanceController::fromKDLtoFRI(const KDL::Frame& in, std::vector<double>& out)
     {
-        out.resize(12);
-        out.at(0) = in.M.UnitX().x();
-        out.at(1) = in.M.UnitY().x();
-        out.at(2) = in.M.UnitZ().x();
-        out.at(3) = in.p.x();
-        out.at(4) = in.M.UnitX().y();
-        out.at(5) = in.M.UnitY().y();
-        out.at(6) = in.M.UnitZ().y();
-        out.at(7) = in.p.y();
-        out.at(8) = in.M.UnitX().z();
-        out.at(9) = in.M.UnitY().z();
-        out.at(10) = in.M.UnitZ().y();
-        out.at(11) = in.p.z();
+        assert(out.size() == 12);
+        out[0] = in.M.UnitX().x();
+        out[1] = in.M.UnitY().x();
+        out[2] = in.M.UnitZ().x();
+        out[3] = in.p.x();
+        out[4] = in.M.UnitX().y();
+        out[5] = in.M.UnitY().y();
+        out[6] = in.M.UnitZ().y();
+        out[7] = in.p.y();
+        out[8] = in.M.UnitX().z();
+        out[9] = in.M.UnitY().z();
+        out[10] = in.M.UnitZ().y();
+        out[11] = in.p.z();
 
     }
 
     void CartesianImpedanceController::fromKDLtoFRI(const KDL::Stiffness& in, std::vector<double>& out)
     {
-        out.resize(6);
+        assert(out.size() == 6);
         for( int d = 0; d < 6; ++d)
         {
-            out.at(d) = in[d];
+            out[d] = in[d];
         }
     }
 
     void CartesianImpedanceController::fromKDLtoFRI(const KDL::Wrench& in, std::vector<double>& out)
     {
-        out.resize(6);
-        out.at(0) = in.force.x();
-        out.at(1) = in.force.y();
-        out.at(2) = in.force.z();
-        out.at(3) = in.torque.x();
-        out.at(4) = in.torque.y();
-        out.at(5) = in.torque.z();
+        assert(out.size() == 6);
+        out[0] = in.force.x();
+        out[1] = in.force.y();
+        out[2] = in.force.z();
+        out[3] = in.torque.x();
+        out[4] = in.torque.y();
+        out[5] = in.torque.z();
     }
 
     void CartesianImpedanceController::fromFRItoKDL(const std::vector<double>& in, KDL::Frame& out)
     {
-        KDL::Rotation R(in.at(0), in.at(1), in.at(2), in.at(4), in.at(5), in.at(6), in.at(8), in.at(9), in.at(10));
-        KDL::Vector p(in.at(3), in.at(7), in.at(11));
+        assert(in.size() == 12);
+        KDL::Rotation R(in[0], in[1], in[2], in[4], in[5], in[6], in[8], in[9], in[10]);
+        KDL::Vector p(in[3], in[7], in[11]);
         KDL::Frame T(R, p);
         out = T;
     }
 
     void CartesianImpedanceController::fromFRItoKDL(const std::vector<double>& in, KDL::Stiffness& out)
     {
-        KDL::Stiffness s(in.at(0), in.at(1), in.at(2), in.at(3), in.at(4), in.at(5));
+        assert(in.size() == 6);
+        KDL::Stiffness s(in[0], in[1], in[2], in[3], in[4], in[5]);
         out = s;
     }
 
     void CartesianImpedanceController::fromFRItoKDL(const std::vector<double>& in, KDL::Wrench& out)
     {
-        KDL::Wrench w(KDL::Vector(in.at(0), in.at(1), in.at(2)), KDL::Vector(in.at(3), in.at(4), in.at(5)));
+        assert(in.size() == 6);
+        KDL::Wrench w(KDL::Vector(in[0], in[1], in[2]), KDL::Vector(in[3], in[4], in[5]));
         out = w;
     }
 
