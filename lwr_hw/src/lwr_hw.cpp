@@ -457,7 +457,7 @@ namespace lwr_hw
 
   bool LWRHW::canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const
   {
-    std::vector<ControlStrategy> desired_strategies;
+    int counter = 0;
     
     for ( std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it )
     {
@@ -473,19 +473,19 @@ namespace lwr_hw
       {
         // Debug
         // std::cout << "One controller wants to work on hardware_interface::PositionJointInterface" << std::endl;
-        desired_strategies.push_back( JOINT_POSITION );
+        ++counter;
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
       {
         // Debug
         // std::cout << "One controller wants to work on hardware_interface::EffortJointInterface" << std::endl;
-        desired_strategies.push_back( JOINT_IMPEDANCE );
+        ++counter;
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
       {
         // Debug
         // std::cout << "One controller wants to work on hardware_interface::PositionCartesianInterface" << std::endl;
-        desired_strategies.push_back( CARTESIAN_IMPEDANCE );
+        ++counter;
       }
       else
       {
@@ -494,7 +494,7 @@ namespace lwr_hw
       }
     }
 
-    if( desired_strategies.size() > 1 )
+    if( counter > 1 )
     {
       std::cout << "OOPS! Currently we are using the JointCommandInterface to switch mode, this is not strictly correct. " 
                 << "This is temporary until a joint_mode_controller is available (so you can have different interfaces available in different modes)"

@@ -6,7 +6,7 @@
 
 namespace lwr_controllers 
 {
-    CartesianImpedanceController::CartesianImpedanceController() {}
+    CartesianImpedanceController::CartesianImpedanceController() : cur_T_FRI_(12) {}
     CartesianImpedanceController::~CartesianImpedanceController() {}
 
     bool CartesianImpedanceController::init(hardware_interface::PositionCartesianInterface *robot, ros::NodeHandle &n)
@@ -163,16 +163,13 @@ namespace lwr_controllers
         KDL::Frame cur_T( cur_R, cur_p );
         x_cur_ = cur_T;
 
-
-        std::vector<double> cur_T_FRI;
-
-        fromKDLtoFRI(x_des_, cur_T_FRI);
+        fromKDLtoFRI(x_des_, cur_T_FRI_);
         // forward commands to hwi
         // std::cout << "Before forwarding the command" << std::endl;
         for(int c = 0; c < 30; ++c)
         {
             if(c < 12)
-                cart_handles_.at(c).setCommand(cur_T_FRI.at(c));
+                cart_handles_.at(c).setCommand(cur_T_FRI_[c]);
             if(c > 11 && c < 18)
                 cart_handles_.at(c-12).setCommand(k_des_[c-12]);
             if(c > 17 && c < 24)

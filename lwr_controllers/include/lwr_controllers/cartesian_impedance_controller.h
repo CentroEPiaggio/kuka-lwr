@@ -54,6 +54,9 @@ namespace lwr_controllers
         KDL::Frame x_cur_;
         KDL::Frame x_FRI_;
 		KDL::Twist x_err_;
+        
+        // FRI vars
+        std::vector<double> cur_T_FRI_;
 
 		// The jacobian at q_msg
         // KDL::Jacobian J_;
