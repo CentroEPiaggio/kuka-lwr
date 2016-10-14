@@ -147,7 +147,7 @@ namespace lwr_controllers
     void CartesianImpedanceController::update(const ros::Time& time, const ros::Duration& period)
     {
         // get current values
-        std::cout << "Update current values" << std::endl;
+        // std::cout << "Update current values" << std::endl;
         KDL::Rotation cur_R(cart_handles_.at(0).getPosition(),
                             cart_handles_.at(1).getPosition(),
                             cart_handles_.at(2).getPosition(),
@@ -168,7 +168,7 @@ namespace lwr_controllers
 
         fromKDLtoFRI(x_des_, cur_T_FRI);
         // forward commands to hwi
-        std::cout << "Before forwarding the command" << std::endl;
+        // std::cout << "Before forwarding the command" << std::endl;
         for(int c = 0; c < 30; ++c)
         {
             if(c < 12)
