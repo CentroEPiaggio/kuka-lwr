@@ -5,6 +5,7 @@
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <lwr_controllers/Stiffness.h>
+#include <tf/transform_listener.h>
 
 // KDL added
 #include <kdl/stiffness.hpp>
@@ -37,7 +38,7 @@ namespace lwr_controllers
 
     protected:
 
-        std::string robot_namespace_;
+        std::string robot_namespace_, root_name_, tip_name_;
         std::vector<std::string> joint_names_, cart_12_names_, cart_6_names_;
         std::vector<hardware_interface::JointHandle> joint_handles_;
         std::vector<hardware_interface::CartesianVariableHandle> cart_handles_;
@@ -47,6 +48,9 @@ namespace lwr_controllers
         ros::ServiceServer srv_command_;
         ros::Subscriber sub_ft_measures_;
         ros::Publisher pub_goal_;
+        
+        // Transformation from robot base to controller base
+        KDL::Frame robotBase_controllerBase_;
 
 		// Cartesian vars
         KDL::Frame x_ref_;

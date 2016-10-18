@@ -26,6 +26,7 @@
   <depend>kdl_conversions</depend>
   <depend>sensor_msgs</depend>
   <depend>lwr_hw</depend>
+  <depend>tf_conversions</depend>
   
   <build_depend>message_generation</build_depend>
   

@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   lwr_hw
+  tf_conversions
 )
 
 add_definitions (-fpermissive -std=c++11)

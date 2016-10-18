@@ -1,6 +1,7 @@
 #include <math.h>
 #include <pluginlib/class_list_macros.h>
 #include <kdl_conversions/kdl_msg.h>
+#include <tf_conversions/tf_kdl.h>
 
 #include "lwr_controllers/cartesian_impedance_controller.h"
 
@@ -24,6 +25,30 @@ namespace lwr_controllers
             ROS_WARN_STREAM("CartesianImpedanceController: Could not read robot name from parameter server ("<<n.getNamespace()<<"/robot_name), using the namespace...");
             robot_namespace_ = n.getNamespace();
             //return false;
+        }
+        if (!n.getParam("root_name", root_name_))
+        {
+            ROS_WARN_STREAM("CartesianImpedanceController: Could not read robot root name from parameter server ("<<n.getNamespace()<<"/root_name). Considering it to be equal to #BASE as defined in the KRC!!!");
+            root_name_ = robot_namespace_ + "_base_link";
+        }
+        else
+        {
+            tf::TransformListener listener;
+            tf::StampedTransform transform;
+            listener.waitForTransform(robot_namespace_ + "_base_link", root_name_, ros::Time::now(), ros::Duration(1.0));
+            try{
+                listener.lookupTransform( robot_namespace_ + "_base_link", root_name_,  ros::Time(0), transform);
+            }
+            catch (tf::TransformException ex){
+                ROS_ERROR_STREAM("CartesianImpedanceController: Could not read transform from "<< robot_namespace_ << "_base_link to " << root_name_ << ": " << ex.what());
+                return false;
+            }
+            
+            tf::poseTFToKDL(tf::Transform(transform.getRotation(), transform.getOrigin()), robotBase_controllerBase_);
+        }
+        if (n.getParam("tip_name", tip_name_))
+        {
+            ROS_WARN_STREAM("CartesianImpedanceController: robot tip name is " << tip_name_ << ". In this controller it is ignored. Using tip name defined in #TOOL in the KRC!!!");
         }
 
         joint_names_.push_back( robot_namespace_ + std::string("_a1_joint") );
@@ -89,6 +114,10 @@ namespace lwr_controllers
         KDL::Stiffness k( 800.0, 800.0, 800.0, 50.0, 50.0, 50.0 );
         k_des_ = k;
 
+        // Initial Cartesian damping
+        KDL::Stiffness d( 0.8, 0.8, 0.8, 0.8, 0.8, 0.8 );
+        d_des_ = d;
+        
         // Initial force/torque measure
         KDL::Wrench w(KDL::Vector(0.0, 0.0, 0.0), KDL::Vector(0.0, 0.0, 0.0));
         f_des_ = w;
@@ -104,6 +133,8 @@ namespace lwr_controllers
 
         // Compute a KDL frame out of the message
         tf::poseMsgToKDL( msg->x_FRI, x_des_ );
+        // Pre-multiply the pose to make sure it is expressed in the correct frame
+        x_des_ = robotBase_controllerBase_ * x_des_;
 
         // Convert Wrench msg to KDL wrench
         tf::wrenchMsgToKDL( msg->f_FRI, f_des_ );
@@ -114,6 +145,10 @@ namespace lwr_controllers
             ROS_INFO("Updating Stiffness command");
             KDL::Stiffness k( msg->k_FRI.x, msg->k_FRI.y, msg->k_FRI.z, msg->k_FRI.rx, msg->k_FRI.ry, msg->k_FRI.rz );
             k_des_ = k;
+            
+            ROS_INFO("Updating Damping command");
+            KDL::Stiffness d( msg->d_FRI.x, msg->d_FRI.y, msg->d_FRI.z, msg->d_FRI.rx, msg->d_FRI.ry, msg->d_FRI.rz );
+            d_des_ = d;
         //}
 
         // publishe goal
