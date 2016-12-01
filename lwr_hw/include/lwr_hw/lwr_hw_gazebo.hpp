@@ -19,7 +19,7 @@ class LWRHWGazebo : public LWRHW
 {
 public:
 
-  LWRHWGazebo() : LWRHW() {}
+  LWRHWGazebo() : LWRHW(), ts_(3.0), lastT_(0.0) {}
   ~LWRHWGazebo() {}
 
   void setParentModel(gazebo::physics::ModelPtr parent_model){parent_model_ = parent_model; parent_set_ = true;};
@@ -87,7 +87,24 @@ public:
         break;
 
       case CARTESIAN_IMPEDANCE:
-        ROS_WARN("CARTESIAN IMPEDANCE NOT IMPLEMENTED");
+        if(time-lastT_ < ts_)
+            break;
+        lastT_ = time;
+        ROS_WARN("CARTESIAN IMPEDANCE NOT AVAILABLE IN GAZEBO, PRINTING THE COMMANDED VALUES:");
+        std::cout << "Notice that this printing is done only every " << ts_.toSec() << " seconds: to change this, change ts_ in lwr_hw_gazebo.hpp..." << std::endl;
+        std::cout << "cart_pos_command_ = | ";
+        for(int i=0; i < 12; ++i)
+            std::cout << cart_pos_command_[i] << " | ";
+        std::cout << std::endl << "cart_stiff_command_ = | ";
+        for(int i=0; i < 6; i++)
+            std::cout << cart_stiff_command_[i] << " | ";
+        std::cout << std::endl << "cart_damp_command_ = | ";
+        for(int i=0; i < 6; i++)
+            std::cout << cart_damp_command_[i] << " | ";
+        std::cout << std::endl << "cart_wrench_command_ = | ";
+        for(int i=0; i < 6; i++)
+            std::cout << cart_wrench_command_[i] << " | ";
+        std::cout << std::endl << "Here, the call to doCartesianImpedanceControl() is done" << std::endl;
         break;
 
       case JOINT_IMPEDANCE:
@@ -117,6 +134,8 @@ private:
   std::vector<gazebo::physics::JointPtr> sim_joints_;
   gazebo::physics::ModelPtr parent_model_;
   bool parent_set_ = false;
+  ros::Duration ts_;
+  ros::Time lastT_;
 
 };
 

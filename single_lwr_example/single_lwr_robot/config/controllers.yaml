@@ -1,5 +1,5 @@
 lwr:
-  # CONTROLLERS USED IN THE EXAMLE
+  # CONTROLLERS USED IN THE EXAMPLE
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100  
@@ -62,6 +62,13 @@ lwr:
   # One Task Inverse Kinematics
   one_task_inverse_kinematics:
     type: lwr_controllers/OneTaskInverseKinematics
+    root_name: lwr_base_link
+    tip_name: lwr_7_link
+
+  # Cartesian Impedance
+  cartesian_impedance_controller:
+    type: lwr_controllers/CartesianImpedanceController
+    robot_name: lwr
     root_name: lwr_base_link
     tip_name: lwr_7_link
 

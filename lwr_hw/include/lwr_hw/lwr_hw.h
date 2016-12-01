@@ -10,8 +10,7 @@
 
 // ROS controls
 #include <hardware_interface/robot_hw.h>
-#include <hardware_interface/joint_state_interface.h>
-#include <hardware_interface/joint_command_interface.h>
+#include <cartesian_hardware_interface/cartesian_command_interface.h>
 #include <transmission_interface/transmission_info.h>
 #include <transmission_interface/transmission_parser.h>
 #include <joint_limits_interface/joint_limits.h>
@@ -50,9 +49,9 @@ public:
   // JOINT_POSITION -> strategy 10 -> triggered with PoitionJointInterface
   // CARTESIAN_IMPEDANCE -> strategy 20 (not implemented)
   // JOINT_IMPEDANCE -> strategy 30 -> triggered with (ToDo) ImpedanceJointInterface
-  // JOINT_EFFORT -> strategy 30 with special configuration, triggered with EffortJointInterface
-  // JOINT_STIFFNESS -> strategy 30 with special configuration, trigered with (ToDo) StiffnessJointInterface
-  // GRAVITY_COMPENSATION -> (not implemented, achieved with low stiffness)
+// JOINT_EFFORT -> strategy 40 with special configuration, triggered with EffortJointInterface
+// JOINT_STIFFNESS -> strategy 50 with special configuration, trigered with (ToDo) StiffnessJointInterface
+// GRAVITY_COMPENSATION -> (does not exist in the real robot, achieved with low stiffness)
   // __Note__: StiffnessJointInterface + EffortJointInterface = ImpedanceJointInterface
   enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, JOINT_EFFORT = 40, JOINT_STIFFNESS = 50, GRAVITY_COMPENSATION = 90};
   virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const;
@@ -71,6 +70,8 @@ public:
   hardware_interface::JointStateInterface state_interface_;
   hardware_interface::EffortJointInterface effort_interface_;
   hardware_interface::PositionJointInterface position_interface_;
+  hardware_interface::CartesianStateInterface cart_interface_;
+  hardware_interface::PositionCartesianInterface position_cart_interface_;
   // hardware_interface::StiffnessJointInterface stiffness_interface_; // ToDo
   // hardware_interface::ImpedanceointInterface impedance_interface_; // ToDo
 
@@ -94,6 +95,8 @@ public:
   // configuration
   int n_joints_ = 7; // safe magic number, the kuka lwr 4+ has 7 joints
   std::vector<std::string> joint_names_;
+  std::vector<std::string> cart_12_names_;
+  std::vector<std::string> cart_6_names_;
 
   // limits
   std::vector<double> 
@@ -117,7 +120,15 @@ public:
   joint_velocity_command_,
   joint_stiffness_command_,
   joint_damping_command_,
-  joint_effort_command_;
+  joint_effort_command_,
+  cart_pos_,
+  cart_stiff_,
+  cart_damp_,
+  cart_wrench_,
+  cart_pos_command_,
+  cart_stiff_command_,
+  cart_damp_command_,
+  cart_wrench_command_;
 
   // NOTE:
   // joint_velocity_command is not really to command the kuka arm in velocity,

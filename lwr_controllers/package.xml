@@ -23,7 +23,13 @@
   <depend>kdl_parser</depend>
   <depend>message_runtime</depend>
   <depend>geometry_msgs</depend>
-
+  <depend>kdl_conversions</depend>
+  <depend>sensor_msgs</depend>
+  <depend>lwr_hw</depend>
+  <depend>tf_conversions</depend>
+  
+  <build_depend>message_generation</build_depend>
+  
   <export>
     <controller_interface plugin="${prefix}/lwr_controllers_plugins.xml"/>
   </export>

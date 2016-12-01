@@ -6,6 +6,12 @@
     </description>
   </class>
   
+  <class name="lwr_controllers/CartesianImpedanceController" type="lwr_controllers::CartesianImpedanceController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      This replicates the Cartesian impedance control of the LWR 4+, but it uses JOINT_EFFORT mode to send the computed torque. Note that, this won't work generally in any robot, since the dynamic term should be added (f_dyn(q, qdot, qdotdot)).
+    </description>
+  </class>
+    
   <class name="lwr_controllers/GravityCompensation" type="lwr_controllers::GravityCompensation" base_class_type="controller_interface::ControllerBase">
     <description>
       Safe gravity compensation.

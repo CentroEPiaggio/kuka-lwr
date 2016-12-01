@@ -78,6 +78,16 @@ public:
       joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j]-joint_position_prev_[j])/period.toSec(), joint_velocity_[j], 0.2);
       joint_stiffness_[j] = joint_stiffness_command_[j];
     }
+    for(int j = 0; j < 12; j++)
+    {
+        cart_pos_[j] = device_->getMsrCartPosition()[j];
+    }
+    for(int j = 0; j < 6; j++)
+    {
+        cart_stiff_[j] = cart_stiff_command_[j];
+        cart_damp_[j] = cart_damp_command_[j];
+        cart_wrench_[j] = cart_wrench_command_[j];
+    }
     return;
   }
 
@@ -89,6 +99,10 @@ public:
     float newJntStiff[n_joints_];
     float newJntDamp[n_joints_];
     float newJntAddTorque[n_joints_];
+    float newCartPos[12];
+    float newCartStiff[6];
+    float newCartDamp[6];
+    float newAddFT[6];
 
     switch (getControlStrategy())
     {
@@ -101,6 +115,17 @@ public:
         break;
 
       case CARTESIAN_IMPEDANCE:
+        for(int i=0; i < 12; ++i)
+        {
+          newCartPos[i] = cart_pos_command_[i];
+        }
+        for(int i=0; i < 6; i++)
+        {
+          newCartStiff[i] = cart_stiff_command_[i];
+          newCartDamp[i] = cart_damp_command_[i];
+          newAddFT[i] = cart_wrench_command_[i];
+        }
+        device_->doCartesianImpedanceControl(newCartPos, newCartStiff, newCartDamp, newAddFT, NULL, false);
         break;
 
       case JOINT_IMPEDANCE:
@@ -160,6 +185,12 @@ public:
         desired_strategy = JOINT_IMPEDANCE;
         break;
       }
+      else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
+      {
+        std::cout << "Request to switch to hardware_interface::PositionCartesianInterface (CARTESIAN_IMPEDANCE)" << std::endl;
+        desired_strategy = CARTESIAN_IMPEDANCE;
+        break;
+      }
     }
 
     for (int j = 0; j < n_joints_; ++j)
@@ -181,7 +212,7 @@ public:
 
     if(desired_strategy == getControlStrategy())
     {
-      std::cout << "The ControlStrategy didn't changed, it is already: " << getControlStrategy() << std::endl;
+      std::cout << "The ControlStrategy didn't change, it is already: " << getControlStrategy() << std::endl;
     }
     else
     {
@@ -190,8 +221,11 @@ public:
       // send to KRL the new strategy
       if( desired_strategy == JOINT_POSITION )
         device_->setToKRLInt(0, JOINT_POSITION);
-      else if( desired_strategy >= JOINT_IMPEDANCE)
+      else if( desired_strategy == JOINT_IMPEDANCE)
         device_->setToKRLInt(0, JOINT_IMPEDANCE);
+      else if( desired_strategy == CARTESIAN_IMPEDANCE)
+        device_->setToKRLInt(0, CARTESIAN_IMPEDANCE);
+
 
       startFRI();
 

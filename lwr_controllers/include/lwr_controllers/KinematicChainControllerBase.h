@@ -4,7 +4,7 @@
 #include <control_msgs/JointControllerState.h> // TODO: state message for all controllers?
 
 #include <urdf/model.h>
-#include <hardware_interface/joint_command_interface.h>
+#include <lwr_hw/lwr_hw.h>
 #include <controller_interface/controller.h>
 #include <ros/node_handle.h>
 #include <ros/ros.h>

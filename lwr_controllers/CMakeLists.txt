@@ -14,7 +14,13 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   cmake_modules
   kdl_conversions
+  sensor_msgs
+  std_msgs
+  lwr_hw
+  tf_conversions
 )
+
+add_definitions (-fpermissive -std=c++11)
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
 
@@ -26,12 +32,19 @@ add_message_files(
    RPY.msg
    MultiPriorityTask.msg
    ArmState.msg
+   CartesianImpedancePoint.msg
+   Stiffness.msg
+)
+add_service_files(
+  FILES
+  SetCartesianImpedanceCommand.srv
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
   geometry_msgs
+  sensor_msgs
 )
 
 catkin_package(
@@ -45,6 +58,7 @@ catkin_package(
     forward_command_controller
     kdl_parser
     message_runtime
+    lwr_hw
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )
@@ -63,6 +77,7 @@ add_library(${PROJECT_NAME}
   src/one_task_inverse_dynamics_jl.cpp
   src/gravity_compensation.cpp
   src/arm_state_controller.cpp
+  src/cartesian_impedance_controller.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
