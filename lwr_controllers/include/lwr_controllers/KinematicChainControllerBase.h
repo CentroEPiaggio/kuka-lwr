@@ -47,6 +47,12 @@ namespace controller_interface
 		} joint_limits_;
 
 		std::vector<typename JI::ResourceHandleType> joint_handles_;
+        std::vector<typename JI::ResourceHandleType> joint_stiffness_handles_;
+        std::vector<typename JI::ResourceHandleType> joint_damping_handles_;
+        std::vector<typename JI::ResourceHandleType> joint_set_point_handles_;
+        
+        bool getHandles(JI *robot);
+        
 	};
     
     template <typename JI>
@@ -161,12 +167,8 @@ namespace controller_interface
         }
 
         // Get joint handles for all of the joints in the chain
-        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
-        {
-            joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
-            ROS_DEBUG("%s", it->getJoint().getName().c_str() );
-        }
-
+        getHandles(robot);
+        
         ROS_DEBUG("Number of joints in handle = %lu", joint_handles_.size() );
         
         joint_msr_states_.resize(kdl_chain_.getNrOfJoints());
@@ -174,7 +176,19 @@ namespace controller_interface
 
         return true;
     }
-
+    
+    template <typename JI>
+    bool KinematicChainControllerBase<JI>::getHandles(JI *robot)
+    {
+        for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
+        {
+            joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
+            ROS_DEBUG("%s", it->getJoint().getName().c_str() );
+        }        
+        return true;
+    }
+    
+    
 }
 
 #endif
