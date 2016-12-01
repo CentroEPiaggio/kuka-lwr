@@ -106,8 +106,8 @@ namespace lwr_hw
       joint_position_command_[j] = 0.0;
       joint_velocity_command_[j] = 0.0;
       joint_effort_command_[j] = 0.0;
-      joint_stiffness_command_[j] = 2500.0;
-      joint_damping_command_[j] = 0.0;
+      joint_stiffness_command_[j] = 1000.0;
+      joint_damping_command_[j] = 0.7;
     }
 
     for(int i=0; i < 12; ++i)
