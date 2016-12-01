@@ -205,6 +205,13 @@ namespace lwr_hw
       joint_handle_position = hardware_interface::JointHandle(state_interface_.getHandle(joint_names_[j]),
                                                        &joint_position_command_[j]);
       position_interface_.registerHandle(joint_handle_position);
+      
+      hardware_interface::JointHandle joint_handle_set_point;
+      joint_handle_set_point = hardware_interface::JointHandle(hardware_interface::JointStateHandle(
+                                                                   joint_names_[j]+std::string("_set_point"),
+                                                                   &joint_position_[j], &joint_velocity_[j], &joint_effort_[j]),
+                                                       &joint_position_command_[j]);
+      effort_interface_.registerHandle(joint_handle_set_point);
 
       // the stiffness is not actually a different joint, so the state handle is only used for handle
       hardware_interface::JointHandle joint_handle_stiffness;
@@ -212,7 +219,16 @@ namespace lwr_hw
                                                                    joint_names_[j]+std::string("_stiffness"),
                                                                    &joint_stiffness_[j], &joint_stiffness_[j], &joint_stiffness_[j]),
                                                        &joint_stiffness_command_[j]);
-      position_interface_.registerHandle(joint_handle_stiffness);
+      // FIXME: This interface is not working properly. It was relaying on an old ros_control fork already deprecated.
+      //position_interface_.registerHandle(joint_handle_stiffness);
+      effort_interface_.registerHandle(joint_handle_stiffness);
+      
+      hardware_interface::JointHandle joint_handle_damping;
+      joint_handle_damping = hardware_interface::JointHandle(hardware_interface::JointStateHandle(
+                                                                    joint_names_[j]+std::string("_damping"),  
+                                                                    &joint_damping_[j], &joint_damping_[j], &joint_damping_[j]),
+                                                                    &joint_damping_command_[j]);
+      effort_interface_.registerHandle(joint_handle_damping);
    
      // velocity command handle, recall it is fake, there is no actual velocity interface
       hardware_interface::JointHandle joint_handle_velocity;
