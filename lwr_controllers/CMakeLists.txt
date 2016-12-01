@@ -78,6 +78,7 @@ add_library(${PROJECT_NAME}
   src/gravity_compensation.cpp
   src/arm_state_controller.cpp
   src/cartesian_impedance_controller.cpp
+  src/KinematicChainControllerBase.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
