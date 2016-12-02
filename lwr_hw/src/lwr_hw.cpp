@@ -47,6 +47,7 @@ namespace lwr_hw
     joint_stiffness_.resize(n_joints_);
     joint_damping_.resize(n_joints_);
     joint_position_command_.resize(n_joints_);
+    joint_set_point_command_.resize(n_joints_);
     joint_velocity_command_.resize(n_joints_);
     joint_effort_command_.resize(n_joints_);
     joint_stiffness_command_.resize(n_joints_);
@@ -104,6 +105,7 @@ namespace lwr_hw
       joint_damping_[j] = 0.0;
 
       joint_position_command_[j] = 0.0;
+      joint_set_point_command_[j] = 0.0;
       joint_velocity_command_[j] = 0.0;
       joint_effort_command_[j] = 0.0;
       joint_stiffness_command_[j] = 1000.0;
@@ -210,7 +212,7 @@ namespace lwr_hw
       joint_handle_set_point = hardware_interface::JointHandle(hardware_interface::JointStateHandle(
                                                                    joint_names_[j]+std::string("_set_point"),
                                                                    &joint_position_[j], &joint_velocity_[j], &joint_effort_[j]),
-                                                       &joint_position_command_[j]);
+                                                       &joint_set_point_command_[j]);
       effort_interface_.registerHandle(joint_handle_set_point);
 
       // the stiffness is not actually a different joint, so the state handle is only used for handle

@@ -118,7 +118,7 @@ public:
 
             for(int j=0; j < n_joints_; j++)
             {
-              newJntPosition[j] = (float)joint_position_command_[j];
+              newJntPosition[j] = (float)joint_set_point_command_[j];
               newJntAddTorque[j] = (float)joint_effort_command_[j];
               newJntStiff[j] = (float)joint_stiffness_command_[j];
               newJntDamp[j] = (float)joint_damping_command_[j];

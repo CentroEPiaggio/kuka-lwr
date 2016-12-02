@@ -117,6 +117,7 @@ public:
   joint_stiffness_,
   joint_damping_,
   joint_position_command_,
+  joint_set_point_command_,
   joint_velocity_command_,
   joint_stiffness_command_,
   joint_damping_command_,

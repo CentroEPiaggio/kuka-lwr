@@ -131,7 +131,7 @@ public:
       case JOINT_IMPEDANCE:
         for(int j=0; j < n_joints_; j++)
         {
-          newJntPosition[j] = joint_position_command_[j];
+          newJntPosition[j] = joint_set_point_command_[j];
           newJntAddTorque[j] = joint_effort_command_[j];
           newJntStiff[j] = joint_stiffness_command_[j];
           newJntDamp[j] = joint_damping_command_[j];
@@ -152,7 +152,7 @@ public:
       case JOINT_STIFFNESS:
         for(int j=0; j < n_joints_; j++)
         {
-          newJntPosition[j] = joint_position_command_[j];
+          newJntPosition[j] = joint_set_point_command_[j];
           newJntStiff[j] = joint_stiffness_command_[j];
         }
         device_->doJntImpedanceControl(newJntPosition, newJntStiff, NULL, NULL, false);
