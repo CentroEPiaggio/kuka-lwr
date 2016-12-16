@@ -7,11 +7,14 @@ bool KinematicChainControllerBase<hardware_interface::EffortJointInterface>::get
 {
     for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
     {
-        joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
-        joint_stiffness_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_stiffness")));
-        joint_damping_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_damping")));
-        joint_set_point_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_set_point")));
-        ROS_DEBUG("%s", it->getJoint().getName().c_str() );
+    	if ( it->getJoint().getType() != 8 )
+        {
+	        joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
+	        joint_stiffness_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_stiffness")));
+	        joint_damping_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_damping")));
+	        joint_set_point_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_set_point")));
+	        ROS_DEBUG("%s", it->getJoint().getName().c_str() );
+	    }
     }
     return true;
 }
