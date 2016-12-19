@@ -65,6 +65,8 @@ namespace lwr_hw
     joint_upper_limits_.resize(n_joints_);
     joint_lower_limits_stiffness_.resize(n_joints_);
     joint_upper_limits_stiffness_.resize(n_joints_);
+    joint_upper_limits_damping_.resize(n_joints_);
+    joint_lower_limits_damping_.resize(n_joints_);
     joint_effort_limits_.resize(n_joints_);
 
     // RESET VARIABLES
@@ -242,11 +244,14 @@ namespace lwr_hw
                           joint_handle_position,
                           joint_handle_velocity,
                           joint_handle_stiffness,
+                          joint_handle_damping,
                           urdf_model, 
+                          &joint_effort_limits_[j],
                           &joint_lower_limits_[j], &joint_upper_limits_[j],
                           &joint_lower_limits_stiffness_[j],
                           &joint_upper_limits_stiffness_[j],
-                          &joint_effort_limits_[j]);
+                          &joint_lower_limits_damping_[j],
+                          &joint_upper_limits_damping_[j]);
     }
 
     // Now for cart variables
@@ -294,26 +299,24 @@ namespace lwr_hw
   // Register the limits of the joint specified by joint_name and\ joint_handle. The limits are
   // retrieved from the urdf_model.
   // Return the joint's type, lower position limit, upper position limit, and effort limit.
-  void LWRHW::registerJointLimits(const std::string& joint_name,
-                           const hardware_interface::JointHandle& joint_handle_effort,
-                           const hardware_interface::JointHandle& joint_handle_position,
-                           const hardware_interface::JointHandle& joint_handle_velocity,
-                           const hardware_interface::JointHandle& joint_handle_stiffness,
-                           const urdf::Model *const urdf_model,
-                           double *const lower_limit, double *const upper_limit, 
-                           double *const lower_limit_stiffness, double *const upper_limit_stiffness,
-                           double *const effort_limit)
-  {
+  // TODO: register limits for cartesian variables
+
+  void LWRHW::registerJointLimits(const std::string& joint_name, const hardware_interface::JointHandle& joint_handle_effort, const hardware_interface::JointHandle& joint_handle_position, const hardware_interface::JointHandle& joint_handle_velocity, const hardware_interface::JointHandle& joint_handle_stiffness,  const hardware_interface::JointHandle& joint_handle_damping, const urdf::Model*const urdf_model, double*const effort_limit, double*const lower_limit, double*const upper_limit, double*const lower_limit_stiffness, double*const upper_limit_stiffness, double*const lower_limit_damping, double*const upper_limit_damping)
+{
     *lower_limit = -std::numeric_limits<double>::max();
     *upper_limit = std::numeric_limits<double>::max();
     *lower_limit_stiffness = -std::numeric_limits<double>::max();
     *upper_limit_stiffness = std::numeric_limits<double>::max();
+    *lower_limit_damping = -std::numeric_limits<double>::max();
+    *upper_limit_damping = std::numeric_limits<double>::max();
     *effort_limit = std::numeric_limits<double>::max();
 
     joint_limits_interface::JointLimits limits;
     joint_limits_interface::JointLimits limits_stiffness;
+    joint_limits_interface::JointLimits limits_damping;
     bool has_limits = false;
     bool has_limits_stiffness = false;
+    bool has_limits_damping = false;
     joint_limits_interface::SoftJointLimits soft_limits;
     bool has_soft_limits = false;
 
@@ -321,6 +324,7 @@ namespace lwr_hw
     {
       const boost::shared_ptr<const urdf::Joint> urdf_joint = urdf_model->getJoint(joint_name);
       const boost::shared_ptr<const urdf::Joint> urdf_joint_sitffness = urdf_model->getJoint(joint_name + std::string("_stiffness"));
+      const boost::shared_ptr<const urdf::Joint> urdf_joint_damping = urdf_model->getJoint(joint_name + std::string("_damping"));
       if (urdf_joint != NULL)
       {
         // Get limits from the URDF file.
@@ -328,6 +332,8 @@ namespace lwr_hw
           has_limits = true;
         if (joint_limits_interface::getJointLimits(urdf_joint_sitffness, limits_stiffness))
           has_limits_stiffness = true;
+        if (joint_limits_interface::getJointLimits(urdf_joint_damping, limits_damping))
+            has_limits_damping = true;
         if (joint_limits_interface::getSoftJointLimits(urdf_joint, soft_limits))
           has_soft_limits = true;
       }
@@ -364,17 +370,28 @@ namespace lwr_hw
       vj_sat_interface_.registerHandle(sat_handle_velocity);
     }
 
-    if (!has_limits_stiffness)
-      return;
-
-    if (limits_stiffness.has_position_limits)
+    if (has_limits_stiffness)
     {
-      *lower_limit_stiffness = limits_stiffness.min_position;
-      *upper_limit_stiffness = limits_stiffness.max_position;
-    }
 
-    const joint_limits_interface::PositionJointSaturationHandle sat_handle_stiffness(joint_handle_stiffness, limits_stiffness);
-    sj_sat_interface_.registerHandle(sat_handle_stiffness);
+        if (limits_stiffness.has_position_limits)
+        {
+        *lower_limit_stiffness = limits_stiffness.min_position;
+        *upper_limit_stiffness = limits_stiffness.max_position;
+        }
+        const joint_limits_interface::PositionJointSaturationHandle sat_handle_stiffness(joint_handle_stiffness, limits_stiffness);
+        sj_sat_interface_.registerHandle(sat_handle_stiffness);
+    }
+    if (has_limits_damping)
+    {
+        
+        if (limits_damping.has_position_limits)
+        {
+            *lower_limit_damping = limits_damping.min_position;
+            *upper_limit_damping = limits_damping.max_position;
+        }
+        const joint_limits_interface::PositionJointSaturationHandle sat_handle_damping(joint_handle_damping, limits_damping);
+        dj_sat_interface_.registerHandle(sat_handle_damping);
+    }
   }
 
   void LWRHW::enforceLimits(ros::Duration period)
