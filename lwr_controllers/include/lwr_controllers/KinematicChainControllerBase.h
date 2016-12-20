@@ -182,7 +182,7 @@ namespace controller_interface
     {
         for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
         {
-            if ( it->getJoint().getType() != 8 )
+            if ( it->getJoint().getType() != KDL::Joint::None )
             {
                 joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
                 ROS_DEBUG("%s", it->getJoint().getName().c_str() );

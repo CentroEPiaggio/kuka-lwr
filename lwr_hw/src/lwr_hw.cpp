@@ -223,7 +223,6 @@ namespace lwr_hw
                                                                    joint_names_[j]+std::string("_stiffness"),
                                                                    &joint_stiffness_[j], &joint_stiffness_[j], &joint_stiffness_[j]),
                                                        &joint_stiffness_command_[j]);
-      // FIXME: This interface is not working properly. It was relaying on an old ros_control fork already deprecated.
       //position_interface_.registerHandle(joint_handle_stiffness);
       effort_interface_.registerHandle(joint_handle_stiffness);
       

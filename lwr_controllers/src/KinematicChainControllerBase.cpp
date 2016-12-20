@@ -7,7 +7,7 @@ bool KinematicChainControllerBase<hardware_interface::EffortJointInterface>::get
 {
     for(std::vector<KDL::Segment>::const_iterator it = kdl_chain_.segments.begin(); it != kdl_chain_.segments.end(); ++it)
     {
-    	if ( it->getJoint().getType() != 8 )
+    	if ( it->getJoint().getType() != KDL::Joint::None )
         {
 	        joint_handles_.push_back(robot->getHandle(it->getJoint().getName()));
 	        joint_stiffness_handles_.push_back(robot->getHandle(it->getJoint().getName() + std::string("_stiffness")));
