@@ -107,7 +107,7 @@ namespace lwr_controllers
             pid_cmd_(i) = joint_des_states_.qdotdot(i) + Kv_(i)*(joint_des_states_.qdot(i) - joint_msr_states_.qdot(i)) + Kp_(i)*(joint_des_states_.q(i) - joint_msr_states_.q(i));
             cg_cmd_(i) = C_(i)*joint_msr_states_.qdot(i) + G_(i);
         }
-        KDL::Multiply(M_,pid_cmd_,tau_cmd_);
+        tau_cmd_.data = M_.data * pid_cmd_.data;
         KDL::Add(tau_cmd_,cg_cmd_,tau_cmd_);
         
         for(size_t i=0; i<joint_handles_.size(); i++)
