@@ -56,6 +56,17 @@ public:
   enum ControlStrategy {JOINT_POSITION = 10, CARTESIAN_IMPEDANCE = 20, JOINT_IMPEDANCE = 30, JOINT_EFFORT = 40, JOINT_STIFFNESS = 50, GRAVITY_COMPENSATION = 90};
   virtual bool canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const;
   virtual void doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list);
+  
+  /**
+   * @brief Function to get the control strategy based on the list of controllers to be started/stopped
+   * 
+   * @param start_list controllers to be started
+   * @param stop_list controllers to be stopped
+   * @param default_control_strategy value to use as a default return value
+   * 
+   * @return the output control strategy found based on the lists
+   */
+  static ControlStrategy getNewControlStrategy(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list, ControlStrategy default_control_strategy = JOINT_POSITION);
 
   // This functions must be implemented depending on the outlet (Real FRI/FRIL, Gazebo, etc.)
   virtual bool init() = 0;
