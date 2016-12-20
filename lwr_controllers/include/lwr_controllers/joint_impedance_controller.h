@@ -30,7 +30,7 @@ namespace lwr_controllers
 
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command(const std_msgs::Float64MultiArray::ConstPtr &msg);
-		void setParam(const std_msgs::Float64MultiArray::ConstPtr &msg, KDL::JntArray& array, std::string s);
+		void setParam(const std_msgs::Float64MultiArray::ConstPtr &msg, KDL::JntArray* array, std::string s);
         
 	private:
 

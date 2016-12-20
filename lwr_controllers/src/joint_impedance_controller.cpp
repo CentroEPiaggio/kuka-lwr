@@ -44,9 +44,9 @@ bool JointImpedanceController::init(hardware_interface::EffortJointInterface *ro
     }
 
     typedef  const std_msgs::Float64MultiArray::ConstPtr& msg_type;
-    sub_stiffness_ = nh_.subscribe<JointImpedanceController, msg_type>("stiffness", 1, boost::bind(&JointImpedanceController::setParam, this, _1, K_, "K"));
-    sub_damping_ = nh_.subscribe<JointImpedanceController, msg_type>("damping", 1, boost::bind(&JointImpedanceController::setParam, this, _1, D_, "D"));
-    sub_add_torque_ = nh_.subscribe<JointImpedanceController, msg_type>("additional_torque", 1, boost::bind(&JointImpedanceController::setParam, this, _1, tau_des_, "AddTorque"));
+    sub_stiffness_ = nh_.subscribe<JointImpedanceController, msg_type>("stiffness", 1, boost::bind(&JointImpedanceController::setParam, this, _1, &K_, "K"));
+    sub_damping_ = nh_.subscribe<JointImpedanceController, msg_type>("damping", 1, boost::bind(&JointImpedanceController::setParam, this, _1, &D_, "D"));
+    sub_add_torque_ = nh_.subscribe<JointImpedanceController, msg_type>("additional_torque", 1, boost::bind(&JointImpedanceController::setParam, this, _1, &tau_des_, "AddTorque"));
     sub_posture_ = nh_.subscribe("command", 1, &JointImpedanceController::command, this);
 
     return true;
@@ -96,13 +96,13 @@ void JointImpedanceController::command(const std_msgs::Float64MultiArray::ConstP
 
 }
 
-void JointImpedanceController::setParam(const std_msgs::Float64MultiArray::ConstPtr& msg, KDL::JntArray& array, std::string s)
+void JointImpedanceController::setParam(const std_msgs::Float64MultiArray_< std::allocator< void > >::ConstPtr& msg, KDL::JntArray* array, std::string s)
 {
     if (msg->data.size() == joint_handles_.size())
     {
         for (unsigned int i = 0; i < joint_handles_.size(); ++i)
         {
-            array(i) = msg->data[i];
+            (*array)(i) = msg->data[i];
         }
     }
     else
@@ -113,8 +113,7 @@ void JointImpedanceController::setParam(const std_msgs::Float64MultiArray::Const
     ROS_INFO("Num of Joint handles = %lu, dimension of message = %lu", joint_handles_.size(), msg->data.size());
 
     ROS_INFO("New param %s: %.2lf, %.2lf, %.2lf %.2lf, %.2lf, %.2lf, %.2lf", s.c_str(),
-             array(0), array(1), array(2), array(3), array(4), array(5), array(6));
-
+             (*array)(0), (*array)(1), (*array)(2), (*array)(3), (*array)(4), (*array)(5), (*array)(6));
 }
 
 } // namespace
