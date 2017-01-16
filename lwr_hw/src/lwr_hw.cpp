@@ -489,9 +489,53 @@ namespace lwr_hw
     return true;
   }
 
+#if ROS_VERSION_MINIMUM(1,12,6)
+    bool LWRHW::prepareSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const
+    {
+        int counter_position = 0, counter_effort = 0, counter_cartesian = 0;
+        
+        for ( std::list<hardware_interface::ControllerInfo>::const_iterator ci_it = start_list.begin(); ci_it != start_list.end(); ++ci_it )
+        {
+            for( std::vector<hardware_interface::InterfaceResources>::const_iterator it = ci_it->claimed_resources.begin(); it != ci_it->claimed_resources.end(); ++it)
+            {
+                // If any of the controllers in the start list works on a velocity interface, the switch can't be done.
+                if( it->hardware_interface.compare( std::string("hardware_interface::VelocityJointInterface") ) == 0 )
+                {
+                    std::cout << "The given controllers to start work on a velocity joint interface, and this robot does not have such an interface. "
+                    << "The switch can't be done" << std::endl;
+                    return false;
+                }
+                if( it->hardware_interface.compare( std::string("hardware_interface::PositionJointInterface") ) == 0 )
+                {
+                    counter_position = 1;
+                }
+                else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
+                {
+                    counter_effort = 1;
+                }
+                else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
+                {
+                    counter_cartesian = 1;
+                }
+            }
+        }
+        
+        if( (counter_position+counter_effort+counter_cartesian)>1)
+        {
+            std::cout << "OOPS! Currently we are using the JointCommandInterface to switch mode, this is not strictly correct. " 
+            << "This is temporary until a joint_mode_controller is available (so you can have different interfaces available in different modes)"
+            << "Having said this, we do not support more than one controller that ones to act on any given JointCommandInterface"
+            << "and we can't switch"
+            << std::endl;
+            return false;
+        }
+        
+        return true;
+    }
+#else
   bool LWRHW::canSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list) const
   {
-    int counter = 0;
+    int counter_position = 0, counter_effort = 0, counter_cartesian = 0;
     
     for ( std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it )
     {
@@ -507,19 +551,19 @@ namespace lwr_hw
       {
         // Debug
         // std::cout << "One controller wants to work on hardware_interface::PositionJointInterface" << std::endl;
-        ++counter;
+        counter_position = 1;
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
       {
         // Debug
         // std::cout << "One controller wants to work on hardware_interface::EffortJointInterface" << std::endl;
-        ++counter;
+        counter_effort = 1;
       }
       else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
       {
         // Debug
         // std::cout << "One controller wants to work on hardware_interface::PositionCartesianInterface" << std::endl;
-        ++counter;
+        counter_cartesian = 1;
       }
       else
       {
@@ -528,7 +572,7 @@ namespace lwr_hw
       }
     }
 
-    if( counter > 1 )
+    if( (counter_position+counter_effort+counter_cartesian)>1)
     {
       std::cout << "OOPS! Currently we are using the JointCommandInterface to switch mode, this is not strictly correct. " 
                 << "This is temporary until a joint_mode_controller is available (so you can have different interfaces available in different modes)"
@@ -540,34 +584,14 @@ namespace lwr_hw
 
     return true;
   }
+#endif
 
   void LWRHW::doSwitch(const std::list<hardware_interface::ControllerInfo> &start_list, const std::list<hardware_interface::ControllerInfo> &stop_list)
   {
     // at this point, we now that there is only one controller that ones to command joints
     ControlStrategy desired_strategy = JOINT_POSITION; // default
 
-    // If any of the controllers in the start list works on a velocity interface, the switch can't be done.
-    for ( std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it )
-    {
-      if( it->hardware_interface.compare( std::string("hardware_interface::PositionJointInterface") ) == 0 )
-      {
-        std::cout << "Request to switch to hardware_interface::PositionJointInterface (JOINT_POSITION)" << std::endl;
-        desired_strategy = JOINT_POSITION;
-        break;
-      }
-      else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
-      {
-        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
-        desired_strategy = JOINT_IMPEDANCE;
-        break;
-      }
-      else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
-      {
-        std::cout << "Request to switch to hardware_interface::PositionCartesianInterface (CARTESIAN_IMPEDANCE)" << std::endl;
-        desired_strategy = CARTESIAN_IMPEDANCE;
-        break;
-      }
-    }
+    desired_strategy = getNewControlStrategy(start_list,stop_list,desired_strategy);
 
     for (int j = 0; j < n_joints_; ++j)
     {
@@ -597,6 +621,77 @@ namespace lwr_hw
     }
   }
 
-  
+#if ROS_VERSION_MINIMUM(1,12,6)
+    LWRHW::ControlStrategy LWRHW::getNewControlStrategy(const std::list< hardware_interface::ControllerInfo >& start_list, const std::list< hardware_interface::ControllerInfo >& stop_list, LWRHW::ControlStrategy default_control_strategy)
+    {
+        ControlStrategy desired_strategy = default_control_strategy;
+        // NOTE that this allows to switch only based on the strategy of the first controller, but ROS kinetic would allow multiple interfaces and more
+        bool strategy_found = false;
+        
+        for ( std::list<hardware_interface::ControllerInfo>::const_iterator ci_it = start_list.begin(); ci_it != start_list.end(); ++ci_it )
+        {
+            for( std::vector<hardware_interface::InterfaceResources>::const_iterator it = ci_it->claimed_resources.begin(); it != ci_it->claimed_resources.end(); ++it)
+            {
+                if( it->hardware_interface.compare( std::string("hardware_interface::PositionJointInterface") ) == 0 )
+                {
+                    std::cout << "Request to switch to hardware_interface::PositionJointInterface (JOINT_POSITION)" << std::endl;
+                    desired_strategy = JOINT_POSITION;
+                    strategy_found = true;
+                    break;
+                }
+                else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
+                {
+                    std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
+                    desired_strategy = JOINT_IMPEDANCE;
+                    strategy_found = true;
+                    break;
+                }
+                else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
+                {
+                    std::cout << "Request to switch to hardware_interface::PositionCartesianInterface (CARTESIAN_IMPEDANCE)" << std::endl;
+                    desired_strategy = CARTESIAN_IMPEDANCE;
+                    strategy_found = true;
+                    break;
+                }
+            }
+            if(strategy_found)
+            {
+                break;
+            }
+        }
+        
+        return desired_strategy;
+    }
+#else
+  LWRHW::ControlStrategy LWRHW::getNewControlStrategy(const std::list< hardware_interface::ControllerInfo >& start_list, const std::list< hardware_interface::ControllerInfo >& stop_list, lwr_hw::LWRHW::ControlStrategy default_control_strategy)
+  {
+    ControlStrategy desired_strategy = default_control_strategy;
+    
+    // If any of the controllers in the start list works on a velocity interface, the switch can't be done.
+    for ( std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it )
+    {
+        if( it->hardware_interface.compare( std::string("hardware_interface::PositionJointInterface") ) == 0 )
+        {
+            std::cout << "Request to switch to hardware_interface::PositionJointInterface (JOINT_POSITION)" << std::endl;
+            desired_strategy = JOINT_POSITION;
+            break;
+        }
+        else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
+        {
+            std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
+            desired_strategy = JOINT_IMPEDANCE;
+            break;
+        }
+        else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
+        {
+            std::cout << "Request to switch to hardware_interface::PositionCartesianInterface (CARTESIAN_IMPEDANCE)" << std::endl;
+            desired_strategy = CARTESIAN_IMPEDANCE;
+            break;
+        }
+    }
+    
+    return desired_strategy;
+  }
+#endif
   
 }

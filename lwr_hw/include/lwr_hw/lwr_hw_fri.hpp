@@ -171,28 +171,7 @@ public:
     // at this point, we now that there is only one controller that ones to command joints
     ControlStrategy desired_strategy = JOINT_POSITION; // default
 
-    // If any of the controllers in the start list works on a velocity interface, the switch can't be done.
-    for ( std::list<hardware_interface::ControllerInfo>::const_iterator it = start_list.begin(); it != start_list.end(); ++it )
-    {
-      if( it->hardware_interface.compare( std::string("hardware_interface::PositionJointInterface") ) == 0 )
-      {
-        std::cout << "Request to switch to hardware_interface::PositionJointInterface (JOINT_POSITION)" << std::endl;
-        desired_strategy = JOINT_POSITION;
-        break;
-      }
-      else if( it->hardware_interface.compare( std::string("hardware_interface::EffortJointInterface") ) == 0 )
-      {
-        std::cout << "Request to switch to hardware_interface::EffortJointInterface (JOINT_IMPEDANCE)" << std::endl;
-        desired_strategy = JOINT_IMPEDANCE;
-        break;
-      }
-      else if( it->hardware_interface.compare( std::string("hardware_interface::PositionCartesianInterface") ) == 0 )
-      {
-        std::cout << "Request to switch to hardware_interface::PositionCartesianInterface (CARTESIAN_IMPEDANCE)" << std::endl;
-        desired_strategy = CARTESIAN_IMPEDANCE;
-        break;
-      }
-    }
+    desired_strategy = getNewControlStrategy(start_list,stop_list,desired_strategy);
 
     for (int j = 0; j < n_joints_; ++j)
     {

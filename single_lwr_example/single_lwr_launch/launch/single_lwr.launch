@@ -27,7 +27,7 @@
 	<!-- LAUNCH IMPLEMENTATION -->
 
 	<!-- the urdf/sdf parameter -->
-	<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
 	
 	<!-- joint and robot state publishers of the full robot description -->
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
@@ -87,7 +87,7 @@
 	<group ns="lwr">
 		<group if="$(arg lwr_powered)">
 			<!--add a copy of the robot description within the name space -->
-			<param name="robot_description" command="$(find xacro)/xacro.py $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
+			<param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro"/>
 
 			<include file="$(find lwr_hw)/launch/lwr_hw.launch">
 				<arg name="port" value="$(arg port)"/>
