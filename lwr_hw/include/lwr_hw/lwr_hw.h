@@ -117,6 +117,7 @@ public:
   joint_stiffness_,
   joint_damping_,
   joint_position_command_,
+  joint_set_point_command_,
   joint_velocity_command_,
   joint_stiffness_command_,
   joint_damping_command_,
@@ -162,15 +163,7 @@ private:
   bool initKDLdescription(const urdf::Model *const urdf_model);
 
   // Helper function to register limit interfaces
-  void registerJointLimits(const std::string& joint_name,
-                   const hardware_interface::JointHandle& joint_handle_effort,
-                   const hardware_interface::JointHandle& joint_handle_position,
-                   const hardware_interface::JointHandle& joint_handle_velocity,
-                   const hardware_interface::JointHandle& joint_handle_stiffness,
-                   const urdf::Model *const urdf_model,
-                   double *const lower_limit, double *const upper_limit,
-                   double *const lower_limit_stiffness, double *const upper_limit_stiffness,
-                   double *const effort_limit);
+  void registerJointLimits(const std::string& joint_name, const hardware_interface::JointHandle& joint_handle_effort, const hardware_interface::JointHandle& joint_handle_position, const hardware_interface::JointHandle& joint_handle_velocity, const hardware_interface::JointHandle& joint_handle_stiffness, const hardware_interface::JointHandle& joint_handle_damping, const urdf::Model*const urdf_model, double*const effort_limit, double*const lower_limit, double*const upper_limit, double*const lower_limit_stiffness, double*const upper_limit_stiffness, double*const lower_limit_damping, double*const upper_limit_damping);
 
 }; // class
 

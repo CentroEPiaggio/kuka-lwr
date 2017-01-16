@@ -163,7 +163,10 @@ public:
 		/** KRL Interaction -- Corresponds to $FRI_TO_INT */
 	int   getFrmKRLInt(int index) { return msr.krl.intData[index]; }
 		/** KRL Interaction -- Corresponds to $FRI_FRM_INT */
-	void  setToKRLInt(int index, int val) { cmd.krl.intData[index]=val; }
+	void  setToKRLInt(int index, int val) { cmd.krl.intData[index]=val; 
+		if (index == 0)
+			cmd.cmd.cmdFlags = 0;
+	}
 		/** KRL Interaction -- Corresponds to $FRI_TO_BOOL */
 	bool  getFrmKRLBool(int index) { return ((msr.krl.boolData & (1<<index)) != 0);}
 		/** KRL Interaction -- Corresponds to $FRI_FRM_BOOL */

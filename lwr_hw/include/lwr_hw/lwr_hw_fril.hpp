@@ -66,6 +66,7 @@ public:
       joint_effort_[j] = (double)msrJntTrq[j];
       joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j]-joint_position_prev_[j])/period.toSec(), joint_velocity_[j], 0.2);
       joint_stiffness_[j] = joint_stiffness_command_[j];
+      joint_damping_[j] = joint_damping_command_[j];
     }
     return;
   }
@@ -118,7 +119,7 @@ public:
 
             for(int j=0; j < n_joints_; j++)
             {
-              newJntPosition[j] = (float)joint_position_command_[j];
+              newJntPosition[j] = (float)joint_set_point_command_[j];
               newJntAddTorque[j] = (float)joint_effort_command_[j];
               newJntStiff[j] = (float)joint_stiffness_command_[j];
               newJntDamp[j] = (float)joint_damping_command_[j];

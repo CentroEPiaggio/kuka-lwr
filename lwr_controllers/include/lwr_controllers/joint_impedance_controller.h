@@ -30,19 +30,16 @@ namespace lwr_controllers
 
 		void update(const ros::Time& time, const ros::Duration& period);
 		void command(const std_msgs::Float64MultiArray::ConstPtr &msg);
-		void setGains(const std_msgs::Float64MultiArray::ConstPtr &msg);
-
+		void setParam(const std_msgs::Float64MultiArray::ConstPtr &msg, KDL::JntArray* array, std::string s);
+        
 	private:
 
-		ros::Subscriber sub_gains_;
+		ros::Subscriber sub_stiffness_, sub_damping_, sub_add_torque_;
 		ros::Subscriber sub_posture_;
 
-		KDL::JntArrayVel dotq_msr_;
-		KDL::JntArray q_msr_, q_des_;
-		KDL::JntArray tau_des_, tau_cmd_, tau_gravity_;
+		KDL::JntArray q_des_;
+		KDL::JntArray tau_des_;
 		KDL::JntArray K_, D_;
-
-		boost::scoped_ptr<KDL::ChainDynParam> id_solver_gravity_;
 
 	};
 

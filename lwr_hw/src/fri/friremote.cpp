@@ -153,7 +153,7 @@ int friRemote::doJntImpedanceControl(const float newJntPosition[LBR_MNJ],
 
 {
 	// Helper, if not properly initialized or the like...
-	cmd.cmd.cmdFlags=0;
+	//cmd.cmd.cmdFlags=0;    
 	if (newJntPosition)
 	{
 		cmd.cmd.cmdFlags|=FRI_CMD_JNTPOS;
