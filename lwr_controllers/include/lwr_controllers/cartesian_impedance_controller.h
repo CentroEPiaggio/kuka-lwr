@@ -6,10 +6,12 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <lwr_controllers/Stiffness.h>
 #include <tf/transform_listener.h>
+#include <realtime_tools/realtime_publisher.h>
 
 // KDL added
 #include <kdl/stiffness.hpp>
 #include <kdl/trajectory.hpp>
+#include <kdl_conversions/kdl_msg.h>
 
 // BOOST added
 #include <boost/scoped_ptr.hpp>
@@ -48,6 +50,7 @@ namespace lwr_controllers
         ros::ServiceServer srv_command_;
         ros::Subscriber sub_ft_measures_;
         ros::Publisher pub_goal_;
+        boost::shared_ptr< realtime_tools::RealtimePublisher< geometry_msgs::PoseStamped > > realtime_pose_pub_;
         
         // Transformation from robot base to controller base
         KDL::Frame robotBase_controllerBase_;
@@ -91,6 +94,9 @@ namespace lwr_controllers
         
         // Utility function to get the current pose
         void getCurrentPose(KDL::Frame& f);
+        
+        // Utility function to publish the current pose
+        void publishCurrentPose(const KDL::Frame& f);
         
         // Utility function to forward commands to FRI
         void forwardCmdFRI(const KDL::Frame& f);

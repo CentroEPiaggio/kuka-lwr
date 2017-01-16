@@ -98,6 +98,7 @@ namespace lwr_controllers
         srv_command_ = n.advertiseService("set_command", &CartesianImpedanceController::command_cb, this);
         sub_ft_measures_ = n.subscribe(n.resolveName("ft_measures"), 1, &CartesianImpedanceController::updateFT, this);
         pub_goal_ = n.advertise<geometry_msgs::PoseStamped>(n.resolveName("goal"),0);
+        realtime_pose_pub_.reset(new realtime_tools::RealtimePublisher<geometry_msgs::PoseStamped>(n, "cartesian_pose", 4));
 
         // // may be needed, to set initial commands asap
         // starting(ros::Time::now());
@@ -176,6 +177,8 @@ namespace lwr_controllers
         // get current values
         // std::cout << "Update current values" << std::endl;
         getCurrentPose(x_cur_);
+        
+        publishCurrentPose(x_cur_);
 
         // forward commands to hwi
         // std::cout << "Before forwarding the command" << std::endl;
@@ -301,6 +304,15 @@ namespace lwr_controllers
                           cart_handles_.at(7).getPosition(),
                           cart_handles_.at(11).getPosition());
         f = KDL::Frame( cur_R, cur_p );
+    }
+    
+    void CartesianImpedanceController::publishCurrentPose(const KDL::Frame& f)
+    {
+        if (realtime_pose_pub_->trylock()) {
+            realtime_pose_pub_->msg_.header.stamp = ros::Time::now();
+            tf::poseKDLToMsg(f, realtime_pose_pub_->msg_.pose);
+            realtime_pose_pub_->unlockAndPublish();
+        }
     }
 
 }
