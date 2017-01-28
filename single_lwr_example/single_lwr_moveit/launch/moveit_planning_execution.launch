@@ -16,6 +16,7 @@
     <arg name="port" default="49939" doc="The listening port of the FRI interface" />
     <arg name="t1_limits" default="false"/>
     <arg name="fril_init_file" default="$(find single_lwr_robot)/config/980241-FRI-Driver.init"/>
+    <arg name="controllers" default="joint_trajectory_controller"/>
     
     <include file="$(find single_lwr_launch)/launch/single_lwr.launch">
         <arg name="use_lwr_sim" value="$(arg sim)" />
@@ -27,6 +28,7 @@
         <arg name="t1_limits" value="$(arg t1_limits)" />
         <arg name="file" value="$(arg fril_init_file)" />
         <arg name="load_moveit" value="true" />
+        <arg name="controllers" value="$(arg controllers)"/>
     </include>
     
 </launch>
