@@ -1,0 +1,34 @@
+<launch>
+    <!-- The planning and execution components of MoveIt! configured to run -->
+    <!-- using the ROS-Industrial interface. -->
+    
+    <!-- Non-standard joint names:
+    - Create a file [robot_moveit_config]/config/joint_names.yaml
+    controller_joint_names: [joint_1, joint_2, ... joint_N] 
+    - Update with joint names for your robot (in order expected by rbt controller)
+    - and uncomment the following line: -->
+    <!-- <rosparam command="load" file="$(find [robot_moveit_config])/config/joint_names.yaml"/> -->
+    
+    <!-- the "sim" argument controls whether we connect to a Simulated or Real robot -->
+    <!--  - if sim=false, a robot_ip argument is required -->
+    <arg name="sim" default="true" doc="If true, the robot will be simulated in Gazebo" />
+    <arg name="ip" default="192.168.0.20" doc="The IP address of the robot" />
+    <arg name="port" default="49939" doc="The listening port of the FRI interface" />
+    <arg name="t1_limits" default="false"/>
+    <arg name="fril_init_file" default="$(find single_lwr_robot)/config/980241-FRI-Driver.init"/>
+    <arg name="controllers" default="joint_trajectory_controller"/>
+    
+    <include file="$(find single_lwr_launch)/launch/single_lwr.launch">
+        <arg name="use_lwr_sim" value="$(arg sim)" />
+        <arg name="lwr_powered" unless="$(arg sim)" value="true" />
+        <arg name="lwr_powered" if="$(arg sim)" value="false" />
+        
+        <arg name="ip" value="$(arg ip)" />
+        <arg name="port" value="$(arg port)" />
+        <arg name="t1_limits" value="$(arg t1_limits)" />
+        <arg name="file" value="$(arg fril_init_file)" />
+        <arg name="load_moveit" value="true" />
+        <arg name="controllers" value="$(arg controllers)"/>
+    </include>
+    
+</launch>
