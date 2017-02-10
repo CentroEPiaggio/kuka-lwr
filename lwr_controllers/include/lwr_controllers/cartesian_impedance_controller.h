@@ -6,10 +6,12 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <lwr_controllers/Stiffness.h>
 #include <tf/transform_listener.h>
+#include <realtime_tools/realtime_publisher.h>
 
 // KDL added
 #include <kdl/stiffness.hpp>
 #include <kdl/trajectory.hpp>
+#include <kdl_conversions/kdl_msg.h>
 
 // BOOST added
 #include <boost/scoped_ptr.hpp>
@@ -42,12 +44,14 @@ namespace lwr_controllers
         std::vector<std::string> joint_names_, cart_12_names_, cart_6_names_;
         std::vector<hardware_interface::JointHandle> joint_handles_;
         std::vector<hardware_interface::CartesianVariableHandle> cart_handles_;
+        bool publish_cartesian_pose_;
 		
         // ROS API (topic, service and dynamic reconfigure)
 		ros::Subscriber sub_command_;
         ros::ServiceServer srv_command_;
         ros::Subscriber sub_ft_measures_;
         ros::Publisher pub_goal_;
+        boost::shared_ptr< realtime_tools::RealtimePublisher< geometry_msgs::PoseStamped > > realtime_pose_pub_;
         
         // Transformation from robot base to controller base
         KDL::Frame robotBase_controllerBase_;
@@ -91,6 +95,9 @@ namespace lwr_controllers
         
         // Utility function to get the current pose
         void getCurrentPose(KDL::Frame& f);
+        
+        // Utility function to publish the current pose
+        void publishCurrentPose(const KDL::Frame& f);
         
         // Utility function to forward commands to FRI
         void forwardCmdFRI(const KDL::Frame& f);

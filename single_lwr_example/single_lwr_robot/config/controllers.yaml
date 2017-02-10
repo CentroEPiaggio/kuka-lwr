@@ -71,6 +71,7 @@ lwr:
     robot_name: lwr
     root_name: lwr_base_link
     tip_name: lwr_7_link
+    publish_cartesian_pose: false
 
   # Multi Task Priority Inverse Kinematics
   multi_task_priority_inverse_kinematics:
