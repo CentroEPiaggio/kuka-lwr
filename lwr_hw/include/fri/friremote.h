@@ -150,6 +150,7 @@ public:
 	float * getMsrMsrJntPosition() { return msr.data.msrJntPos; }
 	float * getMsrEstExtJntTrq() { return msr.data.estExtJntTrq; }
 	float * getMsrJntTrq() { return msr.data.msrJntTrq; }
+	float * getMsrMassMatrix() { return msr.data.massMatrix;}
 		/* @} */
 
 	float getSampleTime() { return msr.intf.desiredCmdSampleTime; }
