@@ -89,6 +89,9 @@ public:
         cart_damp_[j] = cart_damp_command_[j];
         cart_wrench_[j] = cart_wrench_command_[j];
     }
+    for (int j = 0; j < n_joints_ * n_joints_; j++)
+      inertia_matrix_[j] = device_->getMsrMassMatrix()[j];
+
     return;
   }
 

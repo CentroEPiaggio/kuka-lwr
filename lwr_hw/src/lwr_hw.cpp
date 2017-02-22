@@ -60,6 +60,8 @@ namespace lwr_hw
     cart_stiff_command_.resize(6);
     cart_damp_command_.resize(6);
     cart_wrench_command_.resize(6);
+    inertia_matrix_.resize(n_joints_ * n_joints_);
+    inertia_matrix_fake_.resize(n_joints_ * n_joints_);
 
     joint_lower_limits_.resize(n_joints_);
     joint_upper_limits_.resize(n_joints_);
@@ -286,6 +288,18 @@ namespace lwr_hw
                                                        &cart_wrench_command_[j]);
       position_cart_interface_.registerHandle(cart_wrench_handle);
     }
+
+    for (int i=0; i< n_joints_; i++)
+      for (int j=0; j< n_joints_; j++)
+	{
+	hardware_interface::JointHandle inertia_handle_ij;
+	inertia_handle_ij = hardware_interface::JointHandle(hardware_interface::JointStateHandle(
+                            "inertia_" + std::to_string(i) + "_" + std::to_string(j),
+                            &inertia_matrix_[i*7 + j], &inertia_matrix_[i*7 + j], &inertia_matrix_[i*7 + j]),
+			    &inertia_matrix_fake_[i*7 + j]);
+	effort_interface_.registerHandle(inertia_handle_ij);
+      }
+
 
     // Register interfaces
     registerInterface(&state_interface_);
