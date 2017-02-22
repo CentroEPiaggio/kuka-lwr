@@ -16,6 +16,13 @@ bool KinematicChainControllerBase<hardware_interface::EffortJointInterface>::get
 	        ROS_DEBUG("%s", it->getJoint().getName().c_str() );
 	    }
     }
+
+    // Inertia matrix handles
+    int n_joints = 7;
+    for (int i=0; i<n_joints; i++)
+      for (int j=0; j<n_joints; j++)
+	inertia_matrix_handles_.push_back(robot->getHandle("inertia_" + std::to_string(i) + "_" + std::to_string(j)));
+
     return true;
 }
 }

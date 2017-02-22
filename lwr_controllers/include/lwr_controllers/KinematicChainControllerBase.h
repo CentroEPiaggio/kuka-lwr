@@ -50,6 +50,7 @@ namespace controller_interface
         std::vector<typename JI::ResourceHandleType> joint_stiffness_handles_;
         std::vector<typename JI::ResourceHandleType> joint_damping_handles_;
         std::vector<typename JI::ResourceHandleType> joint_set_point_handles_;
+	std::vector<typename JI::ResourceHandleType> inertia_matrix_handles_;
         
         bool getHandles(JI *robot);
         
