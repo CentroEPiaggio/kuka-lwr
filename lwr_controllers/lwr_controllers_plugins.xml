@@ -24,6 +24,12 @@
     </description>
   </class>
 
+  <class name="lwr_controllers/CLIKController" type="lwr_controllers::CLIKController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The CLIKController.
+    </description>
+  </class>
+
   <class name="lwr_controllers/InverseDynamicsController" type="lwr_controllers::InverseDynamicsController" base_class_type="controller_interface::ControllerBase">
     <description>
       The InverseDynamicsController compensates for inertial, gravitational, and coriolis effects on a robot.
