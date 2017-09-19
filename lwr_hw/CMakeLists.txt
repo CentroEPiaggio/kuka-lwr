@@ -138,3 +138,7 @@ install(DIRECTORY launch/
 
 install(DIRECTORY include/cartesian_hardware_interface/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+  
+install(FILES include/lwr_hw/lwr_hw.h
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+
