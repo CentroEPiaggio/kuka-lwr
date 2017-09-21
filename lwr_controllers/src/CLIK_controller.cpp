@@ -128,6 +128,18 @@ std::cout << "Default Control Strategy: Stack of Tasks, second task is to stay f
 
     void CLIKController::update(const ros::Time& time1, const ros::Duration& period)
     {
+	if(stopping)
+	{
+	    for(int i=0; i < joint_handles_.size(); i++)
+	    {
+		joint_des_states_.q(i) = joint_handles_[i].getPosition();
+	    }
+	    fk_pos_solver_->JntToCart(joint_des_states_.q, x_des_);
+	    
+	    stopping=false;
+	    return;
+	}
+
         double k_click = 1;
         nh_.param<double>("k_click",k_click, 1);
 
@@ -359,6 +371,9 @@ std::cout << "Default Control Strategy: Stack of Tasks, second task is to stay f
 
         switch(msg->id)
         {
+	    case -1: //stop the robot
+		stopping=true;
+	    break;
             case 0:
             frame_des_ = KDL::Frame(
                     KDL::Rotation::RPY(msg->orientation.roll,

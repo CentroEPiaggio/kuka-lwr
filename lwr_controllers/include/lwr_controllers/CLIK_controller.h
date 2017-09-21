@@ -39,6 +39,7 @@ namespace lwr_controllers
 		void command(const lwr_controllers::PoseRPY::ConstPtr &msg);
 
 	private:
+		bool stopping=false;
 		void controller_type(const std_msgs::Int16::ConstPtr &msg);
 		void extend_chain(ros::NodeHandle &n);
 		void command2(const geometry_msgs::Pose::ConstPtr &msg);
