@@ -40,6 +40,8 @@ namespace lwr_controllers
 
 	private:
 		bool stopping=false;
+		bool homing=false;
+		std::vector<double> home;
 		void controller_type(const std_msgs::Int16::ConstPtr &msg);
 		void extend_chain(ros::NodeHandle &n);
 		void command2(const geometry_msgs::Pose::ConstPtr &msg);

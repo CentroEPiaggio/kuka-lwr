@@ -44,7 +44,6 @@ namespace lwr_controllers
         M_.resize(kdl_chain_.getNrOfJoints());
 
         // Get the initial joints from the rosparam server
-        std::vector<double> home;
         n.getParam("joint_home", home);
 
         // Get joint positions
@@ -137,6 +136,18 @@ std::cout << "Default Control Strategy: Stack of Tasks, second task is to stay f
 	    fk_pos_solver_->JntToCart(joint_des_states_.q, x_des_);
 	    
 	    stopping=false;
+	    return;
+	}
+
+	if(homing)
+	{   
+	    for(int i=0; i < joint_handles_.size(); i++)
+	    {
+		joint_des_states_.q(i) = home[i];
+	    }
+	    fk_pos_solver_->JntToCart(joint_des_states_.q, x_des_);
+
+	    homing=false;
 	    return;
 	}
 
@@ -373,6 +384,9 @@ std::cout << "Default Control Strategy: Stack of Tasks, second task is to stay f
         {
 	    case -1: //stop the robot
 		stopping=true;
+	    break;
+	    case -2: //homing the robot
+		homing=true;
 	    break;
             case 0:
             frame_des_ = KDL::Frame(
