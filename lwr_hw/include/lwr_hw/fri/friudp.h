@@ -64,7 +64,7 @@
 #endif
 #include <time.h>
 #endif
-#include "fri/friComm.h"
+#include "lwr_hw/fri/friComm.h"
 
 #include <iostream>
 

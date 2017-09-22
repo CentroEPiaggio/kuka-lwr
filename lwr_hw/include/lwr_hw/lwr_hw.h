@@ -10,7 +10,7 @@
 
 // ROS controls
 #include <hardware_interface/robot_hw.h>
-#include <cartesian_hardware_interface/cartesian_command_interface.h>
+#include <lwr_hw/cartesian_hardware_interface/cartesian_command_interface.h>
 #include <transmission_interface/transmission_info.h>
 #include <transmission_interface/transmission_parser.h>
 #include <joint_limits_interface/joint_limits.h>

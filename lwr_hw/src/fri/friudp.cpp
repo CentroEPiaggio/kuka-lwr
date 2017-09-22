@@ -40,7 +40,7 @@
 \brief Implementation of a UDP socket
  *                                                                         *
  ***************************************************************************/
-#include "fri/friudp.h"
+#include "lwr_hw/fri/friudp.h"
 
 #ifdef WIN32
 #include <winsock2.h>

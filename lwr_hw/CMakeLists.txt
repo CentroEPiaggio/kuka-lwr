@@ -136,9 +136,5 @@ install(TARGETS lwr_hw_fri_node
 install(DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)
 
-install(DIRECTORY include/cartesian_hardware_interface/
+install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-  
-install(FILES include/lwr_hw/lwr_hw.h
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-

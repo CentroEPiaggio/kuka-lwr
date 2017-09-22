@@ -36,7 +36,7 @@
 #include <cassert>
 #include <string>
 #include <hardware_interface/internal/hardware_resource_manager.h>
-#include <cartesian_hardware_interface/cartesian_state_interface.h>
+#include <lwr_hw/cartesian_hardware_interface/cartesian_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 
 namespace hardware_interface
