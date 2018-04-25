@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-add_definitions (-fpermissive -std=c++11)
+add_definitions (-std=c++11)
 
 catkin_package(
   CATKIN_DEPENDS
@@ -66,6 +66,7 @@ add_library(friremote
   src/fri/friremote.cpp
   src//fri/friudp.cpp
 )
+set_target_properties(friremote PROPERTIES COMPILE_DEFINITIONS HAVE_SOCKLEN_T)
 # lwr hw fri node
 add_executable(lwr_hw_fri_node  src/lwr_hw_fri_node.cpp
   include/${PROJECT_NAME}/lwr_hw_fri.hpp
