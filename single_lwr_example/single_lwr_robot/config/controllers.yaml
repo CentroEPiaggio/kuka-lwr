@@ -1,4 +1,4 @@
-lwr:
+right_arm:
   # CONTROLLERS USED IN THE EXAMPLE
   joint_state_controller:
     type: joint_state_controller/JointStateController
@@ -8,13 +8,13 @@ lwr:
   joint_trajectory_controller:
     type: position_controllers/JointTrajectoryController
     joints: 
-      - lwr_a1_joint
-      - lwr_a2_joint
-      - lwr_e1_joint
-      - lwr_a3_joint
-      - lwr_a4_joint
-      - lwr_a5_joint
-      - lwr_a6_joint
+      - right_arm_a1_joint
+      - right_arm_a2_joint
+      - right_arm_e1_joint
+      - right_arm_a3_joint
+      - right_arm_a4_joint
+      - right_arm_a5_joint
+      - right_arm_a6_joint
 
   stiffness_trajectory_controller:
     type: position_controllers/JointTrajectoryController
@@ -163,3 +163,12 @@ lwr:
      pid_lwr_a4_joint: {p: 90,  i: 5, d: 10, i_clamp_min: -0.3, i_clamp_max: 0.3}
      pid_lwr_a5_joint: {p: 40,  i: 5, d: 7, i_clamp_min: -0.3, i_clamp_max: 0.3}
      pid_lwr_a6_joint: {p: 15,  i: 2, d: 5, i_clamp_min: -0.3, i_clamp_max: 0.3}
+
+right_hand:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 100  
+  joint_trajectory_controller:
+    type: position_controllers/JointTrajectoryController
+    joints: 
+      - right_hand_synergy_joint

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <!-- Loads thee lwr.world environment in Gazebo. -->
+    
+    <!-- These are the arguments you can pass this launch file, for example paused:=true -->
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="hardware_interface" default="PositionJointInterface"/>
+    <arg name="robot_name" default="lwr" />
+    <arg name="model" default="lwr"/>
+    <arg name="hand_name" default="RBOHand"/>
+    
+    <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find single_lwr_robot)/worlds/lwr_soma_surface.world"/>
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+    
+    <!-- Load the URDF with the given hardware interface into the ROS Parameter Server -->
+    <!-- This lauch file just loads the URDF with the given hardware interface and robot name into the ROS Parameter Server -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find single_lwr_robot)/robot/single_lwr_robot.urdf.xacro' hardware_interface:=$(arg hardware_interface) robot_name:=$(arg robot_name)" />
+    
+    <!-- Run a python script to send a service call to gazebo_ros to spawn a URDF robot -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -model lwr -param robot_description"/>
+    
+    
+    </launch>
+    

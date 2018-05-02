@@ -18,7 +18,7 @@
 	<arg name="stopped_controllers" default="gravity_compensation_controller one_task_inverse_kinematics"/>
 
 	<!-- in case you want to load moveit from here, it might be hard with the real HW though -->
-	<arg name="load_moveit" default="false"/>
+	<arg name="load_moveit" default="true"/>
 
 	<!-- set some ros tools -->
 	<arg name="use_rviz" default="false"/>

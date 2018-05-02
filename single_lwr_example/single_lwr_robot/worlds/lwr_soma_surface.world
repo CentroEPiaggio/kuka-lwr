@@ -1,0 +1,117 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <!-- We use a custom world for the lwr so that the camera angle is launched correctly. -->
+  <!-- One can change this world to his needs or use another one. -->
+  
+  <world name="default">
+    
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    
+    <!-- Global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    
+    <!-- Focus camera -->
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+	<pose>4.927360 -4.376610 3.740080 0.000000 0.275643 2.356190</pose>
+	<view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+
+    <!-- box (like a wall) -->
+<!--     <model name="box">
+	<pose>0.7 1 0.5 0 0 0</pose>
+	<static>true</static>
+	<link name='link'>
+		<pose>0 0 0 0 0 0</pose>
+		<collision name="my_collision">
+		 	<pose>0 0 0 0 0 0</pose>
+			<geometry>
+		          <box>
+		            <size>2 1 1</size>
+		          </box>
+		        </geometry>
+	        </collision>
+
+	        <visual name="my_visual">
+			<geometry>
+		          <box>
+		            <size>2 1 1</size>
+		          </box>
+		        </geometry>
+	        </visual>
+		
+		<self_collide>0</self_collide>		
+		<gravity>1</gravity>
+	</link>
+    </model> -->
+
+
+    <!-- box (like a table) -->
+    <model name="table">
+	<!-- <pose>1.4 0.8 0.14 0 0 0</pose> -->
+	<pose>2 1 0.30 0 0 0</pose>
+	<static>true</static>
+	<link name='linkTable'>
+		<pose>0 0 0 0 0 0</pose>
+		<collision name="my_collisionTable">
+		 	<pose>0 0 0 0 0 0</pose>
+			<geometry>
+		          <box>
+		            <size>2 2 0.60</size>
+		          </box>
+		        </geometry>
+	        </collision>
+
+	        <visual name="my_visualTable">
+			<geometry>
+		          <box>
+		            <size>2 2 0.60</size>
+		          </box>
+		        </geometry>
+	        </visual>
+		
+		<self_collide>0</self_collide>		
+		<gravity>1</gravity>
+	</link>
+    </model>
+
+    <!-- cylinder object -->
+<!--     <model name="cylinder">
+	<pose>0.6 -0.15 0.32 1.57079632679 0 0</pose>
+	<static>false</static>
+	<link name='link'>
+		<pose>0 0 0 0 0 0</pose>
+		<collision name="my_collision">
+		 	<pose>0 0 0 0 0 0</pose>
+			<geometry>
+		          	<cylinder>
+		<radius> 0.04 </radius>
+		<length> 0.1 </length>
+	</cylinder>
+		        </geometry>
+	        </collision>
+
+	        <visual name="my_visual">
+			<geometry>
+		          	<cylinder>
+		<radius> 0.04 </radius>
+		<length> 0.1 </length>
+	</cylinder>
+		        </geometry>
+	        </visual>
+		
+		<self_collide>0</self_collide>		
+		<gravity>1</gravity>
+	</link>
+
+    </model> -->
+
+    
+  </world>
+  
+</sdf>

@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lwr_kinect">
+       
+  <!-- MODELS -->
+  <xacro:include filename="$(find lwr_description)/model/kuka_lwr_soma.urdf.xacro"/>
+  <xacro:include filename="$(find soft_hand_description)/model/soft_hand.urdf.xacro"/>
+  <!-- <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_ocado.urdf.xacro"/> -->
+
+  <!-- THESE ARE GOOD CAMERA POSES FOR NOW -->
+  <!-- <xacro:property name="cam_px" value="1.78" />
+  <xacro:property name="cam_py" value="-0.5" /> 
+  <xacro:property name="cam_pz" value="1.35" />
+  <xacro:property name="cam_or" value="-2.05" />
+  <xacro:property name="cam_op" value="0" />
+  <xacro:property name="cam_oy" value="0" /> -->
+
+  <!-- <xacro:property name="cam_px" value="1.78" />
+  <xacro:property name="cam_py" value="-0.4" /> 
+  <xacro:property name="cam_pz" value="1.35" />
+  <xacro:property name="cam_or" value="-2.05" />
+  <xacro:property name="cam_op" value="0" />
+  <xacro:property name="cam_oy" value="0" /> -->
+
+  <xacro:property name="cam_px" value="1.61" />
+  <xacro:property name="cam_py" value="-0.20" /> 
+  <xacro:property name="cam_pz" value="1.20" />
+  <xacro:property name="cam_or" value="-2.04" />
+  <xacro:property name="cam_op" value="0" />
+  <xacro:property name="cam_oy" value="0" />
+    
+  <link name="world"/>
+  
+
+  <!-- Kinect Camera -->
+
+  <joint name="kinect2_rgb_joint" type="fixed">
+    <origin xyz="${cam_px} ${cam_py} ${cam_pz}" rpy="${cam_or} ${cam_op} ${cam_oy}"/>
+    <parent link="world"/>
+    <child link="kinect2_rgb_frame" />
+  </joint>
+  
+  <link name="kinect2_rgb_frame"/>
+
+  <joint name="kinect2_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/> <!--xyz="-0.031 ${-kinect_cam_py} -0.016" -->
+    <parent link="kinect2_rgb_frame"/>
+    <child link="kinect2_link"/>
+  </joint>
+
+  <link name="kinect2_link"> 
+    <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>    
+      <box size="0.05 0.05 0.05"/>
+    </geometry>
+    <material name="white">
+      <color rgba="1 1 0 1"/>
+    </material>      
+    </visual>
+  </link>
+
+  <joint name="kinect2_rgb_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="kinect2_link" />
+    <child link="kinect2_rgb_optical_frame" />
+  </joint>
+  
+  <link name="kinect2_rgb_optical_frame"/>
+
+  <!-- THIS ONE MIGHT BE COMMENTED LATER -->
+  <joint name="kinect2_ir_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <parent link="kinect2_rgb_optical_frame" />
+    <child link="kinect2_ir_optical_frame" />
+  </joint>
+  
+  <link name="kinect2_ir_optical_frame"/>
+  <!-- THIS ONE MIGHT BE COMMENTED LATER -->
+
+  <!-- The fixed joints & links below are usually published by static_transformers launched by the iai _kinect files. However, for Gazebo simulation we need them, so we add them here. (Hence, don't publish them additionally!) -->
+
+  <joint name="kinect2_depth_joint" type="fixed">
+    <origin xyz="0 ${2 * -kinect_cam_py} 0" rpy="0 0 0" />
+    <parent link="kinect2_rgb_frame" />
+    <child link="kinect2_depth_frame" />
+  </joint>
+  
+  <link name="kinect2_depth_frame"/>
+
+  <joint name="kinect2_depth_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${_M_PI_2} 0 ${_M_PI_2}" />
+    <parent link="kinect2_depth_frame" />
+    <child link="kinect2_depth_optical_frame" />
+  </joint>
+  
+  <link name="kinect2_depth_optical_frame"/>
+
+  <!-- Kinect Camera END -->
+
+
+  <!-- RIGHT ARM -->
+  <xacro:kuka_lwr name="right_arm" parent="world">
+    <origin xyz="0.77 0.801 1.607" rpy="3.1415 -0.7854 0"/>
+    <!--<origin xyz="0 0 0" rpy="0 0 0"/>-->
+  </xacro:kuka_lwr>
+
+  <!-- Enable the Joint Feedback -->
+  <gazebo reference="right_arm_a6_joint">
+       <provideFeedback>true</provideFeedback>
+  </gazebo>
+  
+  <!-- The force torque sensor plugin -->
+  <gazebo>
+       <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+           <updateRate>100.0</updateRate>
+           <topicName>ft_sensor_topic</topicName>
+           <jointName>right_arm_a6_joint</jointName>
+       </plugin>
+  </gazebo>
+
+  <!-- RIGHT SOFTHAND -->
+  <xacro:soft_hand parent="right_arm_7_link" name="right_hand" left="false" withAdaptiveTransmission="true" useMimicTag="$(arg use_mimic_tag)">
+    <origin xyz="0 0 0" rpy="0 0 3.1415"/>
+  </xacro:soft_hand>
+
+  <!-- EXTRA ENDEFFECTOR -->
+  <joint name="right_hand_ee_joint" type="fixed">
+    <origin xyz="0.002 0.00695 0.1" rpy="0 -1.5708 3.1415"/>
+    <parent link="right_hand_softhand_base" />
+    <child link="right_hand_ee_link" />
+  </joint>
+
+  <link name="right_hand_ee_link">
+  </link>
+
+</robot>
