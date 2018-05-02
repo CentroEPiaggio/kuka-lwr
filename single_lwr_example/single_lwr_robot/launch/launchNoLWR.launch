@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- LAUNCH ARGUMENTS -->
+
+	<!-- Robot to be used -->
+    <arg name="robot_name" default="lwr_soma"/>
+	
+	<!-- Set world to be used -->
+	<arg name="environment_name" default="lwr_soma_surface"/> 
+	
+	<!-- Set simulation tools -->
+	<arg name="use_gazebo" default="true"/>
+
+	<!-- Set visualization tools -->
+	<arg name="use_rviz" default="true"/>
+
+	<!-- Set some controller args -->
+	<arg name="controllers" default="joint_trajectory_controller"/>
+
+	<!-- Set true if real robot is connected -->
+	<arg name="right_arm_enabled" default="false"/>
+    <arg name="right_hand_enabled" default="true"/>
+
+    <!-- choose to use the new hw interface for softhand (requires launch_qb_interface!!!) -->
+    <arg name="launch_new_sh_hw" default="true"/>
+
+    <!-- choose to launch qb_interface or qb_interface_imu -->
+    <arg name="launch_qb_interface" default="true"/>
+    <arg name="use_imu" default="false"/>
+
+    <!-- LAUNCH IMPLEMENTATION -->
+
+    <!-- load hardware interface and controller configurations -->
+    <rosparam command="load" file="$(find vito_description)/config/vito_controllers.yaml"/>
+    <rosparam command="load" file="$(find vito_description)/config/hardware_interfaces.yaml"/>
+
+    <!-- Hand Controllers -->
+	<group ns="right_hand">
+		<!-- If hand connected -->
+		<group if="$(arg right_hand_enabled)">
+            <!--add a copy of the robot description within the name space -->
+            <param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+
+            <rosparam command="load" file="$(find vito_description)/config/right_hand_names.yaml" />
+
+            <group if="$(arg launch_new_sh_hw)">
+            	<include file="$(find soft_hand_qb_ros_control)/launch/soft_hand_qb_hw.launch">
+            	</include>
+        	</group>
+        	<group unless="$(arg launch_new_sh_hw)">
+            	<include file="$(find soft_hand_ros_control)/launch/soft_hand_hw.launch">
+                	<arg name="use_deafult_joint_names" value="false"/>
+                	<arg name="hand_id" value="2"/>
+            	</include>
+        	</group>
+        </group>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/>
+	</group>
+
+	<!-- TRIK Controller -->
+	<include file="$(find trik_controller)/launch/lwr.launch" >
+		<arg name="tvel" default="4.0"/>
+		<arg name="rvel" default="5.0"/>
+		<arg name="vel" default="4.0"/>
+		<arg name="accel" default="3.0"/>
+		<arg name="enabled_on_start" default="false"/>
+	</include>
+
+	<!-- Load collision objects into the planning scene -->
+  	<node name="loadCollisions" pkg="hybrid_automaton_manager_lwr" type="testSDF2MoveIt" args="$(find single_lwr_robot)/worlds/$(arg environment_name).world --skipIfco" output="screen"/>
+
+  	<!-- Load finger_fk service node -->
+  	<node name="finger_forward_kinematics" pkg="finger_fk" type="finger_fk_main.py" output="screen"/>
+
+  	<!-- Loads RViz -->
+	<group if="$(arg use_rviz)">
+		<node name="lwr_rviz" pkg="rviz" type="rviz" respawn="false" args="-d $(find hybrid_automaton_manager_lwr)/configs/simple_config_soma.rviz" output="screen"/>
+	</group>
+
+	<!-- QB Interface -->
+    <group if="$(arg launch_qb_interface)">
+        <group if="$(arg use_imu)">
+            <include file="$(find qb_interface)/launch/qb_interface_imu.launch"></include>
+        </group>
+        <group unless="$(arg use_imu)">
+            <include file="$(find qb_interface)/launch/qb_interface.launch"></include>
+        </group>
+    </group>
+
+</launch>

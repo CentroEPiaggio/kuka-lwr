@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<launch>
+	<!-- LAUNCH ARGUMENTS -->
+	
+	<!-- Robot to be used -->
+    <arg name="robot_name" default="lwr_soma"/>
+
+	<!-- Set world to be used -->
+	<arg name="environment_name" default="lwr_soma_surface"/> 
+	
+	<!-- Set simulation tools -->
+	<arg name="use_gazebo" default="false"/>
+
+	<!-- Set visualization tools -->
+	<arg name="use_rviz" default="true"/>
+
+	<!-- Set some controller args -->
+	<arg name="controllers" default="joint_trajectory_controller"/>
+
+	<!-- Set true if real robot is connected -->
+	<arg name="right_arm_enabled" default="true"/>
+    <arg name="right_hand_enabled" default="false"/>
+
+	<!-- LAUNCH IMPLEMENTATION -->
+
+	<!-- Load the urdf as robot_description to parameter server -->
+	<!-- SET USE_MIMIC_TAG TO TRUE FOR REAL ROBOT LAUNCH -->
+	<param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+
+	<group if="$(arg use_gazebo)">
+		<!-- Load Gazebo simulation environment -->
+    	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+    	    <arg name="world_name" value="$(find single_lwr_robot)/worlds/$(arg environment_name).world"/>
+    	    <arg name="paused" value="true"/>
+    	    <arg name="use_sim_time" value="true"/>
+    	    <arg name="gui" value="true"/>
+     	   <arg name="headless" value="true"/>
+			<arg name="debug" value="false"/>
+		</include>
+
+		<!-- Spawn the full robot into Gazebo  -->
+    	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model $(arg robot_name) -param robot_description -J $(arg robot_name)::right_arm_a1_joint 0.40 -J $(arg robot_name)::right_arm_a2_joint -1.40 -J $(arg robot_name)::right_arm_a3_joint -0.80 -J $(arg robot_name)::right_arm_a4_joint -0.60 -J $(arg robot_name)::right_arm_a5_joint -0.25 -J $(arg robot_name)::right_arm_a6_joint 0.40 -J $(arg robot_name)::right_arm_e1_joint 0.50 -unpause"/>
+    </group>
+	
+	<!-- Joint and robot state publishers of the full robot description -->
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+		<rosparam param="source_list">[/right_arm/joint_states,/right_hand/joint_states]</rosparam>
+	</node>
+
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+    <!-- Loads joint controller configurations from YAML file to parameter server -->
+    <rosparam command="load" file="$(find vito_description)/config/vito_controllers.yaml"/>
+
+    <!-- Loads HW configurations from YAML file to parameter server -->
+    <rosparam command="load" file="$(find vito_description)/config/hardware_interfaces.yaml"/>
+
+	<!-- Loading MoveIt interface -->
+	<include file="$(find single_lwr_moveit)/launch/move_group.launch">
+		<arg name="allow_trajectory_execution" value="false" />
+		<arg name="fake_execution" value="true" />
+		<arg name="info" value="true"/>
+		<arg name="debug" value="false"/> 
+	</include>
+
+	<!-- LWR Controllers -->
+	<group ns="right_arm">
+		<!-- If arm connected -->
+		<group if="$(arg right_arm_enabled)">
+            <!--add a copy of the robot description within the name space -->
+            <param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+
+            <rosparam command="load" file="$(find vito_description)/config/right_arm_names.yaml" />
+
+            <include file="$(find lwr_hw)/launch/lwr_hw.launch">
+                <arg name="port" value="49939"/>
+                <arg name="ip" value="192.168.0.10"/>
+                <arg name="name" value="right_arm"/>
+            </include>
+        </group>
+
+		<!-- spawn only desired controllers in current namespace -->
+		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller $(arg controllers) --shutdown-timeout 2"/>
+	</group>
+
+	<!-- Hand Controllers -->
+	<group ns="right_hand">
+		<!-- If hand connected -->
+		<group if="$(arg right_hand_enabled)">
+            <!--add a copy of the robot description within the name space -->
+            <param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+
+            <rosparam command="load" file="$(find vito_description)/config/right_hand_names.yaml" />
+
+            <include file="$(find soft_hand_ros_control)/launch/soft_hand_hw.launch">
+                <arg name="use_deafult_joint_names" value="false"/>
+                <arg name="hand_id" value="2"/>
+            </include>
+        </group>
+
+        <!-- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/> -->
+	</group>
+
+</launch>
