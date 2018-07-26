@@ -64,6 +64,7 @@ catkin_package(
 )
 
 add_library(${PROJECT_NAME}
+  src/cartesian_impedance_vito_controller.cpp
   src/joint_impedance_controller.cpp	
   src/inverse_dynamics_controller.cpp
   src/computed_torque_controller.cpp
@@ -97,3 +98,8 @@ install(TARGETS ${PROJECT_NAME}
 
 install(FILES lwr_controllers_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+
+add_executable(cartesian_command_vito src/cartesian_command_vito.cpp)
+
+target_link_libraries(cartesian_command_vito ${catkin_LIBRARIES})

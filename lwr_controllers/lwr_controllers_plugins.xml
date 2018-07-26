@@ -24,6 +24,12 @@
     </description>
   </class>
 
+  <class name="lwr_controllers/CartesianImpedanceVitoController" type="lwr_controllers::CartesianImpedanceVitoController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      The CartesianImpedanceVitoController tracks effort commands (as in JointImpedanceController). It expects a EffortJointInterface type of hardware interface.
+    </description>
+  </class>
+
   <class name="lwr_controllers/InverseDynamicsController" type="lwr_controllers::InverseDynamicsController" base_class_type="controller_interface::ControllerBase">
     <description>
       The InverseDynamicsController compensates for inertial, gravitational, and coriolis effects on a robot.
