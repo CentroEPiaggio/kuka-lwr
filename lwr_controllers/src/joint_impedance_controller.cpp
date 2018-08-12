@@ -59,7 +59,7 @@ void JointImpedanceController::starting(const ros::Time& time)
     // Initializing stiffness, damping, ext_torque and set point values
     for (size_t i = 0; i < joint_handles_.size(); i++) {
         tau_des_(i) = 0.0;
-        q_des_(i) = joint_handles_[i].getPosition();
+        q_des_(i) = joint_set_point_handles_[i].getPosition();
     }
 
 
