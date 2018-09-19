@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lwr_adaptive">
+       
+  <!-- MODELS -->
+  <xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
+  <xacro:include filename="$(find soft_hand_description)/model/soft_hand.urdf.xacro"/>
+  <!-- <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_ocado.urdf.xacro"/> -->
+    
+  <link name="world"/>
+
+  <!-- RIGHT ARM -->
+  <xacro:kuka_lwr name="right_arm" parent="world">
+    <origin xyz="0.77 0.801 1.607" rpy="3.1415 -0.7854 0"/>
+    <!--<origin xyz="0 0 0" rpy="0 0 0"/>-->
+  </xacro:kuka_lwr>
+
+  <!-- Enable the Joint Feedback -->
+  <gazebo reference="right_arm_a6_joint">
+       <provideFeedback>true</provideFeedback>
+  </gazebo>
+  
+  <!-- The force torque sensor plugin -->
+  <gazebo>
+       <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
+           <updateRate>100.0</updateRate>
+           <topicName>ft_sensor_topic</topicName>
+           <jointName>right_arm_a6_joint</jointName>
+       </plugin>
+  </gazebo>
+
+  <!-- RIGHT SOFTHAND -->
+  <xacro:soft_hand parent="right_arm_7_link" name="right_hand" left="false" withAdaptiveTransmission="true" useMimicTag="$(arg use_mimic_tag)">
+    <origin xyz="0 0 0" rpy="0 0 3.1415"/>
+  </xacro:soft_hand>
+
+  <!-- EXTRA ENDEFFECTOR -->
+  <joint name="right_hand_ee_joint" type="fixed">
+    <origin xyz="0.002 0.00695 0.1" rpy="0 -1.5708 3.1415"/>
+    <parent link="right_hand_softhand_base" />
+    <child link="right_hand_ee_link" />
+  </joint>
+
+  <link name="right_hand_ee_link">
+  </link>
+
+
+  <!-- ADDING ROS INTEGRATED CONTACT SENSORS FOR FINGERTIPS -->
+
+  <!-- For thumb distal phalanx -->
+  <gazebo reference="right_hand_thumb_distal_link">
+  <sensor name="thumb_distal_link_contact_sensor" type="contact">
+    <always_on>true</always_on>
+    <update_rate>30.0</update_rate>
+    <contact>
+      <collision>collision</collision>
+    </contact>
+    <plugin name="gripper_bumper" filename="libgazebo_ros_bumper.so">
+      <bumperTopicName>thumb_contact_sensor_state</bumperTopicName>
+      <frameName>right_hand_thumb_distal_link</frameName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+</robot>
