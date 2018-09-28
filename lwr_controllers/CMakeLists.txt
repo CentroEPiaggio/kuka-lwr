@@ -97,3 +97,4 @@ install(TARGETS ${PROJECT_NAME}
 
 install(FILES lwr_controllers_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
