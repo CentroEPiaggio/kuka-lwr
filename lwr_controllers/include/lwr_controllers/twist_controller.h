@@ -45,8 +45,6 @@ namespace lwr_controllers {
     // PID controllers (wrench_ = PID(s) * (twist_des_ - twist_meas_))
     std::vector<control_toolbox::Pid> pid_controller_;
 
-
-
   };
 
 }
