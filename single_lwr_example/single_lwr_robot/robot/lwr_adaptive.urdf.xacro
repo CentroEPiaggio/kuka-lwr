@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lwr_adaptive">
-       
+
   <!-- MODELS -->
   <xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
-  <xacro:include filename="$(find soft_hand_description)/model/soft_hand.urdf.xacro"/>
-  <!-- <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_ocado.urdf.xacro"/> -->
-    
+  <!-- <xacro:include filename="$(find soft_hand_description)/model/soft_hand_contact_distal.urdf.xacro"/> -->
+  <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_ocado.urdf.xacro"/>
+
   <link name="world"/>
 
   <!-- RIGHT ARM -->
@@ -18,7 +18,7 @@
   <gazebo reference="right_arm_a6_joint">
        <provideFeedback>true</provideFeedback>
   </gazebo>
-  
+
   <!-- The force torque sensor plugin -->
   <gazebo>
        <plugin name="ft_sensor" filename="libgazebo_ros_ft_sensor.so">
@@ -29,9 +29,9 @@
   </gazebo>
 
   <!-- RIGHT SOFTHAND -->
-  <xacro:soft_hand parent="right_arm_7_link" name="right_hand" left="false" withAdaptiveTransmission="true" useMimicTag="$(arg use_mimic_tag)">
+  <xacro:soft_hand_soma_ocado parent="right_arm_7_link" name="right_hand" left="false" withAdaptiveTransmission="true" useMimicTag="$(arg use_mimic_tag)">
     <origin xyz="0 0 0" rpy="0 0 3.1415"/>
-  </xacro:soft_hand>
+  </xacro:soft_hand_soma_ocado>
 
   <!-- EXTRA ENDEFFECTOR -->
   <joint name="right_hand_ee_joint" type="fixed">
@@ -50,9 +50,9 @@
   <gazebo reference="right_hand_thumb_distal_link">
   <sensor name="thumb_distal_link_contact_sensor" type="contact">
     <always_on>true</always_on>
-    <update_rate>30.0</update_rate>
+    <update_rate>10.0</update_rate>
     <contact>
-      <collision>collision</collision>
+      <collision>right_hand_thumb_distal_link_collision_collision</collision>
     </contact>
     <plugin name="gripper_bumper" filename="libgazebo_ros_bumper.so">
       <bumperTopicName>thumb_contact_sensor_state</bumperTopicName>
