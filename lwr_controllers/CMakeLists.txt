@@ -64,7 +64,7 @@ catkin_package(
 )
 
 add_library(${PROJECT_NAME}
-  src/joint_impedance_controller.cpp	
+  src/joint_impedance_controller.cpp
   src/inverse_dynamics_controller.cpp
   src/computed_torque_controller.cpp
   src/one_task_inverse_kinematics.cpp
@@ -79,6 +79,7 @@ add_library(${PROJECT_NAME}
   src/arm_state_controller.cpp
   src/cartesian_impedance_controller.cpp
   src/KinematicChainControllerBase.cpp
+	src/twist_controller.cpp
 )
 
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
@@ -97,4 +98,3 @@ install(TARGETS ${PROJECT_NAME}
 
 install(FILES lwr_controllers_plugins.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-
