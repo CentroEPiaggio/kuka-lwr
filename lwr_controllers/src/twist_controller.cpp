@@ -92,7 +92,7 @@ namespace lwr_controllers {
       wrench_.force(i) = pid_controller_[i].computeCommand(error.vel(i), dt_);
     }
     for(unsigned int i = 0; i < 3; i++){
-      wrench_.torque(i) = pid_controller_[i].computeCommand(error.rot(i), dt_);
+      wrench_.torque(i) = pid_controller_[i+3].computeCommand(error.rot(i), dt_);
     }
 
     // Computing the current jacobian
