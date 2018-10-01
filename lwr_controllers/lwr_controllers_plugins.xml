@@ -1,17 +1,17 @@
 <library path="lib/liblwr_controllers">
-  
+
   <class name="arm_state_controller/ArmStateController" type="arm_state_controller::ArmStateController" base_class_type="controller_interface::ControllerBase">
     <description>
       Information about external torque, Jacobian, etc.
     </description>
   </class>
-  
+
   <class name="lwr_controllers/CartesianImpedanceController" type="lwr_controllers::CartesianImpedanceController" base_class_type="controller_interface::ControllerBase">
     <description>
       This replicates the Cartesian impedance control of the LWR 4+, but it uses JOINT_EFFORT mode to send the computed torque. Note that, this won't work generally in any robot, since the dynamic term should be added (f_dyn(q, qdot, qdotdot)).
     </description>
   </class>
-    
+
   <class name="lwr_controllers/GravityCompensation" type="lwr_controllers::GravityCompensation" base_class_type="controller_interface::ControllerBase">
     <description>
       Safe gravity compensation.
@@ -34,37 +34,37 @@
     <description>
       The InverseDynamicsController compensates for inertial, gravitational, and coriolis effects on a robot.
     </description>
-  </class> 
+  </class>
 
   <class name="lwr_controllers/ComputedTorqueController" type="lwr_controllers::ComputedTorqueController" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
-  </class> 
+  </class>
 
   <class name="lwr_controllers/OneTaskInverseKinematics" type="lwr_controllers::OneTaskInverseKinematics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
-  </class> 
+  </class>
 
   <class name="lwr_controllers/MultiTaskPriorityInverseKinematics" type="lwr_controllers::MultiTaskPriorityInverseKinematics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
-  </class> 
+  </class>
 
   <class name="lwr_controllers/MultiTaskPriorityInverseDynamics" type="lwr_controllers::MultiTaskPriorityInverseDynamics" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
-  </class>   
+  </class>
 
   <class name="lwr_controllers/OneTaskInverseDynamicsJL" type="lwr_controllers::OneTaskInverseDynamicsJL" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
-  </class> 
+  </class>
 
   <class name="lwr_controllers/MinimumEffortInverseDynamics" type="lwr_controllers::MinimumEffortInverseDynamics" base_class_type="controller_interface::ControllerBase">
     <description>
@@ -85,6 +85,12 @@
   </class>
 
   <class name="lwr_controllers/DynamicSlidingModeControllerTaskSpace" type="lwr_controllers::DynamicSlidingModeControllerTaskSpace" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Info...
+    </description>
+  </class>
+
+  <class name="lwr_controllers/TwistController" type="lwr_controllers::TwistController" base_class_type="controller_interface::ControllerBase">
     <description>
       Info...
     </description>
