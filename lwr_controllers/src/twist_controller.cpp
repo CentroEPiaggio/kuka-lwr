@@ -3,8 +3,6 @@
 #include <utils/pseudo_inversion.h>
 #include "kdl/chainfksolvervel_recursive.hpp"
 
-#define DEBUG   1                             // Prints out additional info
-
 namespace lwr_controllers {
 
   // DEFAULT CONSTRUCTOR
@@ -36,13 +34,6 @@ namespace lwr_controllers {
     joint_comm_.resize(kdl_chain_.getNrOfJoints());
     jacobian_.resize(kdl_chain_.getNrOfJoints());
 
-    // Reading the joint states (position and velocity) and setting command
-    for(unsigned int i = 0; i < joint_handles_.size(); i++){
-      joint_states_.q(i) = joint_handles_[i].getPosition();
-      joint_states_.qdot(i) = joint_handles_[i].getVelocity();
-      joint_handles_[i].setCommand(joint_states_.q(i));
-    }
-
     // Initializing the cmd_flag_
     cmd_flag_ = 0;
 
@@ -60,39 +51,35 @@ namespace lwr_controllers {
 
     // Setting desired twist to zero
     twist_des_ = KDL::Twist::Zero();
+
+    // Reading the joint states (position and velocity) and setting command
+    for(unsigned int i = 0; i < joint_handles_.size(); i++){
+      joint_states_.q(i) = joint_handles_[i].getPosition();
+      joint_states_.qdot(i) = joint_handles_[i].getVelocity();
+      joint_comm_(i) = joint_states_.q(i);
+      joint_handles_[i].setCommand(joint_comm_(i));
+    }
   }
 
   // UPDATING FUNCTION
   void TwistController::update(const ros::Time& time,
     const ros::Duration& period){
-    // Getting current time resolution and updating last_time_
-    current_time_ = time;
-    dt_ = current_time_ - last_time_;
-    last_time_ = current_time_;
-
-    // Reading the joint states (position and velocity)
-    for(unsigned int i = 0; i < joint_handles_.size(); i++){
-      joint_states_.q(i) = joint_handles_[i].getPosition();
-      joint_states_.qdot(i) = joint_handles_[i].getVelocity();
-    }
-
-    // Printing for debugging
-    if(DEBUG){
-      std::cout << "The joint position commands before: " << std::endl;
-      std::cout << joint_comm_.data << "." << std::endl;
-    }
-
-    // Setting command to current position (if cmd_flag_ = 0, position hold)
-    joint_comm_ = joint_states_.q;
-
-    // Printing for debugging
-    if(DEBUG){
-      std::cout << "The joint position commands after: " << std::endl;
-      std::cout << joint_comm_.data << "." << std::endl;
-    }
-
     // THE CODE INSIDE NEXT IF EXECUTED ONLY IF twist_des_ != 0
     if(cmd_flag_){
+
+      // Getting current time resolution and updating last_time_
+      current_time_ = time;
+      dt_ = current_time_ - last_time_;
+      last_time_ = current_time_;
+
+      // Reading the joint states (position and velocity)
+      for(unsigned int i = 0; i < joint_handles_.size(); i++){
+        joint_states_.q(i) = joint_handles_[i].getPosition();
+        joint_states_.qdot(i) = joint_handles_[i].getVelocity();
+      }
+
+      // Setting command to current position (if cmd_flag_ = 0, position hold)
+      joint_comm_ = joint_states_.q;
 
       // Forward computing current ee twist and then error
       jnt_to_twist_solver_->JntToCart(joint_states_, tmp_twist_meas_);

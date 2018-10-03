@@ -32,7 +32,7 @@ namespace lwr_controllers {
     KDL::Twist error_;                // Error between desired and measured
 
   private:
-    // A flag for position holding if twist_des_ = 0
+    // Flag for position holding if twist_des_ = 0
     int cmd_flag_;
 
     // ROS Variables
