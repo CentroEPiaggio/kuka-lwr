@@ -43,7 +43,6 @@
   <link name="right_hand_ee_link">
   </link>
 
-
   <!-- ADDING ROS INTEGRATED CONTACT SENSORS FOR FINGERTIPS -->
 
   <!-- For thumb distal phalanx -->
