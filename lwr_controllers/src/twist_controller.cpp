@@ -46,9 +46,6 @@ namespace lwr_controllers {
 
   // STARTING FUNCTION
   void TwistController::starting(const ros::Time& time){
-    // Getting previous time
-    last_time_ = time;
-
     // Setting desired twist to zero
     twist_des_ = KDL::Twist::Zero();
 
@@ -66,12 +63,6 @@ namespace lwr_controllers {
     const ros::Duration& period){
     // THE CODE INSIDE NEXT IF EXECUTED ONLY IF twist_des_ != 0
     if(cmd_flag_){
-
-      // Getting current time resolution and updating last_time_
-      current_time_ = time;
-      dt_ = current_time_ - last_time_;
-      last_time_ = current_time_;
-
       // Reading the joint states (position and velocity)
       for(unsigned int i = 0; i < joint_handles_.size(); i++){
         joint_states_.q(i) = joint_handles_[i].getPosition();
@@ -102,7 +93,7 @@ namespace lwr_controllers {
 
       // Integrating joint_vel_comm_ to find joint_comm_ (forward Euler)
       for(unsigned int i = 0; i < joint_handles_.size(); i++){
-        joint_comm_(i) += joint_vel_comm_(i) * dt_.toSec();
+        joint_comm_(i) += joint_vel_comm_(i) * period.toSec();
       }
 
       // Saturating with joint limits
