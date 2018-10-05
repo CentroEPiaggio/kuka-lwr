@@ -39,7 +39,7 @@ namespace lwr_controllers {
     ros::Subscriber sub_command_;     // For listening to the command topic
     ros::Time last_time_;             // Used to compute dt
     ros::Time current_time_;          // Used to compute dt
-    ros::Duration dt_;                // The time resolution for the PID
+    ros::Duration dt_;                // The time resolution for integration
 
     // KDL Variables
     KDL::JntArrayVel joint_states_;   // Joint state containing q and q_dot

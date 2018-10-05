@@ -78,7 +78,7 @@ namespace lwr_controllers {
         joint_states_.qdot(i) = joint_handles_[i].getVelocity();
       }
 
-      // Setting command to current position (if cmd_flag_ = 0, position hold)
+      // Setting command to current position
       joint_comm_ = joint_states_.q;
 
       // Forward computing current ee twist and then error
