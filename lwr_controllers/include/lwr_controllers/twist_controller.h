@@ -30,6 +30,7 @@ namespace lwr_controllers {
     KDL::Twist twist_meas_, twist_des_;
     KDL::FrameVel tmp_twist_meas_;    // Used for forward twist computing
     KDL::Twist error_;                // Error between desired and measured
+    KDL::Twist twist_tmp_;            // Used temp. for comparing with old twists
 
   private:
     // Flag for position holding if twist_des_ = 0

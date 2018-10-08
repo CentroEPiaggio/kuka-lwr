@@ -48,8 +48,9 @@ namespace lwr_controllers {
 
   // STARTING FUNCTION
   void TwistController::starting(const ros::Time& time){
-    // Setting desired twist to zero
+    // Setting desired and tmp twist to zero
     twist_des_ = KDL::Twist::Zero();
+    twist_tmp_ = KDL::Twist::Zero();
 
     // Reading the joint states (position and velocity) and setting command
     for(unsigned int i = 0; i < joint_handles_.size(); i++){
@@ -63,6 +64,14 @@ namespace lwr_controllers {
   // UPDATING FUNCTION
   void TwistController::update(const ros::Time& time,
     const ros::Duration& period){
+    // FOR DEBUG: Compare old twist to new one
+    if(KDL::Equal(twist_des_, twist_tmp_, 0.0000001)){
+      ROS_DEBUG_STREAM("The twist is the same as before!!!");
+    } else {
+      ROS_DEBUG_STREAM("The twist has changed!!!");
+      twist_tmp_ = twist_des_;
+    }
+
     // THE CODE INSIDE NEXT IF EXECUTED ONLY IF twist_des_ != 0
     if(cmd_flag_){
       // Reading the joint states (position and velocity)
