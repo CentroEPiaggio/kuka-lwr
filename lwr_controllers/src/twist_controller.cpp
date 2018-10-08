@@ -3,6 +3,8 @@
 #include <utils/pseudo_inversion.h>
 #include "kdl/chainfksolvervel_recursive.hpp"
 
+#define DEBUG   1                       // prints out additional info
+
 namespace lwr_controllers {
 
   // DEFAULT CONSTRUCTOR
@@ -69,8 +71,15 @@ namespace lwr_controllers {
         joint_states_.qdot(i) = joint_handles_[i].getVelocity();
       }
 
+      // Debug message
+      ROS_DEBUG_STREAM("The previous joint command  = " << this->joint_comm_.data << ".");
+
       // Setting command to current position
       joint_comm_ = joint_states_.q;
+
+      // Debug message
+      ROS_DEBUG_STREAM("The current joint position = " << this->joint_states_.q.data << ".");
+      ROS_DEBUG_STREAM("The current dt = " << period.toSec() << ".");
 
       // Forward computing current ee twist and then error
       jnt_to_twist_solver_->JntToCart(joint_states_, tmp_twist_meas_);
@@ -107,6 +116,9 @@ namespace lwr_controllers {
       }
 
     }
+
+    // Debug message
+    ROS_DEBUG_STREAM("The current joint command = " << this->joint_comm_.data << ".");
 
     // Once we have the torques, setting the effort
     for(unsigned int i = 0; i < joint_handles_.size(); i++){
