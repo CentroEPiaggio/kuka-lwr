@@ -36,6 +36,9 @@ namespace lwr_controllers {
     // Flag for position holding if twist_des_ = 0
     int cmd_flag_;
 
+    // Bool for not executing the same twist twice
+    bool different_twist_;
+
     // ROS Variables
     ros::Subscriber sub_command_;     // For listening to the command topic
 

@@ -64,11 +64,14 @@ namespace lwr_controllers {
   // UPDATING FUNCTION
   void TwistController::update(const ros::Time& time,
     const ros::Duration& period){
+    // Checking if twist changed
+    different_twist_ = !KDL::Equal(twist_des_, twist_tmp_, 0.0000000001);
+
     // FOR DEBUG: Compare old twist to new one
-    if(KDL::Equal(twist_des_, twist_tmp_, 0.0000001)){
-      ROS_DEBUG_STREAM("The twist is the same as before!!!");
+    if(!different_twist_){
+      ROS_WARN_STREAM("The twist is the same as before!!!");
     } else {
-      ROS_DEBUG_STREAM("The twist has changed!!!");
+      ROS_ERROR_STREAM("The twist has changed!!!");
       twist_tmp_ = twist_des_;
     }
 
