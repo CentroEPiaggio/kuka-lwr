@@ -69,9 +69,9 @@ namespace lwr_controllers {
 
     // FOR DEBUG: Compare old twist to new one
     if(!different_twist_){
-      ROS_WARN_STREAM("The twist is the same as before!!!");
+      ROS_DEBUG_STREAM("The twist is the same as before!!!");
     } else {
-      ROS_ERROR_STREAM("The twist has changed!!!");
+      ROS_DEBUG_STREAM("The twist has changed!!!");
       twist_tmp_ = twist_des_;
     }
 
@@ -89,9 +89,13 @@ namespace lwr_controllers {
       // Setting command to current position
       joint_comm_ = joint_states_.q;
 
-      // Debug message
+      // Debug messages
       ROS_DEBUG_STREAM("The current joint position = " << this->joint_states_.q.data << ".");
       ROS_DEBUG_STREAM("The current dt = " << period.toSec() << ".");
+      ROS_WARN_STREAM("The measured twist = " << "\n" << twist_meas_.vel.x()
+        << "\n" << twist_meas_.vel.y() << "\n" << twist_meas_.vel.z()
+        << "\n" << twist_meas_.rot.x() << "\n" << twist_meas_.rot.y() 
+        << "\n" << twist_meas_.rot.z() <<".");
 
       // Forward computing current ee twist and then error
       jnt_to_twist_solver_->JntToCart(joint_states_, tmp_twist_meas_);
@@ -108,7 +112,7 @@ namespace lwr_controllers {
       for(unsigned int i = 0; i < jacobian_pinv_.rows(); i++){
         joint_vel_comm_(i) = 0.0;
         for(unsigned int j = 0; j < jacobian_pinv_.cols(); j++){
-          joint_vel_comm_(i) += jacobian_pinv_(i, j) * error_(j);
+          joint_vel_comm_(i) += jacobian_pinv_(i, j) * twist_des_(j);
         }
       }
 
