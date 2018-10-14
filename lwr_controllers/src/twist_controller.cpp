@@ -92,7 +92,7 @@ namespace lwr_controllers {
       // Debug messages
       ROS_DEBUG_STREAM("The current joint position = " << this->joint_states_.q.data << ".");
       ROS_DEBUG_STREAM("The current dt = " << period.toSec() << ".");
-      ROS_WARN_STREAM("The measured twist = " << "\n" << twist_meas_.vel.x()
+      ROS_DEBUG_STREAM("The measured twist = " << "\n" << twist_meas_.vel.x()
         << "\n" << twist_meas_.vel.y() << "\n" << twist_meas_.vel.z()
         << "\n" << twist_meas_.rot.x() << "\n" << twist_meas_.rot.y() 
         << "\n" << twist_meas_.rot.z() <<".");
