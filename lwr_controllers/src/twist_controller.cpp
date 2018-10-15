@@ -106,7 +106,7 @@ namespace lwr_controllers {
       jnt_to_jac_solver_->JntToJac(joint_states_.q, jacobian_);
 
       // Computing the pseudo inverse of the jacobian
-      pseudo_inverse(jacobian_.data, jacobian_pinv_);
+      pseudo_inverse(jacobian_.data, jacobian_pinv_, false);    // false in order to remove damping in pinv
 
       // Compute the joint velocities using jacobian pseudo inverse
       for(unsigned int i = 0; i < jacobian_pinv_.rows(); i++){
