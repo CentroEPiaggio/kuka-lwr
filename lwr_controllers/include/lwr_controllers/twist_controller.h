@@ -14,51 +14,55 @@ namespace lwr_controllers {
   class TwistController : public controller_interface::KinematicChainControllerBase<hardware_interface::PositionJointInterface> {
 
   public:
-    // Default Constructor
-    TwistController();
+  // Default Constructor
+  TwistController();
 
-    // Default Destructor
-    ~TwistController();
+  // Default Destructor
+  ~TwistController();
 
-    // Controller functions
-    bool init(hardware_interface::PositionJointInterface *robot, ros::NodeHandle &n);
-		void starting(const ros::Time& time);
-		void update(const ros::Time& time, const ros::Duration& period);
-		void command(const geometry_msgs::Twist::ConstPtr &msg);
-
-    // Measured and commanded twists
-    KDL::Twist twist_meas_, twist_des_;
-    KDL::FrameVel tmp_twist_meas_;    // Used for forward twist computing
-    KDL::Twist error_;                // Error between desired and measured
-    KDL::Twist twist_tmp_;            // Used temp. for comparing with old twists
+  // Controller functions
+  bool init(hardware_interface::PositionJointInterface *robot, ros::NodeHandle &n);
+	void starting(const ros::Time& time);
+	void update(const ros::Time& time, const ros::Duration& period);
+	void command(const geometry_msgs::Twist::ConstPtr &msg);
 
   private:
-    // Flag for position holding if twist_des_ = 0
-    int cmd_flag_;
+  // Flag for position holding if twist_des_ = 0 (IN CASE IT IS NEEDED)
+  int cmd_flag_;
 
-    // Bool for not executing the same twist twice
-    bool different_twist_;
+  // ROS Variables
+  ros::Subscriber sub_command_;           // For listening to the command topic
 
-    // ROS Variables
-    ros::Subscriber sub_command_;     // For listening to the command topic
+  // Twists and frames of different time instants
+  KDL::Twist twist_des_;                  // The current desired twist (for this iteration) written by subscriber
+  KDL::Twist twist_des_new_;              // The desired twist (for this iteration) inclusive of previous it. twist error
+  KDL::Twist twist_ach_;                  // The twist achieved (in previous iteration)
+  KDL::Twist twist_des_old_;              // The past desired twist (in previous iteration)
+  KDL::Twist twist_error_;                // Error between past desired and past achieved
+  KDL::Frame P_ee_;                       // Current end-effecter cartesian pose (achieved after previous iteration)
+  KDL::Frame P_ee_old_;                   // The end-effector pose at the beginning of past iteration
 
-    // KDL Variables
-    KDL::JntArrayVel joint_states_;   // Joint state containing q and q_dot
-    KDL::JntArray joint_vel_comm_;    // Joint velocity for twist following
-    KDL::JntArray joint_comm_;        // Joint command given to position interf.
-    KDL::Jacobian jacobian_;          // Robot jacobian
+  // KDL joint related variables
+  KDL::JntArray joint_states_;            // Joint state containing q and q_dot (updated with integration)
+  KDL::JntArray joint_states_real_;       // Joint state containing q and q_dot (updated with getPosition)
+  KDL::JntArray joint_states_old_;        // Joint state containing q and q_dot (old joints_states_ from previous iteration)
+  KDL::JntArray joint_vel_comm_;          // Joint velocity required for twist following (computed with J_pinv)
+  KDL::JntArray joint_comm_;              // Joint command given to position interface
+  KDL::Jacobian jacobian_;                // Robot jacobian
 
-    // Eigen Variables
-    Eigen::MatrixXd jacobian_pinv_;   // Pseudo inverse of the jacobian
+  // Eigen Variables
+  Eigen::MatrixXd jacobian_pinv_;         // Pseudo inverse of the jacobian
 
-    // Solvers (twist, jacobian and gravity solvers)
-    boost::scoped_ptr<KDL::ChainFkSolverVel> jnt_to_twist_solver_;
-    boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
+  // Solvers (twist, jacobian and gravity solvers)
+  // boost::scoped_ptr<KDL::ChainFkSolverVel> jnt_to_twist_solver_;              // Not needed???
+  boost::scoped_ptr<KDL::ChainFkSolverPos_recursive> jnt_to_pos_solver_;
+  boost::scoped_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
+
+  // Auxiliary functions
+  KDL::Twist computeTwistFromFrames(KDL::Frame Pose_1, KDL::Frame Pose_2, ros::Duration dt);
 
   };
 
 }
-
-
 
 #endif //LWR_CONTROLLERS__TWIST_CONTROLLER_H

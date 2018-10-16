@@ -27,11 +27,13 @@ namespace lwr_controllers {
     }
 
     // Resetting the solvers
-    jnt_to_twist_solver_.reset(new KDL::ChainFkSolverVel_recursive(kdl_chain_));
+    jnt_to_pos_solver_.reset(new KDL::ChainFkSolverPos_recursive(kdl_chain_));
     jnt_to_jac_solver_.reset(new KDL::ChainJntToJacSolver(kdl_chain_));
 
     // Resizing vectors and jacobian
     joint_states_.resize(kdl_chain_.getNrOfJoints());
+    joint_states_old_.resize(kdl_chain_.getNrOfJoints());
+    joint_states_real_.resize(kdl_chain_.getNrOfJoints());
     joint_vel_comm_.resize(kdl_chain_.getNrOfJoints());
     joint_comm_.resize(kdl_chain_.getNrOfJoints());
     jacobian_.resize(kdl_chain_.getNrOfJoints());
@@ -48,62 +50,68 @@ namespace lwr_controllers {
 
   // STARTING FUNCTION
   void TwistController::starting(const ros::Time& time){
-    // Setting desired and tmp twist to zero
+    // Setting all twists to zero
     twist_des_ = KDL::Twist::Zero();
-    twist_tmp_ = KDL::Twist::Zero();
+    twist_des_new_ = KDL::Twist::Zero();
+    twist_ach_ = KDL::Twist::Zero();
+    twist_des_old_ = KDL::Twist::Zero();
+    twist_error_ = KDL::Twist::Zero();
 
     // Reading the joint states (position and velocity) and setting command
     for(unsigned int i = 0; i < joint_handles_.size(); i++){
-      joint_states_.q(i) = joint_handles_[i].getPosition();
-      joint_states_.qdot(i) = joint_handles_[i].getVelocity();
-      joint_comm_(i) = joint_states_.q(i);
+      joint_states_real_(i) = joint_handles_[i].getPosition();
+      joint_comm_(i) = joint_states_real_(i);
       joint_handles_[i].setCommand(joint_comm_(i));
     }
+
+    // Copying into the "non real" joint variables
+    joint_states_ = joint_states_real_;
+    joint_states_old_ = joint_states_;
+
+    // Computing the initial cartesian position
+    jnt_to_pos_solver_->JntToCart(joint_states_, P_ee_);
+    P_ee_old_ = P_ee_;
   }
 
   // UPDATING FUNCTION
   void TwistController::update(const ros::Time& time,
     const ros::Duration& period){
-    // Checking if twist changed
-    different_twist_ = !KDL::Equal(twist_des_, twist_tmp_, 0.0000000001);
-
-    // FOR DEBUG: Compare old twist to new one
-    if(!different_twist_){
-      ROS_DEBUG_STREAM("The twist is the same as before!!!");
-    } else {
-      ROS_DEBUG_STREAM("The twist has changed!!!");
-      twist_tmp_ = twist_des_;
-    }
-
     // THE CODE INSIDE NEXT IF EXECUTED ONLY IF twist_des_ != 0
     if(cmd_flag_){
       // Reading the joint states (position and velocity)
       for(unsigned int i = 0; i < joint_handles_.size(); i++){
-        joint_states_.q(i) = joint_handles_[i].getPosition();
-        joint_states_.qdot(i) = joint_handles_[i].getVelocity();
+        joint_states_real_(i) = joint_handles_[i].getPosition();
       }
 
-      // Debug message
-      ROS_DEBUG_STREAM("The previous joint command  = " << this->joint_comm_.data << ".");
+      // Debug messages
+      ROS_DEBUG_STREAM("The previous joint_comm_  = " << this->joint_comm_.data << ".");
+      ROS_DEBUG_STREAM("The current joint_states_ = " << this->joint_states_.data << ".");
+      ROS_DEBUG_STREAM("The current dt = " << period.toSec() << ".");
 
-      // Setting command to current position
-      joint_comm_ = joint_states_.q;
+      // Forward computing current ee pose and then twist error
+      jnt_to_pos_solver_->JntToCart(joint_states_, P_ee_);
+      twist_ach_ = computeTwistFromFrames(P_ee_, P_ee_old_, period);
+      twist_error_ = twist_des_old_ - twist_ach_;
 
       // Debug messages
-      ROS_DEBUG_STREAM("The current joint position = " << this->joint_states_.q.data << ".");
-      ROS_DEBUG_STREAM("The current dt = " << period.toSec() << ".");
-      ROS_DEBUG_STREAM("The measured twist = " << "\n" << twist_meas_.vel.x()
-        << "\n" << twist_meas_.vel.y() << "\n" << twist_meas_.vel.z()
-        << "\n" << twist_meas_.rot.x() << "\n" << twist_meas_.rot.y() 
-        << "\n" << twist_meas_.rot.z() <<".");
+      ROS_INFO_STREAM("The wanted twist was = \n" << twist_des_old_.vel.data[0] << "\n" << twist_des_old_.vel.data[1] << "\n"
+        << twist_des_old_.vel.data[2] << "\n" << twist_des_old_.rot.data[0] << "\n" << twist_des_old_.rot.data[1] << "\n"
+        << twist_des_old_.rot.data[2] << ".");
+      ROS_INFO_STREAM("The achieved twist is = \n" << twist_ach_.vel.data[0] << "\n" << twist_ach_.vel.data[1] << "\n"
+        << twist_ach_.vel.data[2] << "\n" << twist_ach_.rot.data[0] << "\n" << twist_ach_.rot.data[1] << "\n"
+        << twist_ach_.rot.data[2] << ".");
+      ROS_INFO_STREAM("The joint position error is = \n" << joint_states_real_.data - joint_states_.data << ".");
 
-      // Forward computing current ee twist and then error
-      jnt_to_twist_solver_->JntToCart(joint_states_, tmp_twist_meas_);
-      twist_meas_ = tmp_twist_meas_.deriv();
-      error_ = twist_des_ - twist_meas_;
+      // Adding up the previos error in the current desired twist
+      // (AS OF NOW THE twist_error_ IS NOT USED BECAUSE IT ACCUMULATES AND CAUSES UNWANTED BEHAVIORS)
+      // twist_des_new_ = twist_des_ + twist_error_;
+      twist_des_new_ = twist_des_;
+
+      // Updating old twists
+      twist_des_old_ = twist_des_;
 
       // Computing the current jacobian
-      jnt_to_jac_solver_->JntToJac(joint_states_.q, jacobian_);
+      jnt_to_jac_solver_->JntToJac(joint_states_, jacobian_);
 
       // Computing the pseudo inverse of the jacobian
       pseudo_inverse(jacobian_.data, jacobian_pinv_, false);    // false in order to remove damping in pinv
@@ -112,9 +120,12 @@ namespace lwr_controllers {
       for(unsigned int i = 0; i < jacobian_pinv_.rows(); i++){
         joint_vel_comm_(i) = 0.0;
         for(unsigned int j = 0; j < jacobian_pinv_.cols(); j++){
-          joint_vel_comm_(i) += jacobian_pinv_(i, j) * twist_des_(j);
+          joint_vel_comm_(i) += jacobian_pinv_(i, j) * twist_des_new_(j);
         }
       }
+
+      // Setting command to current position
+      joint_comm_ = joint_states_;
 
       // Integrating joint_vel_comm_ to find joint_comm_ (forward Euler)
       for(unsigned int i = 0; i < joint_handles_.size(); i++){
@@ -131,6 +142,12 @@ namespace lwr_controllers {
         }
       }
 
+      // Memorizing current joint_states_ to old and updating joint_states_
+      joint_states_old_ = joint_states_;
+      joint_states_ = joint_comm_;
+
+      // Memorizing old ee pose
+      P_ee_old_ = P_ee_;
     }
 
     // Debug message
@@ -155,6 +172,19 @@ namespace lwr_controllers {
     // Setting cmd_flag_ according to the twist
     if(KDL::Equal(twist_des_, KDL::Twist::Zero(), 0.0001)) cmd_flag_ = 0;
     else cmd_flag_ = 1;
+  }
+
+  // Auxiliary functions
+  KDL::Twist TwistController::computeTwistFromFrames(KDL::Frame Pose_1, KDL::Frame Pose_2, ros::Duration dt){
+    // Computing linear velocity
+    KDL::Vector lin_vel = (Pose_1.p - Pose_2.p) / dt.toSec();
+
+    // Computing angular velocity (Math StackExchange - "Find angular velocity given pair of rotations")
+    KDL::Rotation A = Pose_1.M * Pose_2.M.Inverse();
+    KDL::Vector ang_vel = A.GetRot() / dt.toSec();      // GetRot gives the rot. axis whose norm is the angle of rot.
+
+    // Return the twist
+    return KDL::Twist(lin_vel, ang_vel);
   }
 
 }
