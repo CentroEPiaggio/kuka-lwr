@@ -56,6 +56,8 @@ namespace lwr_controllers {
     twist_ach_ = KDL::Twist::Zero();
     twist_des_old_ = KDL::Twist::Zero();
     twist_error_ = KDL::Twist::Zero();
+    twist_real_ = KDL::Twist::Zero();
+    twist_error_real_ = KDL::Twist::Zero();
 
     // Reading the joint states (position and velocity) and setting command
     for(unsigned int i = 0; i < joint_handles_.size(); i++){
@@ -71,6 +73,8 @@ namespace lwr_controllers {
     // Computing the initial cartesian position
     jnt_to_pos_solver_->JntToCart(joint_states_, P_ee_);
     P_ee_old_ = P_ee_;
+    P_ee_real_ = P_ee_;
+    P_ee_real_old_ = P_ee_;
   }
 
   // UPDATING FUNCTION
@@ -90,22 +94,31 @@ namespace lwr_controllers {
 
       // Forward computing current ee pose and then twist error
       jnt_to_pos_solver_->JntToCart(joint_states_, P_ee_);
+      jnt_to_pos_solver_->JntToCart(joint_states_real_, P_ee_real_);
       twist_ach_ = computeTwistFromFrames(P_ee_, P_ee_old_, period);
+      twist_real_ = computeTwistFromFrames(P_ee_real_, P_ee_real_old_, period);
       twist_error_ = twist_des_old_ - twist_ach_;
+      twist_error_real_ = twist_des_old_ - twist_real_;
 
       // Debug messages
-      ROS_INFO_STREAM("The wanted twist was = \n" << twist_des_old_.vel.data[0] << "\n" << twist_des_old_.vel.data[1] << "\n"
+      ROS_DEBUG_STREAM("The wanted twist was = \n" << twist_des_old_.vel.data[0] << "\n" << twist_des_old_.vel.data[1] << "\n"
         << twist_des_old_.vel.data[2] << "\n" << twist_des_old_.rot.data[0] << "\n" << twist_des_old_.rot.data[1] << "\n"
         << twist_des_old_.rot.data[2] << ".");
-      ROS_INFO_STREAM("The achieved twist is = \n" << twist_ach_.vel.data[0] << "\n" << twist_ach_.vel.data[1] << "\n"
+      ROS_DEBUG_STREAM("The achieved twist is = \n" << twist_ach_.vel.data[0] << "\n" << twist_ach_.vel.data[1] << "\n"
         << twist_ach_.vel.data[2] << "\n" << twist_ach_.rot.data[0] << "\n" << twist_ach_.rot.data[1] << "\n"
         << twist_ach_.rot.data[2] << ".");
-      ROS_INFO_STREAM("The joint position error is = \n" << joint_states_real_.data - joint_states_.data << ".");
+      ROS_DEBUG_STREAM("The twist error is = \n" << twist_error_.vel.data[0] << "\n" << twist_error_.vel.data[1] << "\n"
+        << twist_error_.vel.data[2] << "\n" << twist_error_.rot.data[0] << "\n" << twist_error_.rot.data[1] << "\n"
+        << twist_error_.rot.data[2] << ".");
+      ROS_DEBUG_STREAM("The real twist error is = \n" << twist_error_real_.vel.data[0] << "\n" << twist_error_real_.vel.data[1] << "\n"
+        << twist_error_real_.vel.data[2] << "\n" << twist_error_real_.rot.data[0] << "\n" << twist_error_real_.rot.data[1] << "\n"
+        << twist_error_real_.rot.data[2] << ".");
+      ROS_DEBUG_STREAM("The joint position error is = \n" << joint_states_real_.data - joint_states_.data << ".");
 
       // Adding up the previos error in the current desired twist
       // (AS OF NOW THE twist_error_ IS NOT USED BECAUSE IT ACCUMULATES AND CAUSES UNWANTED BEHAVIORS)
-      // twist_des_new_ = twist_des_ + twist_error_;
-      twist_des_new_ = twist_des_;
+      twist_des_new_ = twist_des_ + twist_error_;
+      // twist_des_new_ = twist_des_;
 
       // Updating old twists
       twist_des_old_ = twist_des_;
@@ -148,6 +161,10 @@ namespace lwr_controllers {
 
       // Memorizing old ee pose
       P_ee_old_ = P_ee_;
+      P_ee_real_old_ = P_ee_real_;
+
+      // Debug to check execution frequency
+      ROS_DEBUG_STREAM("TwistController: Executing Twist Command!!!");
     }
 
     // Debug message

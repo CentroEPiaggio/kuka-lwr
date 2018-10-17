@@ -39,8 +39,12 @@ namespace lwr_controllers {
   KDL::Twist twist_ach_;                  // The twist achieved (in previous iteration)
   KDL::Twist twist_des_old_;              // The past desired twist (in previous iteration)
   KDL::Twist twist_error_;                // Error between past desired and past achieved
+  KDL::Twist twist_real_;                 // The real twist computed using real joint states
+  KDL::Twist twist_error_real_;           // Error between past desired and past achieved real
   KDL::Frame P_ee_;                       // Current end-effecter cartesian pose (achieved after previous iteration)
   KDL::Frame P_ee_old_;                   // The end-effector pose at the beginning of past iteration
+  KDL::Frame P_ee_real_;                  // The end-effector pose computed from the real joint states
+  KDL::Frame P_ee_real_old_;              // The real end-effector pose achieved in prev. iteration
 
   // KDL joint related variables
   KDL::JntArray joint_states_;            // Joint state containing q and q_dot (updated with integration)
