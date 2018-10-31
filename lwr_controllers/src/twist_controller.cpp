@@ -58,6 +58,7 @@ namespace lwr_controllers {
     twist_error_ = KDL::Twist::Zero();
     twist_real_ = KDL::Twist::Zero();
     twist_error_real_ = KDL::Twist::Zero();
+    twist_check_ = KDL::Twist::Zero();
 
     // Reading the joint states (position and velocity) and setting command
     for(unsigned int i = 0; i < joint_handles_.size(); i++){
@@ -116,7 +117,7 @@ namespace lwr_controllers {
       ROS_DEBUG_STREAM("The joint position error is = \n" << joint_states_real_.data - joint_states_.data << ".");
 
       // Adding up the previos error in the current desired twist
-      // (AS OF NOW THE twist_error_ IS NOT USED BECAUSE IT ACCUMULATES AND CAUSES UNWANTED BEHAVIORS)
+      // (THE twist_error_ CAN BE USED: not sure if this brings to a better behavior)
       twist_des_new_ = twist_des_ + twist_error_;
       // twist_des_new_ = twist_des_;
 
@@ -137,6 +138,17 @@ namespace lwr_controllers {
         }
       }
 
+      // Checking if the desired twist will be achieved by the joint_vel_comm_
+      for(unsigned int i = 0; i < jacobian_.data.rows(); i++){
+        twist_check_(i) = twist_des_new_(i);
+        for(unsigned int j = 0; j < jacobian_.data.cols(); j++){
+          twist_check_(i) -= jacobian_.data(i, j) * joint_vel_comm_(j);
+        }
+      }
+      ROS_DEBUG_STREAM("The pseudo inversion gave an error in twist of \n" << twist_check_.vel.data[0] << "\n" << twist_check_.vel.data[1] << "\n"
+        << twist_check_.vel.data[2] << "\n" << twist_check_.rot.data[0] << "\n" << twist_check_.rot.data[1] << "\n"
+        << twist_check_.rot.data[2] << ".");
+
       // Setting command to current position
       joint_comm_ = joint_states_;
 
@@ -148,9 +160,11 @@ namespace lwr_controllers {
       // Saturating with joint limits
       for(unsigned int i = 0; i < joint_handles_.size(); i++){
         if(joint_comm_(i) < joint_limits_.min(i)){
+          ROS_WARN_STREAM("MIN SAT: The " << i << "th joint command " << joint_comm_(i) << " has been saturated to " << joint_limits_.min(i) << ". \n");
           joint_comm_(i) = joint_limits_.min(i);
         }
         if(joint_comm_(i) > joint_limits_.max(i)){
+          ROS_WARN_STREAM("MAX SAT: The " << i << "th joint command " << joint_comm_(i) << " has been saturated to " << joint_limits_.max(i) << ". \n");
           joint_comm_(i) = joint_limits_.max(i);
         }
       }
