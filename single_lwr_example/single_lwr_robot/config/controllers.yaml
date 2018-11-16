@@ -1,4 +1,4 @@
-right_arm:
+lwr:
   # CONTROLLERS USED IN THE EXAMPLE
   joint_state_controller:
     type: joint_state_controller/JointStateController
@@ -8,13 +8,19 @@ right_arm:
   joint_trajectory_controller:
     type: position_controllers/JointTrajectoryController
     joints: 
-      - right_arm_a1_joint
-      - right_arm_a2_joint
-      - right_arm_e1_joint
-      - right_arm_a3_joint
-      - right_arm_a4_joint
-      - right_arm_a5_joint
-      - right_arm_a6_joint
+      - lwr_a1_joint
+      - lwr_a2_joint
+      - lwr_e1_joint
+      - lwr_a3_joint
+      - lwr_a4_joint
+      - lwr_a5_joint
+      - lwr_a6_joint
+
+  # Twist Controller
+  twist_controller:
+    type: lwr_controllers/TwistController
+    root_name: lwr_base_link
+    tip_name: lwr_7_link
 
   stiffness_trajectory_controller:
     type: position_controllers/JointTrajectoryController
