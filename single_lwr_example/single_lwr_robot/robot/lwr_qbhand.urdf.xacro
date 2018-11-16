@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lwr_qbhand">
+
+  <!-- MODELS -->
+  <xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
+  <xacro:include filename="$(find qb_hand_description)/urdf/qbhand.urdf.xacro"/>
+
+  <link name="world"/>
+
+  <!-- RIGHT ARM -->
+  <xacro:kuka_lwr name="right_arm" parent="world">
+    <origin xyz="0.77 0.801 1.607" rpy="3.1415 -0.7854 0"/>
+    <!--<origin xyz="0 0 0" rpy="0 0 0"/>-->
+  </xacro:kuka_lwr>
+
+  <!-- RIGHT SOFTHAND -->
+  <xacro:build_hand_from_yaml configuration="qbhand_right" namespace="right_hand" parent="right_arm_7_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:build_hand_from_yaml>
+
+  <!-- EXTRA ENDEFFECTOR -->
+  <joint name="right_hand_ee_joint" type="fixed">
+    <origin xyz="0.002 0.00695 0.1" rpy="0 -1.5708 3.1415"/>
+    <parent link="right_hand_base" />
+    <child link="right_hand_ee_link" />
+  </joint>
+
+  <link name="right_hand_ee_link">
+  </link>
+
+</robot>

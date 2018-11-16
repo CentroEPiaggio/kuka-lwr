@@ -8,7 +8,7 @@
       <uri>model://sun</uri>
     </include>
 
-    <model name="table">
+    <!-- <model name="table">
 	<pose>1.4 0.8 0.14 0 0 0</pose>
 	<static>true</static>
 	<link name='linkTable'>
@@ -33,7 +33,7 @@
 		<self_collide>0</self_collide>		
 		<gravity>1</gravity>
 	</link>
-    </model>
+    </model> -->
 
   </world>
 </sdf>
