@@ -12,7 +12,7 @@ using namespace Eigen;
 
 inline void pseudo_inverse(const Eigen::MatrixXd &M_, Eigen::MatrixXd &M_pinv_,bool damped = true)
 {	
-	double lambda_ = damped?0.2:0.0;
+	double lambda_ = damped?0.05:0.0;
 
 	JacobiSVD<MatrixXd> svd(M_, ComputeFullU | ComputeFullV);
 	JacobiSVD<MatrixXd>::SingularValuesType sing_vals_ = svd.singularValues();
