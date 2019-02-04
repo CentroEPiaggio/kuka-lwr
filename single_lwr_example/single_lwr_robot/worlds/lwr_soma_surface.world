@@ -62,7 +62,7 @@
 		 	<pose>0 0 0 0 0 0</pose>
 			<geometry>
 		          <box>
-		            <size>2 2 0.60</size>
+		            <size>2 2 0.90</size>
 		          </box>
 		        </geometry>
 	        </collision>
@@ -70,7 +70,7 @@
 	        <visual name="my_visualTable">
 			<geometry>
 		          <box>
-		            <size>2 2 0.60</size>
+		            <size>2 2 0.90</size>
 		          </box>
 		        </geometry>
 	        </visual>
