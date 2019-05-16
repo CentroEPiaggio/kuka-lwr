@@ -24,7 +24,7 @@
 
 	<!-- Load the urdf as robot_description to parameter server -->
 	<!-- SET USE_MIMIC_TAG TO TRUE FOR REAL ROBOT LAUNCH -->
-	<param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+	<param name="robot_description" command="$(find xacro)/xacro    $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
 
 	<group if="$(arg use_gazebo)">
 		<!-- Load Gazebo simulation environment -->
@@ -67,7 +67,7 @@
 		<!-- If arm connected -->
 		<group if="$(arg right_arm_enabled)">
             <!--add a copy of the robot description within the name space -->
-            <param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+            <param name="robot_description" command="$(find xacro)/xacro    $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
 
             <rosparam command="load" file="$(find vito_description)/config/right_arm_names.yaml" />
 
@@ -79,7 +79,7 @@
         </group>
 
 		<!-- spawn only desired controllers in current namespace -->
-		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller $(arg controllers) --shutdown-timeout 2"/>
+		<node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller $(arg controllers)  "/>
 	</group>
 
 </launch>

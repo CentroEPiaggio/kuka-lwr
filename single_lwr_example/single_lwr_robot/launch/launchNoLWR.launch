@@ -39,7 +39,7 @@
 		<!-- If hand connected -->
 		<group if="$(arg right_hand_enabled)">
             <!--add a copy of the robot description within the name space -->
-            <param name="robot_description" command="$(find xacro)/xacro --inorder $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
+            <param name="robot_description" command="$(find xacro)/xacro    $(find single_lwr_robot)/robot/$(arg robot_name).urdf.xacro use_mimic_tag:=true"/>
 
             <rosparam command="load" file="$(find vito_description)/config/right_hand_names.yaml" />
 
