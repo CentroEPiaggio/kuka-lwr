@@ -56,3 +56,23 @@ YOUR_USERNAME soft memlock unlimited
 3. Reboot, open a terminal, and check that `ulimit -r -l` gives you the values set above.
 4. You need to edit manually the [lwr_hw.launch](lwr_hw/launch/lwr_hw.launch)
 5. Load the KRL script that is downloaded with the library to the Robot, and follow the instructions from the [original link](http://cs.stanford.edu/people/tkr/fri/html/) to set up network and other requirements properly.
+
+### Issues still to be solved for ROS Melodic
+```
+CMake Error:
+  Error evaluating generator expression:
+
+    $<TARGET_PROPERTY:protobuf::libprotobuf,INTERFACE_INCLUDE_DIRECTORIES>
+
+  Target "protobuf::libprotobuf" not found.
+
+CMake Error:
+  Error evaluating generator expression:
+
+    $<TARGET_PROPERTY:ignition-math4::ignition-math4,INTERFACE_INCLUDE_DIRECTORIES>
+
+  Target "ignition-math4::ignition-math4" not found.
+```
+
+Follow the developements on the [Gazebo GitHub Issue](https://github.com/ros-simulation/gazebo_ros_pkgs/issues/689).
+
