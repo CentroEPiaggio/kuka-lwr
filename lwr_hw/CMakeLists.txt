@@ -111,6 +111,7 @@ target_link_libraries(lwr_hw_fril_node
 ## SIMULATION
 # lwr hw sim gazebo plugin 
 find_package(gazebo REQUIRED)
+ign_import_target(UUID)
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 add_library(lwr_hw_gazebo_plugin  src/lwr_hw_gazebo_plugin.cpp
