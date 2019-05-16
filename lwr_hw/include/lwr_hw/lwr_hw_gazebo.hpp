@@ -55,7 +55,7 @@ public:
     {
       joint_position_prev_[j] = joint_position_[j];
       joint_position_[j] += angles::shortest_angular_distance(joint_position_[j],
-                              sim_joints_[j]->GetAngle(0).Radian());
+                              sim_joints_[j]->Position(0));
       joint_position_kdl_(j) = joint_position_[j];
       // derivate velocity as in the real hardware instead of reading it from simulation
       joint_velocity_[j] = filters::exponentialSmoothing((joint_position_[j] - joint_position_prev_[j])/period.toSec(), joint_velocity_[j], 0.2);
