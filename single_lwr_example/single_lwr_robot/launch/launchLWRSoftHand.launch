@@ -101,4 +101,9 @@
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/>
 	</group>
 
+	<!-- Loads RViz -->
+	<group if="$(arg use_rviz)">
+		<node name="lwr_rviz" pkg="rviz" type="rviz" respawn="false" output="screen"/>
+	</group>
+
 </launch>
