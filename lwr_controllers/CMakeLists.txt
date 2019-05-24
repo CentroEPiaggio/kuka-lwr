@@ -20,6 +20,10 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
 )
 
+# bug in gazebo dependencies
+# See https://bitbucket.org/ignitionrobotics/ign-cmake/issues/40
+ign_import_target(UUID)
+
 add_definitions (-fpermissive -std=c++11)
 
 include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})

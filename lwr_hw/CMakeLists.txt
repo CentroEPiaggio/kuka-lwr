@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   pluginlib
   kdl_parser
   transmission_interface
+  gazebo_dev
   gazebo_ros
   std_msgs
 )
@@ -36,6 +37,7 @@ catkin_package(
     pluginlib
     kdl_parser
     transmission_interface
+    gazebo_dev
     gazebo_ros
     std_msgs
   INCLUDE_DIRS include
@@ -59,6 +61,10 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
+
+# bug in gazebo dependencies
+# See https://bitbucket.org/ignitionrobotics/ign-cmake/issues/40
+ign_import_target(UUID)
 
 ## REAL 
 # KUKA FRI library
@@ -110,10 +116,6 @@ target_link_libraries(lwr_hw_fril_node
 
 ## SIMULATION
 # lwr hw sim gazebo plugin 
-find_package(gazebo REQUIRED)
-ign_import_target(UUID)
-include_directories(${GAZEBO_INCLUDE_DIRS})
-link_directories(${GAZEBO_LIBRARY_DIRS})
 add_library(lwr_hw_gazebo_plugin  src/lwr_hw_gazebo_plugin.cpp
   include/${PROJECT_NAME}/lwr_hw_gazebo.hpp
 )
@@ -123,7 +125,6 @@ add_dependencies(lwr_hw_gazebo_plugin
 target_link_libraries(lwr_hw_gazebo_plugin
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
-  ${GAZEBO_LIBRARIES}
 )
 
 ## INSTALLATION
