@@ -1,0 +1,29 @@
+# make the namespace match the name you use to instantiate the arm in the xacro
+left_arm:
+  root: left_arm_base_link
+  tip: left_arm_7_link
+  # joints is not used, since with the robot name and urdf name conventions, the parsing is hardcoded
+  # but as a general solution, joint names could be loaded as well, like controllers do
+  joints:
+  - left_arm_a1_joint
+  - left_arm_a2_joint
+  - left_arm_e1_joint
+  - left_arm_a3_joint
+  - left_arm_a4_joint
+  - left_arm_a5_joint
+  - left_arm_a6_joint
+
+# make the namespace match the name you use to instantiate the arm in the xacro
+right_arm:
+  root: right_arm_base_link
+  tip: right_arm_7_link
+  # joints is not used, since with the robot name and urdf name conventions, the parsing is hardcoded
+  # but as a general solution, joint names could be loaded as well, like controllers do
+  joints:
+  - right_arm_a1_joint
+  - right_arm_a2_joint
+  - right_arm_e1_joint
+  - right_arm_a3_joint
+  - right_arm_a4_joint
+  - right_arm_a5_joint
+  - right_arm_a6_joint
