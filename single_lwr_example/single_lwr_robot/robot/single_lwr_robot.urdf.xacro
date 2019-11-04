@@ -4,37 +4,11 @@
 	<!-- Include all models -->
 	<xacro:include filename="$(find lwr_description)/model/kuka_lwr.urdf.xacro"/>
 
-	<!-- and assemble your robot -->
-	<link name="box">
-		<inertial>
-			<mass value="5.0"/>
-			<origin rpy="0 0 0" xyz="0 0 0"/>
-			<inertia ixx="0.01"
-             iyy="0.01"
-             izz="0.01"
-             ixy="0" iyz="0" ixz="0"/>
-		</inertial>
-		<visual>
-			<origin xyz="0 0 0.50" rpy="0 0 0"/>
-			<geometry>
-				<box size="1.0 1.0 1.0"/>
-			</geometry>
-		</visual>
-		<collision>
-			<origin xyz="0 0 0.50" rpy="0 0 0"/>
-			<geometry>
-				<box size="1.0 1.0 1.0"/>
-			</geometry>
-		</collision>
-	</link>
-
-	<gazebo reference="box">
-		<static>true</static>>
-	</gazebo>
+	<link name="world"/>
 
 	<!-- using the models -->
-	<xacro:kuka_lwr parent="box" name="lwr">
-		<origin xyz="0 0 1" rpy="0 0 0"/>
+	<xacro:kuka_lwr parent="world" name="lwr">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
 	</xacro:kuka_lwr>
 
 </robot>
