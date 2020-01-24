@@ -196,19 +196,27 @@ public:
     }
     else
     {
+      ROS_INFO_STREAM_THROTTLE(1, "Desired strategy differs, trying to stop FRI.");
       stopFRI();
 
       // send to KRL the new strategy
-      if( desired_strategy == JOINT_POSITION )
+      if( desired_strategy == JOINT_POSITION ) {
+        ROS_INFO_STREAM_THROTTLE(1, "Switching to JOINT_POSITION");
         device_->setToKRLInt(0, JOINT_POSITION);
-      else if( desired_strategy == JOINT_IMPEDANCE)
+      }
+      else if( desired_strategy == JOINT_IMPEDANCE) {
+        ROS_INFO_STREAM_THROTTLE(1, "Switching to JOINT_IMPEDANCE");
         device_->setToKRLInt(0, JOINT_IMPEDANCE);
-      else if( desired_strategy == CARTESIAN_IMPEDANCE)
+      }
+      else if( desired_strategy == CARTESIAN_IMPEDANCE) {
+        ROS_INFO_STREAM_THROTTLE(1, "Switching to CARTESIAN_IMPEDANCE");
         device_->setToKRLInt(0, CARTESIAN_IMPEDANCE);
+      }
 
-
+      ROS_INFO_STREAM_THROTTLE(1, "Starting FRI");
       startFRI();
 
+      ROS_INFO_STREAM_THROTTLE(1, "Set control strategy");
       setControlStrategy(desired_strategy);
       std::cout << "The ControlStrategy changed to: " << getControlStrategy() << std::endl;
     }
