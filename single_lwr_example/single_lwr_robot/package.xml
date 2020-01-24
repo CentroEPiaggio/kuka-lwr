@@ -13,6 +13,8 @@
   <exec_depend>lwr_hw</exec_depend>
   <exec_depend>lwr_description</exec_depend>
   <exec_depend>lwr_controllers</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
 
   <export>
   </export>

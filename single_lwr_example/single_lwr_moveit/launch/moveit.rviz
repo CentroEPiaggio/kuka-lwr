@@ -70,11 +70,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          box:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           lwr_1_link:
             Alpha: 1
             Show Axes: false
@@ -143,6 +138,10 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Loop Animation: true
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -188,11 +187,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          box:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           lwr_1_link:
             Alpha: 1
             Show Axes: false
@@ -261,6 +255,10 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
+          world:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: true
@@ -271,8 +269,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        box:
-          Value: false
         lwr_1_link:
           Value: false
         lwr_1_link_dummy:
@@ -303,13 +299,15 @@ Visualization Manager:
           Value: false
         lwr_base_link:
           Value: true
+        world:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        box:
+        world:
           lwr_base_link:
             lwr_1_link:
               lwr_2_link:
@@ -339,7 +337,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: box
+    Fixed Frame: world
     Frame Rate: 30
   Name: root
   Tools:
