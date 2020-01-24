@@ -273,13 +273,13 @@ private:
     // wait until FRI enters in command mode
     device_->setToKRLInt(1, 0);
     std::cout << "Waiting for monitor mode..." << std::endl;
-    while ( device_->getFrmKRLInt(1) != 0 ){}
-    // {
-      // std::cout << "device_->getState(): " << device_->getState() << std::endl;
-      // std::cout << "Waiting for monitor mode..." << std::endl;
-      // device_->setToKRLInt(1, 0);
-      // usleep(1000000);
-    // }
+    while ( device_->getFrmKRLInt(1) != 0 )
+    {
+      std::cout << "device_->getState(): " << device_->getState() << std::endl;
+      std::cout << "Waiting for monitor mode..." << std::endl;
+      device_->setToKRLInt(1, 0);
+      usleep(500000);
+    }
     return;
   }
 
